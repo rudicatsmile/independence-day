@@ -220,6 +220,35 @@ Aplikasi akan berjalan di `http://localhost:3000` dengan indikator badge **`DB L
 
 ---
 
+## 4. Panduan Deployment Publik ke Vercel (Gratis & HTTPS SSL)
+
+Aplikasi **Merdeka 81** dapat di-deploy ke publik secara gratis dalam hitungan menit melalui Vercel:
+
+### 🚀 Langkah-Langkah Deployment:
+
+1. **Buka Vercel Dashboard:**
+   - Kunjungi [vercel.com](https://vercel.com) dan login menggunakan akun GitHub Anda (`rudicatsmile`).
+
+2. **Import Repository GitHub:**
+   - Klik **"Add New..."** ➔ **"Project"**.
+   - Pilih repository **`rudicatsmile/independence-day`**, lalu klik **"Import"**.
+
+3. **Konfigurasi Environment Variables (PENTING):**
+   - Pada bagian **Environment Variables**, masukkan 3 variabel berikut dari file `.env.local` Anda:
+     - `NEXT_PUBLIC_SUPABASE_URL` = `https://cibblaojnuggfrjfkqyl.supabase.co`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = `<your-anon-key>`
+     - `SUPABASE_SERVICE_ROLE_KEY` = `<your-service-role-key>`
+
+4. **Eksekusi Deploy:**
+   - Klik tombol **"Deploy"**. Vercel akan secara otomatis me-build aplikasi dan memberikan URL domain publik HTTPS (misal: `https://independence-day-merdeka81.vercel.app`).
+
+5. **Konfigurasi Site URL di Supabase Dashboard (Autentikasi):**
+   - Buka Dashboard Supabase Cloud ➔ **Authentication** ➔ **URL Configuration**.
+   - Ubah **Site URL** menjadi domain publik Vercel Anda (misal: `https://independence-day-merdeka81.vercel.app`).
+   - Tambahkan URL Vercel ke daftar **Redirect URLs**.
+
+---
+
 ### 🧪 Verifikasi Build Produksi
 
 Untuk memastikan kode TypeScript dan bundle Next.js 15 aman untuk di-deploy ke Vercel:
