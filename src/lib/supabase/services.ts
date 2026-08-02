@@ -561,19 +561,20 @@ export async function fetchLeaderboardFromSupabase(): Promise<Profile[]> {
 }
 
 /**
- * Fetch dynamic stage header title and date from Supabase Cloud
+ * Fetch dynamic stage header title, date, and year number from Supabase Cloud
  */
-export async function fetchLiveEventHeaderFromSupabase(): Promise<{ event_title: string; event_date: string }> {
+export async function fetchLiveEventHeaderFromSupabase(): Promise<{ event_title: string; event_date: string; event_year_number: string }> {
   if (!isSupabaseConfigured()) {
     return {
       event_title: 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
       event_date: '17 AGUSTUS 2026',
+      event_year_number: '81',
     };
   }
 
   const { data, error } = await supabase
     .from('live_event_state')
-    .select('event_title, event_date')
+    .select('event_title, event_date, event_year_number')
     .eq('id', 'main')
     .single();
 
@@ -581,19 +582,25 @@ export async function fetchLiveEventHeaderFromSupabase(): Promise<{ event_title:
     return {
       event_title: 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
       event_date: '17 AGUSTUS 2026',
+      event_year_number: '81',
     };
   }
 
   return {
     event_title: data.event_title || 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
     event_date: data.event_date || '17 AGUSTUS 2026',
+    event_year_number: data.event_year_number || '81',
   };
 }
 
 /**
- * Update dynamic stage header title and date in Supabase Cloud by Admin
+ * Update dynamic stage header title, date, and year number in Supabase Cloud by Admin
  */
-export async function updateLiveEventHeaderInSupabase(eventTitle: string, eventDate: string): Promise<{ error: string | null }> {
+export async function updateLiveEventHeaderInSupabase(
+  eventTitle: string,
+  eventDate: string,
+  eventYearNumber: string
+): Promise<{ error: string | null }> {
   if (!isSupabaseConfigured()) return { error: null };
 
   const { error } = await supabase
@@ -602,6 +609,7 @@ export async function updateLiveEventHeaderInSupabase(eventTitle: string, eventD
       id: 'main',
       event_title: eventTitle,
       event_date: eventDate,
+      event_year_number: eventYearNumber,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
 

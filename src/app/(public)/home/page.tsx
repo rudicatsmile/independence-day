@@ -19,15 +19,17 @@ export default function HomePage() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
+  const [eventYearNumber, setEventYearNumber] = useState('81');
 
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
 
   useEffect(() => {
-    // Initial fetch for dynamic event title & date from Supabase Cloud
+    // Initial fetch for dynamic event title, date, & year number from Supabase Cloud
     const loadHeaderInfo = async () => {
       const info = await fetchLiveEventHeaderFromSupabase();
       if (info.event_title) setEventTitle(info.event_title);
       if (info.event_date) setEventDate(info.event_date);
+      if (info.event_year_number) setEventYearNumber(info.event_year_number);
     };
 
     loadHeaderInfo();
@@ -44,6 +46,7 @@ export default function HomePage() {
             if (payload.new) {
               if (payload.new.event_title) setEventTitle(payload.new.event_title);
               if (payload.new.event_date) setEventDate(payload.new.event_date);
+              if (payload.new.event_year_number) setEventYearNumber(payload.new.event_year_number);
             }
           }
         )
@@ -105,7 +108,7 @@ export default function HomePage() {
               </button>
             ) : (
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-merdeka-red to-amber-500 border-2 border-amber-300 flex flex-col items-center justify-center text-white shadow-gold-glow animate-pulse">
-                <span className="text-2xl font-black leading-none">81</span>
+                <span className="text-2xl font-black leading-none">{eventYearNumber}</span>
                 <span className="text-[9px] font-bold tracking-widest uppercase">Tahun</span>
               </div>
             )}

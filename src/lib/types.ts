@@ -88,6 +88,7 @@ export interface LiveEventState {
   salute_count: number;
   event_title: string;
   event_date: string;
+  event_year_number: string;
   event_type: 'salute' | 'merdeka_challenge';
 }
 

@@ -22,6 +22,8 @@ export const StageVisualizer: React.FC = () => {
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
 
   const profile = useUserStore((state) => state.profile);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
   const galleryItems = useUserStore((state) => state.galleryItems);
   const initSupabaseData = useUserStore((state) => state.initSupabaseData);
 
@@ -33,11 +35,13 @@ export const StageVisualizer: React.FC = () => {
   // Dynamic Header State from Database
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
+  const [eventYearNumber, setEventYearNumber] = useState('81');
   
   // Admin Header Settings Modal State
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editTitleInput, setEditTitleInput] = useState(eventTitle);
   const [editDateInput, setEditDateInput] = useState(eventDate);
+  const [editYearInput, setEditYearInput] = useState(eventYearNumber);
   const [isSavingHeader, setIsSavingHeader] = useState(false);
 
   const refreshLeaderboard = async () => {
@@ -49,6 +53,7 @@ export const StageVisualizer: React.FC = () => {
     const info = await fetchLiveEventHeaderFromSupabase();
     if (info.event_title) setEventTitle(info.event_title);
     if (info.event_date) setEventDate(info.event_date);
+    if (info.event_year_number) setEventYearNumber(info.event_year_number);
   };
 
   useEffect(() => {
@@ -94,6 +99,9 @@ export const StageVisualizer: React.FC = () => {
               if (payload.new.event_date) {
                 setEventDate(payload.new.event_date);
               }
+              if (payload.new.event_year_number) {
+                setEventYearNumber(payload.new.event_year_number);
+              }
             }
           }
         )
@@ -129,14 +137,15 @@ export const StageVisualizer: React.FC = () => {
   useEffect(() => {
     setEditTitleInput(eventTitle);
     setEditDateInput(eventDate);
-  }, [eventTitle, eventDate]);
+    setEditYearInput(eventYearNumber);
+  }, [eventTitle, eventDate, eventYearNumber]);
 
   // Save Header Info by Administrator
   const handleSaveHeaderInfo = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingHeader(true);
 
-    const { error } = await updateLiveEventHeaderInSupabase(editTitleInput, editDateInput);
+    const { error } = await updateLiveEventHeaderInSupabase(editTitleInput, editDateInput, editYearInput);
     setIsSavingHeader(false);
 
     if (error) {
@@ -144,6 +153,7 @@ export const StageVisualizer: React.FC = () => {
     } else {
       setEventTitle(editTitleInput);
       setEventDate(editDateInput);
+      setEventYearNumber(editYearInput);
       setIsAdminModalOpen(false);
       confetti({ particleCount: 80, spread: 80, origin: { y: 0.3 } });
     }
@@ -213,8 +223,9 @@ export const StageVisualizer: React.FC = () => {
       {/* Header Banner Panggung */}
       <header className="flex items-center justify-between glass-card-gold rounded-3xl p-4 sm:p-6 border border-amber-400/50 shadow-gold-glow">
         <div className="flex items-center gap-3">
+          {/* Dynamic Event Year Number Box */}
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-merdeka-red to-amber-500 border border-amber-300 flex items-center justify-center shadow-glow font-black text-2xl text-white">
-            81
+            {eventYearNumber}
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -235,14 +246,16 @@ export const StageVisualizer: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Admin Control Button to edit Header Title & Date */}
-          <button
-            onClick={() => setIsAdminModalOpen(true)}
-            className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30 transition-colors flex items-center justify-center"
-            title="Kelola Header Panggung (Admin)"
-          >
-            <Settings className="w-5 h-5 text-amber-400" />
-          </button>
+          {/* Admin Control Button to edit Header Title & Date (Only visible to logged-in Admin) */}
+          {isAdmin && (
+            <button
+              onClick={() => setIsAdminModalOpen(true)}
+              className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30 transition-colors flex items-center justify-center"
+              title="Kelola Header Panggung (Admin)"
+            >
+              <Settings className="w-5 h-5 text-amber-400" />
+            </button>
+          )}
 
           <button
             onClick={() => setIsAudioMuted(!isAudioMuted)}
@@ -281,7 +294,8 @@ export const StageVisualizer: React.FC = () => {
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-merdeka-red via-amber-500 to-merdeka-red animate-spin-slow opacity-40 blur-xl" />
             <div className="relative z-10 w-44 h-44 rounded-full bg-slate-950 border-4 border-amber-400 flex flex-col items-center justify-center shadow-gold-glow animate-pulse">
               <span className="text-6xl mb-1">🫡</span>
-              <span className="text-xs font-black text-amber-300 uppercase tracking-widest">NUSANTARA 81</span>
+              {/* Dynamic Emblem Year Number */}
+              <span className="text-xs font-black text-amber-300 uppercase tracking-widest">NUSANTARA {eventYearNumber}</span>
             </div>
           </div>
 
@@ -376,7 +390,7 @@ export const StageVisualizer: React.FC = () => {
         </div>
       </div>
 
-      {/* Admin Modal to Edit Dynamic Header Title & Date */}
+      {/* Admin Modal to Edit Dynamic Header Title, Date, and Year Number */}
       {isAdminModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div className="w-full max-w-md glass-card-gold rounded-3xl p-6 border border-amber-400/60 space-y-5 shadow-gold-glow relative">
@@ -410,7 +424,7 @@ export const StageVisualizer: React.FC = () => {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-amber-300 block">
-                  2. Kalimat Subtitle / Tanggal Acara:
+                  2. Tanggal Acara Kemerdekaan (event_date):
                 </label>
                 <input
                   type="text"
@@ -418,7 +432,21 @@ export const StageVisualizer: React.FC = () => {
                   value={editDateInput}
                   onChange={(e) => setEditDateInput(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
-                  placeholder="Contoh: 17 AGUSTUS 2026 / PERAYAAN NASIONAL"
+                  placeholder="Contoh: 17 AGUSTUS 2026"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-amber-300 block">
+                  3. Angka Umur Kemerdekaan / Perayaan (misal: 81):
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editYearInput}
+                  onChange={(e) => setEditYearInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 font-mono font-bold"
+                  placeholder="Contoh: 81"
                 />
               </div>
 
