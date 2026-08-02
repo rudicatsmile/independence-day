@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame } from 'lucide-react';
+import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame, Settings, Save, X, Edit3 } from 'lucide-react';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { useUserStore } from '@/stores/useUserStore';
 import {
   fetchLeaderboardFromSupabase,
   fetchGalleryFromSupabase,
   fetchActivePollFromSupabase,
+  fetchLiveEventHeaderFromSupabase,
+  updateLiveEventHeaderInSupabase,
 } from '@/lib/supabase/services';
 import { Profile } from '@/lib/types';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
@@ -19,6 +21,7 @@ export const StageVisualizer: React.FC = () => {
   const activePoll = useLiveStore((state) => state.poll);
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
 
+  const profile = useUserStore((state) => state.profile);
   const galleryItems = useUserStore((state) => state.galleryItems);
   const initSupabaseData = useUserStore((state) => state.initSupabaseData);
 
@@ -27,21 +30,39 @@ export const StageVisualizer: React.FC = () => {
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const previousItemCountRef = useRef(galleryItems.length);
 
+  // Dynamic Header State from Database
+  const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
+  const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
+  
+  // Admin Header Settings Modal State
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [editTitleInput, setEditTitleInput] = useState(eventTitle);
+  const [editDateInput, setEditDateInput] = useState(eventDate);
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
+
   const refreshLeaderboard = async () => {
     const data = await fetchLeaderboardFromSupabase();
     setLeaderboard(data.slice(0, 5));
+  };
+
+  const refreshHeaderInfo = async () => {
+    const info = await fetchLiveEventHeaderFromSupabase();
+    if (info.event_title) setEventTitle(info.event_title);
+    if (info.event_date) setEventDate(info.event_date);
   };
 
   useEffect(() => {
     initSupabaseData();
     initLiveSupabase();
 
-    // Initial Leaderboard fetch strictly from Supabase Cloud public.profiles table
+    // Initial Leaderboard & Header fetch strictly from Supabase Cloud
     refreshLeaderboard();
+    refreshHeaderInfo();
 
-    // Polling fallback every 3 seconds to guarantee leaderboard updates
+    // Polling fallback every 3 seconds to guarantee updates
     const lbTimer = setInterval(() => {
       refreshLeaderboard();
+      refreshHeaderInfo();
     }, 3000);
 
     // Direct Realtime listener subscription on Stage Visualizer component
@@ -63,8 +84,16 @@ export const StageVisualizer: React.FC = () => {
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'live_event_state' },
           (payload) => {
-            if (payload.new && payload.new.salute_count) {
-              useLiveStore.setState({ saluteCount: payload.new.salute_count });
+            if (payload.new) {
+              if (payload.new.salute_count) {
+                useLiveStore.setState({ saluteCount: payload.new.salute_count });
+              }
+              if (payload.new.event_title) {
+                setEventTitle(payload.new.event_title);
+              }
+              if (payload.new.event_date) {
+                setEventDate(payload.new.event_date);
+              }
             }
           }
         )
@@ -95,6 +124,30 @@ export const StageVisualizer: React.FC = () => {
       clearInterval(lbTimer);
     };
   }, [initSupabaseData, initLiveSupabase]);
+
+  // Sync modal inputs when header state changes
+  useEffect(() => {
+    setEditTitleInput(eventTitle);
+    setEditDateInput(eventDate);
+  }, [eventTitle, eventDate]);
+
+  // Save Header Info by Administrator
+  const handleSaveHeaderInfo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingHeader(true);
+
+    const { error } = await updateLiveEventHeaderInSupabase(editTitleInput, editDateInput);
+    setIsSavingHeader(false);
+
+    if (error) {
+      alert('Gagal memperbarui header di Supabase Cloud: ' + error);
+    } else {
+      setEventTitle(editTitleInput);
+      setEventDate(editDateInput);
+      setIsAdminModalOpen(false);
+      confetti({ particleCount: 80, spread: 80, origin: { y: 0.3 } });
+    }
+  };
 
   // When a new photo is published from any device, jump immediately to the newly uploaded photo on stage!
   useEffect(() => {
@@ -168,15 +221,29 @@ export const StageVisualizer: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-red-950/80 border border-red-500 text-red-400 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1 animate-pulse">
                 <Tv className="w-3 h-3" /> STAGE DISPLAY LIVE
               </span>
-              <span className="text-xs text-amber-300 font-bold">17 AGUSTUS 2026</span>
+              {/* Dynamic Event Date from Database */}
+              <span className="text-xs text-amber-300 font-bold uppercase tracking-wider">
+                {eventDate}
+              </span>
             </div>
+
+            {/* Dynamic Event Title from Database */}
             <h1 className="text-xl sm:text-2xl font-black text-gradient-gold uppercase tracking-wider">
-              PANGGUNG UTAMA PERAYAAN HUT RI KE-81
+              {eventTitle}
             </h1>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Admin Control Button to edit Header Title & Date */}
+          <button
+            onClick={() => setIsAdminModalOpen(true)}
+            className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30 transition-colors flex items-center justify-center"
+            title="Kelola Header Panggung (Admin)"
+          >
+            <Settings className="w-5 h-5 text-amber-400" />
+          </button>
+
           <button
             onClick={() => setIsAudioMuted(!isAudioMuted)}
             className="p-3 rounded-2xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition-colors"
@@ -308,6 +375,74 @@ export const StageVisualizer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Admin Modal to Edit Dynamic Header Title & Date */}
+      {isAdminModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md glass-card-gold rounded-3xl p-6 border border-amber-400/60 space-y-5 shadow-gold-glow relative">
+            <div className="flex items-center justify-between border-b border-amber-500/30 pb-3">
+              <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+                <Edit3 className="w-5 h-5" />
+                <span>KONTROL HEADER LAYAR PANGGUNG (ADMIN)</span>
+              </div>
+              <button
+                onClick={() => setIsAdminModalOpen(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveHeaderInfo} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-amber-300 block">
+                  1. Judul Utama Acara Panggung:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editTitleInput}
+                  onChange={(e) => setEditTitleInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  placeholder="Contoh: PANGGUNG UTAMA PERAYAAN HUT RI KE-81"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-amber-300 block">
+                  2. Kalimat Subtitle / Tanggal Acara:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editDateInput}
+                  onChange={(e) => setEditDateInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  placeholder="Contoh: 17 AGUSTUS 2026 / PERAYAAN NASIONAL"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAdminModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 font-bold text-xs hover:bg-slate-800"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingHeader}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow flex items-center gap-1.5 hover:scale-105"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingHeader ? 'Menyimpan...' : 'Simpan & Broadcast Live'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

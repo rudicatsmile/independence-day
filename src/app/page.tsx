@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, ShieldCheck, Award, ArrowRight } from 'lucide-react';
+import { Flag, Sparkles, ShieldCheck, Award, ArrowRight, GraduationCap } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -23,7 +23,7 @@ export default function LandingPage() {
           MERDEKA <span className="text-gradient-gold">81</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Jelajah Peta QR Hunt, Wall of Merdeka, dan Gerakan Salute Panggung Utama!
+          Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Selfie bersama guru patriot, Wall of Merdeka, dan Gerakan Salute Panggung Utama!
         </p>
       </div>
 
@@ -48,12 +48,12 @@ export default function LandingPage() {
           <p className="text-xs text-slate-400">Bingkai 17-an instan dengan kompresi otomatis & 1-klik share ke WA Status & IG Story.</p>
         </div>
 
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold">
-            🗺️
+        <div className="glass-card rounded-2xl p-5 border border-amber-500/30 space-y-2">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xl">
+            🎓
           </div>
-          <h3 className="text-sm font-bold text-white">Peta QR & Geofencing</h3>
-          <p className="text-xs text-slate-400">Jelajah titik QR di area acara dengan validasi lokasi GPS anti-cheat.</p>
+          <h3 className="text-sm font-bold text-white">Selfie bersama guru patriot</h3>
+          <p className="text-xs text-slate-400">Foto selfie bersama guru favoritmu dan tayangkan langsung di Layar Panggung Utama.</p>
         </div>
 
         <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">

@@ -559,3 +559,52 @@ export async function fetchLeaderboardFromSupabase(): Promise<Profile[]> {
   console.log('🏆 Leaderboard fetched from Supabase Cloud:', data?.length, 'rows');
   return (data || []).map((p, idx) => ({ ...p, rank: idx + 1 }));
 }
+
+/**
+ * Fetch dynamic stage header title and date from Supabase Cloud
+ */
+export async function fetchLiveEventHeaderFromSupabase(): Promise<{ event_title: string; event_date: string }> {
+  if (!isSupabaseConfigured()) {
+    return {
+      event_title: 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
+      event_date: '17 AGUSTUS 2026',
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('live_event_state')
+    .select('event_title, event_date')
+    .eq('id', 'main')
+    .single();
+
+  if (error || !data) {
+    return {
+      event_title: 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
+      event_date: '17 AGUSTUS 2026',
+    };
+  }
+
+  return {
+    event_title: data.event_title || 'PANGGUNG UTAMA PERAYAAN HUT RI KE-81',
+    event_date: data.event_date || '17 AGUSTUS 2026',
+  };
+}
+
+/**
+ * Update dynamic stage header title and date in Supabase Cloud by Admin
+ */
+export async function updateLiveEventHeaderInSupabase(eventTitle: string, eventDate: string): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      event_title: eventTitle,
+      event_date: eventDate,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}

@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, MapPin, Trophy, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv } from 'lucide-react';
+import { Flag, Sparkles, MapPin, Trophy, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { fetchLiveEventHeaderFromSupabase } from '@/lib/supabase/services';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
 export default function HomePage() {
   const profile = useUserStore((state) => state.profile);
@@ -15,7 +17,43 @@ export default function HomePage() {
   const saluteCount = useLiveStore((state) => state.saluteCount);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
+  const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
+
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
+
+  useEffect(() => {
+    // Initial fetch for dynamic event title & date from Supabase Cloud
+    const loadHeaderInfo = async () => {
+      const info = await fetchLiveEventHeaderFromSupabase();
+      if (info.event_title) setEventTitle(info.event_title);
+      if (info.event_date) setEventDate(info.event_date);
+    };
+
+    loadHeaderInfo();
+
+    // Subscribe to Supabase Realtime for live_event_state update
+    if (isSupabaseConfigured()) {
+      const supabase = createClient();
+      const channel = supabase
+        .channel('home-header-realtime-channel')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'live_event_state' },
+          (payload) => {
+            if (payload.new) {
+              if (payload.new.event_title) setEventTitle(payload.new.event_title);
+              if (payload.new.event_date) setEventDate(payload.new.event_date);
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -23,9 +61,9 @@ export default function HomePage() {
       <div className="glass-card-red rounded-3xl p-6 sm:p-8 border-merdeka-red/40 relative overflow-hidden space-y-4 shadow-glow">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>HUT RI KE-81 • 17 AGUSTUS 2026</span>
+              <span>{eventTitle}</span>
             </div>
 
             {isLoggedIn ? (
@@ -87,16 +125,30 @@ export default function HomePage() {
             <p className="text-[10px] text-slate-400">Buat bingkai 17-an</p>
           </Link>
 
-          <Link
-            href="/map"
-            className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
-          >
-            <div className="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center mb-2">
-              <MapPin className="w-4 h-4" />
-            </div>
-            <p className="text-xs font-bold text-white">Peta QR Hunt</p>
-            <p className="text-[10px] text-slate-400">Jelajah 3 Lokasi</p>
-          </Link>
+          {!isLoggedIn ? (
+            <button
+              type="button"
+              onClick={() => setIsAuthModalOpen(true)}
+              className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105 w-full"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-2">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white">Selfie Guru Patriot</p>
+              <p className="text-[10px] text-amber-300 font-semibold">Foto & Klaim +150 PTS</p>
+            </button>
+          ) : (
+            <Link
+              href="/selfie-guru"
+              className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-2">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white">Selfie Guru Patriot</p>
+              <p className="text-[10px] text-amber-300 font-semibold">Foto & Klaim +150 PTS</p>
+            </Link>
+          )}
 
           <Link
             href="/live"
@@ -122,10 +174,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ADMIN EXCLUSIVE CONTROL WIDGET */}
+      {/* Admin Panel Quick Banner */}
       {isAdmin && (
-        <div className="glass-card-gold rounded-3xl p-6 border border-amber-400/50 space-y-3 shadow-gold-glow">
-          <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+        <div className="glass-card-gold rounded-3xl p-5 border border-amber-400/60 space-y-3 shadow-gold-glow">
+          <div className="flex items-center gap-2 text-amber-300">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
             <h2 className="text-base font-black text-white">Panel Kontrol Utama Administrator</h2>
           </div>
