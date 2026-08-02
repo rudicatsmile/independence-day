@@ -178,7 +178,7 @@ async function main() {
     }
   }
 
-  // 4. Seed Missions Table
+  // 4. Seed Missions Table (Consolidated 4 Missions)
   console.log('📦 Seeding Misi Kemerdekaan...');
   const missions = [
     {
@@ -192,24 +192,14 @@ async function main() {
       order_index: 1,
     },
     {
-      slug: 'titik-panggung-utama',
-      title: 'Jelajah QR: Panggung Utama',
-      description: 'Temukan dan scan QR Code di area Panggung Utama Perayaan HUT RI ke-81.',
+      slug: 'jelajah-qr-lokasi',
+      title: 'Jelajah QR & Peta Lokasi Perayaan',
+      description: 'Temukan dan scan banner QR Code di berbagai titik lokasi perayaan HUT RI ke-81 (Panggung Utama, Bazar UMKM, dll).',
       type: 'qr_hunt',
-      points_reward: 75,
-      icon_name: 'QrCode',
-      is_active: true,
-      order_index: 2,
-    },
-    {
-      slug: 'titik-bazar-umkm',
-      title: 'Jelajah QR: Bazar Kuliner Nusantara',
-      description: 'Temukan banner QR Code di booth Bazar UMKM Kemerdekaan.',
-      type: 'qr_hunt',
-      points_reward: 75,
+      points_reward: 150,
       icon_name: 'MapPin',
       is_active: true,
-      order_index: 3,
+      order_index: 2,
     },
     {
       slug: 'quiz-kemerdekaan',
@@ -219,17 +209,17 @@ async function main() {
       points_reward: 100,
       icon_name: 'HelpCircle',
       is_active: true,
-      order_index: 4,
+      order_index: 3,
     },
     {
       slug: 'video-gelora-merdeka',
-      title: 'Video Pekik "Merdeka!"',
-      description: 'Rekam video singkat (maks 15 detik) menyuarakan pesan Kemerdekaan 81.',
+      title: 'Live Salute & Polling Perayaan',
+      description: 'Suarakan rasa hormatmu dan ikuti voting polling interaktif di lokasi acara.',
       type: 'video',
       points_reward: 125,
-      icon_name: 'Video',
+      icon_name: 'Radio',
       is_active: true,
-      order_index: 5,
+      order_index: 4,
     },
   ];
 
@@ -237,7 +227,7 @@ async function main() {
   if (missionsError) {
     console.warn('⚠️ Warning on missions insert:', missionsError.message);
   } else {
-    console.log('✅ 5 Misi Kemerdekaan berhasil di-seed!');
+    console.log('✅ 4 Misi Kemerdekaan berhasil di-seed!');
   }
 
   // 5. Seed Badges Table

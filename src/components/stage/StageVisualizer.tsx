@@ -247,6 +247,14 @@ export const StageVisualizer: React.FC = () => {
                 alt={activePhoto.caption}
                 className="w-full h-full object-cover animate-fade-in"
               />
+
+              {/* Special Badge if photo is Teacher Selfie */}
+              {activePhoto.caption.includes('Selfie Bersama Guru') && (
+                <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-gold-glow flex items-center gap-1.5 animate-bounce">
+                  <span>🎓 MOMEN PATRIOT: SELFIE GURU & MURID</span>
+                </div>
+              )}
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-6 space-y-2">
                 <div className="flex items-center gap-3">
                   <img

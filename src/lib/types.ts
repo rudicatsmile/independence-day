@@ -62,6 +62,7 @@ export interface GalleryItem {
   caption: string;
   like_count: number;
   is_liked?: boolean;
+  teacher_name?: string;
   status: 'approved' | 'flagged' | 'removed';
   report_count: number;
   created_at: string;

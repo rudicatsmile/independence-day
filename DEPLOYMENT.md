@@ -147,4 +147,28 @@ Setelah Vercel memberikan URL domain publik Anda:
 
 ---
 
-*Dokumentasi ini dikelola secara resmi oleh Tim Pengembang Merdeka 81.* 🇮🇩
+## 7. Panduan Custom Subdomain (`merdeka.yalwash9.org`)
+
+Untuk mengubah domain default Vercel (`https://independence-day-khaki.vercel.app`) menjadi domain khusus milik Anda sendiri (**`https://merdeka.yalwash9.org`**):
+
+### 🚀 Langkah-Langkah Setup Custom Subdomain:
+
+1. **Tambahkan Domain di Vercel:**
+   - Buka Vercel Dashboard ➔ Project **`independence-day`** ➔ Tab **Settings** ➔ **Domains**.
+   - Masukkan **`merdeka.yalwash9.org`** pada kolom masukan domain, lalu klik **"Add"**.
+
+2. **Tambahkan CNAME Record di DNS Management Domain (`yalwash9.org`):**
+   - Buka Dashboard DNS Provider tempat domain `yalwash9.org` dibeli (Cloudflare / cPanel / Niagahoster / Idwebhost / Rumahweb).
+   - Tambahkan Record DNS baru dengan konfigurasi:
+     - **Type / Jenis:** `CNAME`
+     - **Name / Host:** `merdeka`
+     - **Target / Value:** `cname.vercel-dns.com`
+     - *(Jika menggunakan Cloudflare, matikan ikon awan menjadi **DNS Only / Grey Cloud**)*.
+
+3. **Tunggu Sertifikat SSL HTTPS Otomatis:**
+   - Vercel akan memverifikasi CNAME tersebut dan menerbitkan sertifikat SSL/HTTPS gratis secara otomatis dalam 1-3 menit.
+
+4. **Update Site URL di Supabase Dashboard:**
+   - Buka Dashboard Supabase Cloud ➔ **Authentication** ➔ **URL Configuration**.
+   - Ubah **Site URL** dan **Redirect URLs** menjadi `https://merdeka.yalwash9.org`, lalu klik **Save**.
+
