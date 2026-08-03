@@ -15,12 +15,17 @@ export default function LandingPage() {
 
       {/* Hero Title */}
       <div className="space-y-4 max-w-3xl">
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 flex items-center justify-center mx-auto shadow-gold-glow animate-pulse">
-          <span className="text-5xl font-black text-white">81</span>
+        {/* Logo Yayasan Emblem */}
+        <div className="w-28 h-28 rounded-3xl bg-slate-900 border-4 border-amber-300 p-2 flex items-center justify-center mx-auto shadow-gold-glow animate-pulse">
+          <img
+            src="/logo-yayasan.png"
+            alt="Logo Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta"
+            className="w-full h-full object-contain drop-shadow-md"
+          />
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
-          MERDEKA <span className="text-gradient-gold">81</span>
+        <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+          Yayasan Al-Wathoniyah <span className="text-gradient-gold">Asshodriyah 9 Jakarta</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
           Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Selfie bersama guru patriot, Wall of Merdeka, dan Gerakan Salute Panggung Utama!
