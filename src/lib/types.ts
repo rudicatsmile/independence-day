@@ -112,3 +112,31 @@ export interface QuizQuestion {
   order_index: number;
   is_active: boolean;
 }
+
+export type CosplayCategory = 'usia_dini' | 'usia_menengah' | 'usia_atas';
+
+export interface CosplayParticipant {
+  id: string;
+  name: string;
+  class_level: string;
+  character_name: string;
+  category: CosplayCategory;
+  created_at?: string;
+  final_score?: number;
+  scores_by_judge?: Record<string, { scores: Record<string, number>; final_score: number }>;
+}
+
+export interface CosplayCriterion {
+  key: string;
+  label: string;
+  indicator: string;
+  weight: number; // e.g. 0.30 for 30%
+}
+
+export interface CosplayScoreRecord {
+  id?: string;
+  participant_id: string;
+  judge_name: string;
+  scores: Record<string, number>;
+  final_score: number;
+}

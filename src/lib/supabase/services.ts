@@ -1,6 +1,6 @@
 import { createClient, isSupabaseConfigured } from './client';
-import { GalleryItem, Mission, Profile, UserMission, TwibbonFrame, QuizQuestion, Poll } from '@/lib/types';
-import { MOCK_GALLERY, MOCK_MISSIONS, MOCK_LEADERBOARD, MOCK_TWIBBON_FRAMES, MOCK_QUIZ_QUESTIONS, MOCK_POLL } from '@/lib/mockData';
+import { GalleryItem, Mission, Profile, UserMission, TwibbonFrame, QuizQuestion, Poll, CosplayCategory, CosplayParticipant, CosplayScoreRecord } from '@/lib/types';
+import { MOCK_GALLERY, MOCK_MISSIONS, MOCK_LEADERBOARD, MOCK_TWIBBON_FRAMES, MOCK_QUIZ_QUESTIONS, MOCK_POLL, MOCK_COSPLAY_PARTICIPANTS } from '@/lib/mockData';
 
 const supabase = createClient();
 
@@ -612,6 +612,103 @@ export async function updateLiveEventHeaderInSupabase(
       event_year_number: eventYearNumber,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Fetch cosplay participants and scores for a specific category
+ */
+export async function fetchCosplayParticipantsFromSupabase(category: CosplayCategory): Promise<CosplayParticipant[]> {
+  if (!isSupabaseConfigured()) {
+    return MOCK_COSPLAY_PARTICIPANTS.filter((p) => p.category === category);
+  }
+
+  const { data: participants, error: pErr } = await supabase
+    .from('cosplay_participants')
+    .select('*')
+    .eq('category', category);
+
+  if (pErr || !participants || participants.length === 0) {
+    return MOCK_COSPLAY_PARTICIPANTS.filter((p) => p.category === category);
+  }
+
+  const pIds = participants.map((p) => p.id);
+  const { data: scores } = await supabase
+    .from('cosplay_scores')
+    .select('*')
+    .in('participant_id', pIds);
+
+  return participants.map((p) => {
+    const pScores = (scores || []).filter((s) => s.participant_id === p.id);
+    const scoresByJudge: Record<string, { scores: Record<string, number>; final_score: number }> = {};
+    let totalScoreSum = 0;
+
+    pScores.forEach((s) => {
+      scoresByJudge[s.judge_name] = {
+        scores: s.scores || {},
+        final_score: Number(s.final_score) || 0,
+      };
+      totalScoreSum += Number(s.final_score) || 0;
+    });
+
+    const avgFinalScore = pScores.length > 0 ? Number((totalScoreSum / pScores.length).toFixed(2)) : 0;
+
+    return {
+      id: p.id,
+      name: p.name,
+      class_level: p.class_level,
+      character_name: p.character_name,
+      category: p.category as CosplayCategory,
+      created_at: p.created_at,
+      final_score: avgFinalScore,
+      scores_by_judge: scoresByJudge,
+    };
+  });
+}
+
+/**
+ * Save / Update a score from a Jury member for a cosplay participant
+ */
+export async function saveCosplayScoreToSupabase(
+  participantId: string,
+  judgeName: string,
+  scores: Record<string, number>,
+  finalScore: number
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('cosplay_scores')
+    .upsert({
+      participant_id: participantId,
+      judge_name: judgeName,
+      scores: scores,
+      final_score: finalScore,
+      created_at: new Date().toISOString(),
+    }, { onConflict: 'participant_id,judge_name' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Add a new cosplay participant
+ */
+export async function saveCosplayParticipantToSupabase(
+  participant: Partial<CosplayParticipant>
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('cosplay_participants')
+    .insert({
+      name: participant.name,
+      class_level: participant.class_level,
+      character_name: participant.character_name,
+      category: participant.category,
+    });
 
   if (error) return { error: error.message };
   return { error: null };

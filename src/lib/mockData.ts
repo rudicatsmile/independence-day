@@ -1,4 +1,4 @@
-import { Mission, Badge, GalleryItem, Poll, Profile, TwibbonFrame, QuizQuestion } from './types';
+import { Mission, Badge, GalleryItem, Poll, Profile, TwibbonFrame, QuizQuestion, CosplayCategory, CosplayCriterion, CosplayParticipant } from './types';
 
 export const MOCK_PROFILE: Profile = {
   id: 'user-001',
@@ -341,9 +341,65 @@ export const MOCK_LEADERBOARD: Profile[] = [
     instansi: 'TK Al-Wathoniyah 9',
     phone: '',
     avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
-    total_points: 250,
+    total_points: 210,
     role: 'participant',
     rank: 5,
     onboarding_completed: true,
   },
+];
+
+export const COSPLAY_JUDGES = [
+  'Bapak Sofyan Jamaludin,S.H.I.',
+  'Bapak H. Mulyana, S.H., M.M.',
+];
+
+export const COSPLAY_CRITERIA_MAP: Record<CosplayCategory, CosplayCriterion[]> = {
+  usia_dini: [
+    { key: 'kostum', label: 'Kesesuaian Kostum', indicator: 'Kostum dan aksesori sesuai dengan tokoh yang diperankan', weight: 0.30 },
+    { key: 'ekspresi', label: 'Ekspresi dan Keceriaan', indicator: 'Menampilkan ekspresi yang sesuai dan menyenangkan', weight: 0.25 },
+    { key: 'keberanian', label: 'Keberanian', indicator: 'Berani tampil di depan penonton', weight: 0.20 },
+    { key: 'kreativitas', label: 'Kreativitas', indicator: 'Ada unsur kreatif dalam kostum atau penampilan', weight: 0.15 },
+    { key: 'pengenalan', label: 'Pengenalan Tokoh', indicator: 'Mampu menyebutkan nama dan mengenali tokoh yang diperankan', weight: 0.10 },
+  ],
+  usia_menengah: [
+    { key: 'kesesuaian_tokoh', label: 'Kesesuaian Tokoh dan Kostum', indicator: 'Kostum, aksesori, dan penampilan mencerminkan karakteristik tokoh', weight: 0.25 },
+    { key: 'penghayatan', label: 'Penghayatan dan Ekspresi', indicator: 'Mampu menampilkan karakter tokoh dengan ekspresif', weight: 0.20 },
+    { key: 'keberanian_diri', label: 'Keberanian dan Percaya Diri', indicator: 'Tampil dengan percaya diri dan mampu berinteraksi dengan penonton', weight: 0.20 },
+    { key: 'keteladanan', label: 'Nilai Keteladanan', indicator: 'Mampu menyampaikan nilai positif dari tokoh', weight: 0.20 },
+    { key: 'kreativitas', label: 'Kreativitas', indicator: 'Memiliki ide kreatif dalam kostum dan cara penyajian', weight: 0.15 },
+  ],
+  usia_atas: [
+    { key: 'kostum_properti', label: 'Kesesuaian Kostum dan Properti', indicator: 'Detail kostum dan properti mendukung karakter tokoh', weight: 0.20 },
+    { key: 'pemahaman_akurasi', label: 'Pemahaman dan Akurasi Tokoh', indicator: 'Menguasai latar belakang, perjuangan, karya, dan kontribusi tokoh', weight: 0.20 },
+    { key: 'pendalaman_karakter', label: 'Pendalaman Karakter', indicator: 'Mampu menghidupkan karakter melalui gestur, ekspresi, dan sikap', weight: 0.20 },
+    { key: 'komunikasi', label: 'Kemampuan Komunikasi', indicator: 'Artikulasi, intonasi, pilihan kata, dan kemampuan menjawab pertanyaan', weight: 0.15 },
+    { key: 'kreativitas_orisinalitas', label: 'Kreativitas dan Orisinalitas', indicator: 'Konsep penampilan unik, kreatif, dan memiliki nilai tambah', weight: 0.15 },
+    { key: 'penguasaan_panggung', label: 'Penguasaan Panggung', indicator: 'Percaya diri, komunikatif, dan mampu menarik perhatian audiens', weight: 0.10 },
+  ],
+};
+
+export const MOCK_COSPLAY_PARTICIPANTS: CosplayParticipant[] = [
+  // Usia Dini (TK / PAUD)
+  { id: 'cp-dini-1', name: 'Ahmad Hafiz', class_level: 'A', character_name: 'Ir. Soekarno', category: 'usia_dini' },
+  { id: 'cp-dini-2', name: 'Aisyah Putri', class_level: 'A', character_name: 'R.A. Kartini', category: 'usia_dini' },
+  { id: 'cp-dini-3', name: 'Bilal Ramadhan', class_level: 'B1', character_name: 'Jenderal Soedirman', category: 'usia_dini' },
+  { id: 'cp-dini-4', name: 'Fatimah Az-Zahra', class_level: 'B1', character_name: 'Cut Nyak Dhien', category: 'usia_dini' },
+  { id: 'cp-dini-5', name: 'Kenzo Pratama', class_level: 'B2', character_name: 'Bung Tomo', category: 'usia_dini' },
+  { id: 'cp-dini-6', name: 'Zahra Amelia', class_level: 'B2', character_name: 'Dewi Sartika', category: 'usia_dini' },
+
+  // Usia Menengah (SD / SMP)
+  { id: 'cp-mngh-1', name: 'Bagas Kencana', class_level: 'SD', character_name: 'Ir. Soekarno', category: 'usia_menengah' },
+  { id: 'cp-mngh-2', name: 'Siti Nurhaliza', class_level: 'SD', character_name: 'R.A. Kartini', category: 'usia_menengah' },
+  { id: 'cp-mngh-3', name: 'Rian Hidayat', class_level: 'SD', character_name: 'Pangeran Diponegoro', category: 'usia_menengah' },
+  { id: 'cp-mngh-4', name: 'Fajar Pratama', class_level: 'SMP', character_name: 'Bung Hatta', category: 'usia_menengah' },
+  { id: 'cp-mngh-5', name: 'Dian Sastro', class_level: 'SMP', character_name: 'Cut Nyak Dhien', category: 'usia_menengah' },
+  { id: 'cp-mngh-6', name: 'Taufik Hidayat', class_level: 'SMP', character_name: 'Jenderal Soedirman', category: 'usia_menengah' },
+
+  // Usia Atas (SMA / SMK / DP)
+  { id: 'cp-atas-1', name: 'Rudi Kurniawan, ST', class_level: 'DP-1', character_name: 'Ir. Soekarno', category: 'usia_atas' },
+  { id: 'cp-atas-2', name: 'Dewi Sartika', class_level: 'DP-1', character_name: 'R.A. Kartini', category: 'usia_atas' },
+  { id: 'cp-atas-3', name: 'Andi Wijaya', class_level: 'DP-1', character_name: 'Bung Hatta', category: 'usia_atas' },
+  { id: 'cp-atas-4', name: 'Reza Rahadian', class_level: 'DP-2', character_name: 'Jenderal Soedirman', category: 'usia_atas' },
+  { id: 'cp-atas-5', name: 'Maya Putri', class_level: 'DP-2', character_name: 'Cut Meutia', category: 'usia_atas' },
+  { id: 'cp-atas-6', name: 'Farhan Ali', class_level: 'DP-2', character_name: 'Pangeran Diponegoro', category: 'usia_atas' },
 ];
