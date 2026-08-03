@@ -28,7 +28,7 @@ export default function LandingPage() {
           Yayasan Al-Wathoniyah <span className="text-gradient-gold">Asshodriyah 9 Jakarta</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Selfie bersama guru patriot, Wall of Merdeka, dan Gerakan Salute Panggung Utama!
+          Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Wall of Merdeka, dan Gerakan Penghormatan Bendera di Panggung Utama!
         </p>
       </div>
 
