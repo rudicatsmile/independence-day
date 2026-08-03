@@ -321,7 +321,7 @@ export const StageVisualizer: React.FC = () => {
           </div>
 
           {/* Active Photo Carousel Card */}
-          {activePhoto && (
+          {activePhoto ? (
             <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
               <img
                 src={activePhoto.image_url}
@@ -350,6 +350,26 @@ export const StageVisualizer: React.FC = () => {
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200 font-medium italic line-clamp-2">
                   "{activePhoto.caption}"
+                </p>
+              </div>
+            </div>
+          ) : (
+            /* Fallback Card when Gallery is Empty: Displays logo-yayasan.png */
+            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950 border border-amber-500/40 shadow-2xl flex items-center justify-center p-6 text-center">
+              <div className="space-y-4 max-w-md my-auto">
+                <div className="w-28 h-28 mx-auto rounded-3xl bg-slate-900 border-2 border-amber-400/50 p-2 shadow-gold-glow flex items-center justify-center">
+                  <img
+                    src="/logo-yayasan.png"
+                    alt="Logo Yayasan Al-Wathoniyah 9"
+                    className="w-full h-full object-contain drop-shadow-md"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-black text-gradient-gold">Yayasan Al-Wathoniyah 9</h3>
+                  <p className="text-xs text-amber-300 font-bold uppercase tracking-wider">Perayaan Kemerdekaan RI</p>
+                </div>
+                <p className="text-xs text-slate-300 italic">
+                  "Unggah foto terbaikmu di Twibbon Photobooth atau Selfie Guru untuk menampilkannya di Layar Panggung Utama!"
                 </p>
               </div>
             </div>
