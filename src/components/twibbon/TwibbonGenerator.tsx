@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, LogIn } from 'lucide-react';
+import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, Move, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '@/stores/useUserStore';
 import { TwibbonFrame } from '@/lib/types';
@@ -18,6 +18,13 @@ export const TwibbonGenerator: React.FC = () => {
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
   const [isSavedToGallery, setIsSavedToGallery] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Position & Zoom adjustment state for customizable photo alignment inside Twibbon
+  const [zoomScale, setZoomScale] = useState<number>(1.0);
+  const [offsetX, setOffsetX] = useState<number>(0);
+  const [offsetY, setOffsetY] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -46,6 +53,10 @@ export const TwibbonGenerator: React.FC = () => {
         if (event.target?.result) {
           setImageSrc(event.target.result as string);
           setIsSavedToGallery(false);
+          // Reset photo position and zoom when a new photo is chosen
+          setZoomScale(1.0);
+          setOffsetX(0);
+          setOffsetY(0);
         }
       };
       reader.readAsDataURL(file);
@@ -69,24 +80,26 @@ export const TwibbonGenerator: React.FC = () => {
     img.crossOrigin = 'anonymous';
     img.src = imageSrc;
     img.onload = () => {
-      // 1. Draw User Photo (Cover mode)
+      // 1. Draw User Photo with Zoom Scale and Offset X/Y
       ctx.clearRect(0, 0, size, size);
       
       const aspect = img.width / img.height;
-      let drawW = size;
-      let drawH = size;
-      let drawX = 0;
-      let drawY = 0;
+      let baseW = size;
+      let baseH = size;
 
       if (aspect > 1) {
-        drawW = size * aspect;
-        drawX = -(drawW - size) / 2;
+        baseW = size * aspect;
       } else {
-        drawH = size / aspect;
-        drawY = -(drawH - size) / 2;
+        baseH = size / aspect;
       }
 
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      const scaledW = baseW * zoomScale;
+      const scaledH = baseH * zoomScale;
+
+      const drawX = (size - scaledW) / 2 + offsetX;
+      const drawY = (size - scaledH) / 2 + offsetY;
+
+      ctx.drawImage(img, drawX, drawY, scaledW, scaledH);
 
       // 2. If Custom PNG/SVG Frame URL is set by Admin, render custom overlay
       if (selectedFrame.frame_image_url) {
@@ -121,79 +134,109 @@ export const TwibbonGenerator: React.FC = () => {
       grad.addColorStop(0, 'rgba(11, 15, 25, 0)');
       grad.addColorStop(0.7, 'rgba(11, 15, 25, 0.85)');
       grad.addColorStop(1, 'rgba(11, 15, 25, 0.98)');
+
       context.fillStyle = grad;
       context.fillRect(0, 0, size, size);
 
-      // Top Red-White Ribbon Bar
-      context.fillStyle = '#D9272D';
-      context.fillRect(0, 0, size, 28);
-      context.fillStyle = '#FFFFFF';
-      context.fillRect(0, 28, size, 28);
-
-      // Gold Border Frame
-      context.strokeStyle = selectedFrame.accent_color || '#F59E0B';
-      context.lineWidth = 20;
-      context.strokeRect(20, 20, size - 40, size - 40);
-
-      // Badge Emblem (Top Right)
-      context.save();
-      context.beginPath();
-      context.arc(size - 120, 120, 75, 0, Math.PI * 2);
-      context.fillStyle = '#D9272D';
+      // Top Red Pill Badge
+      context.fillStyle = selectedFrame.accent_color || '#D9272D';
+      context.roundRect(size * 0.05, size * 0.05, size * 0.35, size * 0.07, 24);
       context.fill();
-      context.strokeStyle = '#F59E0B';
-      context.lineWidth = 6;
-      context.stroke();
 
       context.fillStyle = '#FFFFFF';
-      context.font = 'bold 54px sans-serif';
+      context.font = '900 32px sans-serif';
       context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText('81', size - 120, 120);
-      context.restore();
+      context.fillText('🇲🇨 MERDEKA 81', size * 0.225, size * 0.098);
 
-      // Typography & Text
-      context.textAlign = 'center';
-      
+      // Bottom Text Banner
+      context.textAlign = 'left';
+      context.fillStyle = '#FFFFFF';
+      context.font = '900 48px sans-serif';
+      context.fillText(selectedFrame.title || 'HUT RI KE-81', size * 0.06, size * 0.88);
+
       context.fillStyle = selectedFrame.accent_color || '#F59E0B';
-      context.font = 'bold 36px sans-serif';
-      context.fillText((selectedFrame.subtitle || '17 AGUSTUS 2026').toUpperCase(), size / 2, size - 140);
-
-      context.fillStyle = '#FFFFFF';
-      context.font = 'extrabold 64px sans-serif';
-      context.fillText(selectedFrame.title || 'HUT RI KE-81', size / 2, size - 75);
-
-      context.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      context.font = '28px sans-serif';
-      const watermarkName = isLoggedIn ? profile.full_name : 'Pejuang Kemerdekaan 81';
-      context.fillText(`Dipublikasikan oleh: ${watermarkName}`, size / 2, size - 30);
+      context.font = '700 32px sans-serif';
+      context.fillText(selectedFrame.subtitle || 'Nusantara Baru, Indonesia Maju', size * 0.06, size * 0.93);
     }
 
     function finishRender() {
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-      setGeneratedDataUrl(dataUrl);
+      if (canvasRef.current) {
+        setGeneratedDataUrl(canvasRef.current.toDataURL('image/png'));
+      }
       setIsProcessing(false);
     }
-  }, [imageSrc, selectedFrame, profile.full_name, isLoggedIn]);
+  }, [imageSrc, selectedFrame, zoomScale, offsetX, offsetY]);
 
-  // Handle Download (Free for all)
-  const handleDownload = () => {
-    if (!generatedDataUrl) return;
-    const a = document.createElement('a');
-    a.href = generatedDataUrl;
-    a.download = `Twibbon-Merdeka81-${Date.now()}.jpg`;
-    a.click();
-    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+  // Touch and Mouse Drag Handlers to position photo
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageSrc) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  // Handle Web Share API (Free for all)
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !imageSrc || !e.currentTarget) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scaleFactor = 1080 / rect.width;
+
+    const dx = (e.clientX - dragStart.x) * scaleFactor;
+    const dy = (e.clientY - dragStart.y) * scaleFactor;
+
+    setOffsetX((prev) => prev + dx);
+    setOffsetY((prev) => prev + dy);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!imageSrc || e.touches.length !== 1) return;
+    setIsDragging(true);
+    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging || !imageSrc || e.touches.length !== 1 || !e.currentTarget) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scaleFactor = 1080 / rect.width;
+
+    const dx = (e.touches[0].clientX - dragStart.x) * scaleFactor;
+    const dy = (e.touches[0].clientY - dragStart.y) * scaleFactor;
+
+    setOffsetX((prev) => prev + dx);
+    setOffsetY((prev) => prev + dy);
+    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  const handleResetPosition = () => {
+    setZoomScale(1.0);
+    setOffsetX(0);
+    setOffsetY(0);
+  };
+
+  // Download Handler (FREE for all guests)
+  const handleDownload = () => {
+    if (!generatedDataUrl) return;
+    const link = document.createElement('a');
+    link.download = `twibbon-merdeka81-${Date.now()}.png`;
+    link.href = generatedDataUrl;
+    link.click();
+
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+  };
+
+  // Share Handler (FREE for all guests)
   const handleShare = async () => {
     if (!generatedDataUrl) return;
-
     try {
-      const response = await fetch(generatedDataUrl);
-      const blob = await response.blob();
-      const file = new File([blob], 'twibbon-merdeka81.jpg', { type: 'image/jpeg' });
+      const blob = await (await fetch(generatedDataUrl)).blob();
+      const file = new File([blob], 'twibbon-merdeka81.png', { type: 'image/png' });
 
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
@@ -242,7 +285,7 @@ export const TwibbonGenerator: React.FC = () => {
         </div>
         <h2 className="text-2xl font-black text-gradient-gold">Twibbon Merdeka 81</h2>
         <p className="text-sm text-slate-300">
-          Pilih foto terbaikmu, pasang bingkai spesial HUT RI ke-81, dan bagikan langsung ke media sosial!
+          Pilih foto terbaikmu, atur posisi & bingkai spesial HUT RI ke-81, lalu bagikan langsung ke media sosial!
         </p>
       </div>
 
@@ -289,14 +332,71 @@ export const TwibbonGenerator: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="relative max-w-sm mx-auto aspect-square rounded-xl overflow-hidden shadow-2xl border border-merdeka-gold/40">
-              <canvas ref={canvasRef} className="w-full h-full object-contain" />
-              {isProcessing && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center text-amber-300 gap-2 font-bold text-sm">
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>Memproses Bingkai...</span>
+            {/* Interactive Canvas Container with Drag Handlers */}
+            <div className="space-y-2">
+              <div
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                className="relative max-w-sm mx-auto aspect-square rounded-xl overflow-hidden shadow-2xl border border-amber-400/50 cursor-grab active:cursor-grabbing select-none group touch-none"
+              >
+                <canvas ref={canvasRef} className="w-full h-full object-contain" />
+
+                {/* Touch/Drag Visual Helper Badge */}
+                <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-amber-400/40 text-[10px] font-bold text-amber-300 flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                  <Move className="w-3 h-3 text-amber-400" />
+                  <span>Geser Foto</span>
                 </div>
-              )}
+
+                {isProcessing && (
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center text-amber-300 gap-2 font-bold text-sm">
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    <span>Memproses Bingkai...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Position & Zoom Adjustment Controls */}
+              <div className="max-w-sm mx-auto p-3.5 rounded-xl bg-slate-950/90 border border-amber-500/30 space-y-3 text-left shadow-lg">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-extrabold text-amber-300 flex items-center gap-1.5">
+                    <Move className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Atur Posisi & Perbesaran Foto</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetPosition}
+                    className="text-[11px] text-amber-400 hover:text-white flex items-center gap-1 font-bold underline"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] font-bold text-slate-300">Zoom:</span>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2.5"
+                    step="0.05"
+                    value={zoomScale}
+                    onChange={(e) => setZoomScale(parseFloat(e.target.value))}
+                    className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  />
+                  <span className="text-[11px] font-mono font-black text-amber-300 w-12 text-right">
+                    {Math.round(zoomScale * 100)}%
+                  </span>
+                </div>
+
+                <p className="text-[10px] text-slate-400 italic">
+                  💡 Tip: Klik/sentuh lalu geser foto di atas untuk menyesuaikan posisi wajah agar pas dengan bingkai.
+                </p>
+              </div>
             </div>
 
             {/* Caption Input */}
@@ -351,21 +451,21 @@ export const TwibbonGenerator: React.FC = () => {
                 <button
                   onClick={handlePublishToGallery}
                   disabled={isSavedToGallery}
-                  className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-gold-glow transition-all ${
                     isSavedToGallery
-                      ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 cursor-default'
-                      : 'bg-gradient-to-r from-amber-500 to-merdeka-red text-slate-950 hover:opacity-95 shadow-gold-glow'
+                      ? 'bg-emerald-600/30 border border-emerald-500 text-emerald-300 cursor-default'
+                      : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:scale-102 shimmer-btn'
                   }`}
                 >
                   {isSavedToGallery ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span>Telah Ditayangkan di Wall of Merdeka & Poin Diklaim (+100 PTS)!</span>
+                      <span>Berhasil Ditayangkan di Wall of Merdeka! (+100 PTS Diklaim)</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
-                      <span>Tayangkan Foto Ini di Galeri Publik Wall of Merdeka (+100 PTS)</span>
+                      <Sparkles className="w-4 h-4 text-slate-950" />
+                      <span>Tayangkan Foto Ini di Galeri Publik & Klaim +100 PTS</span>
                     </>
                   )}
                 </button>
@@ -374,6 +474,7 @@ export const TwibbonGenerator: React.FC = () => {
           </div>
         )}
 
+        {/* Hidden File Input */}
         <input
           type="file"
           ref={fileInputRef}
@@ -383,11 +484,8 @@ export const TwibbonGenerator: React.FC = () => {
         />
       </div>
 
-      {/* Auth Modal Popup when requested */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+      {/* Auth Modal Trigger */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </div>
   );
 };
