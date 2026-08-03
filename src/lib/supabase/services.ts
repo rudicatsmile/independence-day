@@ -17,7 +17,7 @@ export async function fetchLiveSaluteCountFromSupabase(): Promise<number> {
     .single();
 
   if (error || !data) return 1945;
-  return data.salute_count || 1945;
+  return typeof data.salute_count === 'number' ? data.salute_count : 1945;
 }
 
 /**
