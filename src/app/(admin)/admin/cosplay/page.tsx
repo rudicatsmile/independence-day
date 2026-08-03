@@ -56,13 +56,6 @@ export default function AdminCosplayPage() {
   };
 
   useEffect(() => {
-    // If logged in as admin, bypass PIN gate automatically
-    if (isAdmin) {
-      setIsPinUnlocked(true);
-    }
-  }, [isAdmin]);
-
-  useEffect(() => {
     if (isPinUnlocked) {
       loadData();
     }
