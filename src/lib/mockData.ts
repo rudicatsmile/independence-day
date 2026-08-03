@@ -114,6 +114,26 @@ export const MOCK_TWIBBON_FRAMES: TwibbonFrame[] = [
     is_active: true,
     order_index: 3,
   },
+  {
+    id: 'f-4',
+    name: 'Bingkai Yalwash 1',
+    accent_color: '#059669',
+    title: 'YAYASAN AL-WATHONIYAH 9',
+    subtitle: 'Perayaan Kemerdekaan RI',
+    frame_image_url: '/twibbon-assets/twibbon-yalwash1.png',
+    is_active: true,
+    order_index: 4,
+  },
+  {
+    id: 'f-5',
+    name: 'Bingkai Yalwash 2',
+    accent_color: '#2563EB',
+    title: 'AL-WATHONIYAH 9',
+    subtitle: 'Gelora Kemerdekaan RI',
+    frame_image_url: '/twibbon-assets/twibbon-yalwash2.png',
+    is_active: true,
+    order_index: 5,
+  },
 ];
 
 export const MOCK_MISSIONS: Mission[] = [

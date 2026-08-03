@@ -219,6 +219,20 @@ export default function AdminTwibbonPage() {
                     >
                       🇮🇩 Sample 2: Merah Putih (.svg)
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-yalwash1.png' })}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-400/40 text-emerald-300 text-[11px] font-semibold transition-all"
+                    >
+                      🏫 Sample 3: Twibbon Yalwash 1 (.png)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-yalwash2.png' })}
+                      className="px-2.5 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/40 text-blue-300 text-[11px] font-semibold transition-all"
+                    >
+                      🏫 Sample 4: Twibbon Yalwash 2 (.png)
+                    </button>
                   </div>
                 </div>
               </div>
