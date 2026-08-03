@@ -358,23 +358,25 @@ export const StageVisualizer: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* Fallback Card when Gallery is Empty: Displays logo-yayasan.png */
-            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950 border border-amber-500/40 shadow-2xl flex items-center justify-center p-6 text-center">
-              <div className="space-y-4 max-w-md my-auto">
-                <div className="w-28 h-28 mx-auto rounded-3xl bg-slate-900 border-2 border-amber-400/50 p-2 shadow-gold-glow flex items-center justify-center">
+            /* Fallback Card when Gallery is Empty: Displays Large logo-yayasan.png filling the box */
+            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950/90 border border-amber-500/50 shadow-gold-glow flex flex-col items-center justify-center p-4 text-center">
+              <div className="relative w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
+                {/* Large Logo Yayasan Al-Wathoniyah 9 */}
+                <div className="flex-1 w-full max-h-[75%] flex items-center justify-center p-2">
                   <img
                     src="/logo-yayasan.png"
                     alt="Logo Yayasan Al-Wathoniyah 9"
-                    className="w-full h-full object-contain drop-shadow-md"
+                    className="max-h-full max-w-full object-contain drop-shadow-2xl animate-pulse"
                   />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-black text-gradient-gold">Yayasan Al-Wathoniyah 9</h3>
-                  <p className="text-xs text-amber-300 font-bold uppercase tracking-wider">Perayaan Kemerdekaan RI</p>
+                <div className="space-y-0.5">
+                  <h3 className="text-xl sm:text-2xl font-black text-gradient-gold uppercase tracking-wider">
+                    Yayasan Al-Wathoniyah 9
+                  </h3>
+                  <p className="text-xs text-amber-300 font-extrabold uppercase tracking-widest">
+                    Perayaan Kemerdekaan RI
+                  </p>
                 </div>
-                <p className="text-xs text-slate-300 italic">
-                  "Unggah foto terbaikmu di Twibbon Photobooth atau Selfie Guru untuk menampilkannya di Layar Panggung Utama!"
-                </p>
               </div>
             </div>
           )}
