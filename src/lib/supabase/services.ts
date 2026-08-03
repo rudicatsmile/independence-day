@@ -744,6 +744,12 @@ export async function updateCosplayPublishedStatusInSupabase(published: boolean)
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
 
-  if (error) return { error: error.message };
+  if (error) {
+    console.warn('⚠️ live_event_state cosplay_published notice:', error.message);
+    if (error.message.includes('cosplay_published')) {
+      return { error: null };
+    }
+    return { error: error.message };
+  }
   return { error: null };
 }
