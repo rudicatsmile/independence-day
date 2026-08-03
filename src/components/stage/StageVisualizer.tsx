@@ -223,9 +223,13 @@ export const StageVisualizer: React.FC = () => {
       {/* Header Banner Panggung */}
       <header className="flex items-center justify-between glass-card-gold rounded-3xl p-4 sm:p-6 border border-amber-400/50 shadow-gold-glow">
         <div className="flex items-center gap-3">
-          {/* Dynamic Event Year Number Box */}
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-merdeka-red to-amber-500 border border-amber-300 flex items-center justify-center shadow-glow font-black text-2xl text-white">
-            {eventYearNumber}
+          {/* Logo Yayasan Al-Wathoniyah 9 Emblem */}
+          <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-amber-400/50 p-1 flex items-center justify-center shadow-gold-glow">
+            <img
+              src="/logo-yayasan.png"
+              alt="Logo Yayasan Al-Wathoniyah 9"
+              className="w-full h-full object-contain drop-shadow"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
