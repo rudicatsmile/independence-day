@@ -358,26 +358,13 @@ export const StageVisualizer: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* Fallback Card when Gallery is Empty: Displays Large logo-yayasan.png filling the box */
-            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950/90 border border-amber-500/50 shadow-gold-glow flex flex-col items-center justify-center p-4 text-center">
-              <div className="relative w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
-                {/* Large Logo Yayasan Al-Wathoniyah 9 */}
-                <div className="flex-1 w-full max-h-[75%] flex items-center justify-center p-2">
-                  <img
-                    src="/logo-yayasan.png"
-                    alt="Logo Yayasan Al-Wathoniyah 9"
-                    className="max-h-full max-w-full object-contain drop-shadow-2xl animate-pulse"
-                  />
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl sm:text-2xl font-black text-gradient-gold uppercase tracking-wider">
-                    Yayasan Al-Wathoniyah 9
-                  </h3>
-                  <p className="text-xs text-amber-300 font-extrabold uppercase tracking-widest">
-                    Perayaan Kemerdekaan RI
-                  </p>
-                </div>
-              </div>
+            /* Fallback Card when Gallery is Empty: Displays Ultra Large logo-yayasan.png filling the entire box */
+            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950/90 border border-amber-500/50 shadow-gold-glow flex items-center justify-center p-2">
+              <img
+                src="/logo-yayasan.png"
+                alt="Logo Yayasan Al-Wathoniyah 9"
+                className="w-full h-full object-contain p-2 drop-shadow-2xl animate-pulse"
+              />
             </div>
           )}
 
