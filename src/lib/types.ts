@@ -89,6 +89,7 @@ export interface LiveEventState {
   event_title: string;
   event_date: string;
   event_year_number: string;
+  cosplay_published?: boolean;
   event_type: 'salute' | 'merdeka_challenge';
 }
 

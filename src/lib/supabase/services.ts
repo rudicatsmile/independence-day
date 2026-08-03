@@ -713,3 +713,37 @@ export async function saveCosplayParticipantToSupabase(
   if (error) return { error: error.message };
   return { error: null };
 }
+
+/**
+ * Fetch Cosplay competition publication status for public viewing
+ */
+export async function fetchCosplayPublishedStatusFromSupabase(): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+
+  const { data, error } = await supabase
+    .from('live_event_state')
+    .select('cosplay_published')
+    .eq('id', 'main')
+    .single();
+
+  if (error || !data) return false;
+  return !!data.cosplay_published;
+}
+
+/**
+ * Update Cosplay competition publication status by Jury / Admin
+ */
+export async function updateCosplayPublishedStatusInSupabase(published: boolean): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      cosplay_published: published,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}

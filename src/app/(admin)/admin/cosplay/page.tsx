@@ -1,17 +1,34 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Award, Trophy, UserCheck, Star, Sparkles, Plus, CheckCircle2, ShieldAlert, Save, RefreshCw, X, FileText } from 'lucide-react';
+import { Award, Trophy, UserCheck, Star, Sparkles, Plus, CheckCircle2, ShieldAlert, Save, RefreshCw, X, FileText, Lock, Unlock, KeyRound } from 'lucide-react';
 import { CosplayCategory, CosplayParticipant } from '@/lib/types';
 import { COSPLAY_JUDGES, COSPLAY_CRITERIA_MAP } from '@/lib/mockData';
-import { fetchCosplayParticipantsFromSupabase, saveCosplayScoreToSupabase, saveCosplayParticipantToSupabase } from '@/lib/supabase/services';
+import {
+  fetchCosplayParticipantsFromSupabase,
+  saveCosplayScoreToSupabase,
+  saveCosplayParticipantToSupabase,
+  fetchCosplayPublishedStatusFromSupabase,
+  updateCosplayPublishedStatusInSupabase,
+} from '@/lib/supabase/services';
+import { useUserStore } from '@/stores/useUserStore';
 import confetti from 'canvas-confetti';
 
 export default function AdminCosplayPage() {
+  const profile = useUserStore((state) => state.profile);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
+
+  // Jury PIN Gate State (Default PIN: 1945)
+  const [pinInput, setPinInput] = useState('');
+  const [isPinUnlocked, setIsPinUnlocked] = useState(false);
+  const [pinError, setPinError] = useState(false);
+
   const [activeCategory, setActiveCategory] = useState<CosplayCategory>('usia_dini');
   const [selectedJudge, setSelectedJudge] = useState<string>(COSPLAY_JUDGES[0]);
   const [participants, setParticipants] = useState<CosplayParticipant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
   // Scoring Modal State
   const [activeParticipant, setActiveParticipant] = useState<CosplayParticipant | null>(null);
@@ -29,20 +46,59 @@ export default function AdminCosplayPage() {
 
   const loadData = async () => {
     setIsLoading(true);
-    const data = await fetchCosplayParticipantsFromSupabase(activeCategory);
+    const [data, pubStatus] = await Promise.all([
+      fetchCosplayParticipantsFromSupabase(activeCategory),
+      fetchCosplayPublishedStatusFromSupabase(),
+    ]);
     setParticipants(data);
+    setIsPublished(pubStatus);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    loadData();
-  }, [activeCategory]);
+    // If logged in as admin, bypass PIN gate automatically
+    if (isAdmin) {
+      setIsPinUnlocked(true);
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (isPinUnlocked) {
+      loadData();
+    }
+  }, [activeCategory, isPinUnlocked]);
+
+  const handleUnlockPin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === '1945' || pinInput === '8181') {
+      setIsPinUnlocked(true);
+      setPinError(false);
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.5 } });
+    } else {
+      setPinError(true);
+    }
+  };
+
+  const handleTogglePublish = async () => {
+    const nextState = !isPublished;
+    setIsPublished(nextState);
+    const { error } = await updateCosplayPublishedStatusInSupabase(nextState);
+
+    if (error) {
+      alert('Gagal mengosongkan/memublikasikan status: ' + error);
+      setIsPublished(!nextState);
+    } else {
+      if (nextState) {
+        confetti({ particleCount: 100, spread: 100, origin: { y: 0.4 } });
+      }
+    }
+  };
 
   const openScoringModal = (p: CosplayParticipant) => {
     setActiveParticipant(p);
     const existingScores = p.scores_by_judge?.[selectedJudge]?.scores || {};
     
-    // Initialize empty 80 default scores if not present
+    // Initialize default scores if not present
     const initScores: Record<string, number> = {};
     criteriaList.forEach((c) => {
       initScores[c.key] = existingScores[c.key] ?? 80;
@@ -112,10 +168,55 @@ export default function AdminCosplayPage() {
   // Sort participants by final_score descending for leaderboard
   const sortedParticipants = [...participants].sort((a, b) => (b.final_score || 0) - (a.final_score || 0));
 
+  // PIN Unlock Gate for Jury Members on HP/Tablet
+  if (!isPinUnlocked) {
+    return (
+      <div className="max-w-md mx-auto py-12 space-y-6 text-center">
+        <div className="glass-card-gold rounded-3xl p-8 border border-amber-400/50 space-y-5 shadow-gold-glow">
+          <div className="w-16 h-16 rounded-3xl bg-merdeka-red/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-amber-400 shadow-glow animate-pulse">
+            <KeyRound className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-white">Portal Juri Lomba Cosplay</h2>
+            <p className="text-xs text-slate-300">
+              Masukkan 4-Digit PIN Akses Juri untuk Penilaian di HP / Tablet (PIN Default: <strong className="text-amber-300 font-mono">1945</strong>)
+            </p>
+          </div>
+
+          <form onSubmit={handleUnlockPin} className="space-y-4">
+            <input
+              type="password"
+              maxLength={4}
+              required
+              value={pinInput}
+              onChange={(e) => setPinInput(e.target.value)}
+              placeholder="Masukkan PIN (misal: 1945)"
+              className="w-full text-center text-2xl tracking-[0.5em] font-mono font-black bg-slate-950 border-2 border-amber-400/60 rounded-2xl py-3 text-amber-300 focus:outline-none focus:border-amber-400"
+            />
+
+            {pinError && (
+              <p className="text-xs text-red-400 font-bold animate-bounce">
+                ❌ PIN Akses Salah. Silakan masukkan PIN 1945
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-sm shadow-gold-glow shimmer-btn hover:scale-102 transition-transform"
+            >
+              BUKA PORTAL PENILAIAN JURI
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Header Admin */}
-      <div className="glass-card-gold rounded-3xl p-6 border border-amber-400/40 space-y-3 shadow-gold-glow">
+      {/* Header Admin & Publication Status */}
+      <div className="glass-card-gold rounded-3xl p-6 border border-amber-400/40 space-y-4 shadow-gold-glow">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-merdeka-red/20 border border-merdeka-red/40 text-amber-300 text-xs font-bold mb-2">
@@ -130,13 +231,37 @@ export default function AdminCosplayPage() {
             </p>
           </div>
 
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow shimmer-btn flex items-center gap-1.5 hover:scale-105"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah Peserta Cosplay Baru</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Toggle Publication Button */}
+            <button
+              onClick={handleTogglePublish}
+              className={`px-4 py-2.5 rounded-xl font-black text-xs shadow-gold-glow flex items-center gap-2 transition-all ${
+                isPublished
+                  ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400'
+                  : 'bg-slate-900 border border-amber-400/50 text-amber-300 hover:bg-slate-800'
+              }`}
+            >
+              {isPublished ? (
+                <>
+                  <Unlock className="w-4 h-4 text-slate-950" />
+                  <span>PEMENANG DITAYANGKAN PUBLIK</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4 text-amber-400" />
+                  <span>PENILAIAN INTERNAL (TERKUNCI)</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow shimmer-btn flex items-center gap-1.5 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Peserta Baru</span>
+            </button>
+          </div>
         </div>
 
         {/* Judge Selector Dropdown */}

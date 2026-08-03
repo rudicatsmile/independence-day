@@ -3,7 +3,11 @@
 -- Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta
 -- ====================================================================
 
--- 1. Tabel Peserta Cosplay
+-- 1. Tambah Kolom Status Publikasi Cosplay pada live_event_state
+alter table public.live_event_state
+  add column if not exists cosplay_published boolean default false;
+
+-- 2. Tabel Peserta Cosplay
 create table if not exists public.cosplay_participants (
   id text primary key default 'cp-' || extract(epoch from now())::text || '-' || floor(random()*1000)::text,
   name text not null,
@@ -13,7 +17,7 @@ create table if not exists public.cosplay_participants (
   created_at timestamptz default now()
 );
 
--- 2. Tabel Skor Penilaian Juri
+-- 3. Tabel Skor Penilaian Juri
 create table if not exists public.cosplay_scores (
   id text primary key default 'cs-' || extract(epoch from now())::text || '-' || floor(random()*1000)::text,
   participant_id text not null references public.cosplay_participants(id) on delete cascade,
