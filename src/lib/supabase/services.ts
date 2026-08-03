@@ -464,8 +464,8 @@ export async function fetchGalleryFromSupabase(): Promise<GalleryItem[]> {
     .eq('status', 'approved')
     .order('created_at', { ascending: false });
 
-  if (error || !data || data.length === 0) {
-    return MOCK_GALLERY;
+  if (error || !data) {
+    return [];
   }
 
   return data.map((item) => ({
