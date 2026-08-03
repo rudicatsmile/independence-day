@@ -207,14 +207,14 @@ export default function AdminTwibbonPage() {
                   <div className="flex flex-wrap gap-2 text-xs">
                     <button
                       type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: 'http://localhost:3000/twibbon-assets/frame-garuda-gold.svg' })}
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/frame-garuda-gold.svg' })}
                       className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 border border-amber-400/40 text-amber-300 text-[11px] font-semibold transition-all"
                     >
                       🖼️ Sample 1: Garuda Emas (.svg)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: 'http://localhost:3000/twibbon-assets/frame-merah-putih.svg' })}
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/frame-merah-putih.svg' })}
                       className="px-2.5 py-1 rounded-lg bg-merdeka-red/20 hover:bg-merdeka-red/40 border border-merdeka-red/40 text-red-300 text-[11px] font-semibold transition-all"
                     >
                       🇮🇩 Sample 2: Merah Putih (.svg)

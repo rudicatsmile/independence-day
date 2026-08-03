@@ -88,16 +88,24 @@ export const TwibbonGenerator: React.FC = () => {
 
       ctx.drawImage(img, drawX, drawY, drawW, drawH);
 
-      // 2. If Custom PNG Frame URL is set by Admin, render custom overlay
+      // 2. If Custom PNG/SVG Frame URL is set by Admin, render custom overlay
       if (selectedFrame.frame_image_url) {
         const overlay = new Image();
         overlay.crossOrigin = 'anonymous';
-        overlay.src = selectedFrame.frame_image_url;
+        
+        // Automatically convert any hardcoded localhost domain to relative path for production compatibility
+        let cleanFrameUrl = selectedFrame.frame_image_url;
+        if (cleanFrameUrl.includes('localhost:3000')) {
+          cleanFrameUrl = cleanFrameUrl.replace(/http:\/\/localhost:\d+/, '');
+        }
+
+        overlay.src = cleanFrameUrl;
         overlay.onload = () => {
           ctx.drawImage(overlay, 0, 0, size, size);
           finishRender();
         };
-        overlay.onerror = () => {
+        overlay.onerror = (err) => {
+          console.warn('⚠️ Overlay image load notice for URL:', cleanFrameUrl, err);
           drawDefaultGradientFrame(ctx, size);
           finishRender();
         };
