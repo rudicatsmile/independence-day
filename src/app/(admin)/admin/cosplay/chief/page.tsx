@@ -116,9 +116,9 @@ export default function ChiefCosplayRefereePage() {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white">Portal Kepala Penilaian Cosplay</h2>
+            <h2 className="text-2xl font-black text-white">Sie Acara Penilaian Cosplay</h2>
             <p className="text-xs text-slate-300">
-              Hak Akses Khusus Wasit Utama Penilaian Cosplay (PIN Default Wasit: <strong className="text-amber-300 font-mono">8181</strong>)
+              Halaman Akses Khusus Sie Acara (PIN Default Wasit: <strong className="text-amber-300 font-mono">8181</strong>)
             </p>
           </div>
 
@@ -143,7 +143,7 @@ export default function ChiefCosplayRefereePage() {
               type="submit"
               className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-merdeka-red via-amber-500 to-merdeka-red text-slate-950 font-black text-sm shadow-gold-glow shimmer-btn hover:scale-102 transition-transform"
             >
-              MASUK CONTROL ROOM WASIT UTAMA
+              MASUK KONTROL ROOM
             </button>
           </form>
         </div>

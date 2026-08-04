@@ -379,7 +379,7 @@ export const MOCK_COSPLAY_PARTICIPANTS: CosplayParticipant[] = [
   { id: 'cp-mngh-6', name: 'Taufik Hidayat', class_level: 'SMP', character_name: 'Jenderal Soedirman', category: 'usia_menengah' },
 
   // Usia Atas (SMA / SMK / DP)
-  { id: 'cp-atas-1', name: 'Nikita Wulandari', class_level: 'DP-1', character_name: 'Ir. Soekarno', category: 'usia_atas' },
+  { id: 'cp-atas-1', name: 'Nikita Wulandari', class_level: 'DP-1', character_name: 'Malayahati', category: 'usia_atas' },
   { id: 'cp-atas-2', name: 'Dewi Sartika', class_level: 'DP-1', character_name: 'R.A. Kartini', category: 'usia_atas' },
   { id: 'cp-atas-3', name: 'Andi Wijaya', class_level: 'DP-1', character_name: 'Bung Hatta', category: 'usia_atas' },
   { id: 'cp-atas-4', name: 'Reza Rahadian', class_level: 'DP-2', character_name: 'Jenderal Soedirman', category: 'usia_atas' },
