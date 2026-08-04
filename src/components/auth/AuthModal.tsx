@@ -117,11 +117,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-300">Instansi / Kontingen:</label>
+                <label className="text-xs font-bold text-slate-300">Lembaga:</label>
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: Garuda Muda / RT 05"
+                  placeholder="Contoh: SMA Al-Wathoniyah 9 / PAUD"
                   value={instansi}
                   onChange={(e) => setInstansi(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400"
