@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldAlert, Award, Radio, Tv, LogOut, ShieldCheck, Image as ImageIcon, ChevronDown, Sparkles, MapPin, HelpCircle } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
@@ -9,6 +10,9 @@ import { logoutUser } from '@/lib/supabase/auth';
 import { AuthModal } from '@/components/auth/AuthModal';
 
 export const Navbar: React.FC = () => {
+  const pathname = usePathname();
+  const hidePointsPill = pathname === '/stage-display' || pathname === '/cosplay' || pathname === '/admin/cosplay';
+
   const profile = useUserStore((state) => state.profile);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const setUserProfile = useUserStore((state) => state.setUserProfile);
@@ -161,11 +165,13 @@ export const Navbar: React.FC = () => {
               <span className="hidden xs:inline">LIVE</span>
             </Link>
 
-            {/* Points Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-merdeka-red/20 border border-merdeka-gold/40 text-xs font-bold text-amber-300">
-              <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
-              <span>{isLoggedIn ? profile.total_points : 0} PTS</span>
-            </div>
+            {/* Points Pill (Hidden on /stage-display & /cosplay) */}
+            {!hidePointsPill && (
+              <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-merdeka-red/20 border border-merdeka-gold/40 text-xs font-bold text-amber-300">
+                <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+                <span>{isLoggedIn ? profile.total_points : 0} PTS</span>
+              </div>
+            )}
 
             {/* Logout Action (Only shown when logged in) */}
             {isLoggedIn && (
