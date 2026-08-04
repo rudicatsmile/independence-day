@@ -68,8 +68,9 @@ export const Navbar: React.FC = () => {
               />
             </div>
             <div>
-              <h1 className="text-sm sm:text-base font-black tracking-wider text-gradient-gold uppercase leading-tight">
-                Merdeka 81
+              <h1 className="text-sm sm:text-base font-black tracking-wider text-gradient-gold uppercase leading-tight flex items-center gap-1.5">
+                <span>Merdeka 81</span>
+                <span className="text-xs sm:text-sm inline-block animate-pulse" title="Bendera Merah Putih Indonesia">🇲🇨</span>
               </h1>
               <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
                 HUT RI KE-81 • 17 AGUSTUS 2026
