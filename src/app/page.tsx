@@ -55,10 +55,10 @@ export default function LandingPage() {
 
         <div className="glass-card rounded-2xl p-5 border border-amber-500/30 space-y-2">
           <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xl">
-            🎓
+            ❓
           </div>
-          <h3 className="text-sm font-bold text-white">Selfie bersama guru patriot</h3>
-          <p className="text-xs text-slate-400">Foto selfie bersama guru favoritmu dan tayangkan langsung di Layar Panggung Utama.</p>
+          <h3 className="text-sm font-bold text-white">Kuis Trivia Kemerdekaan RI</h3>
+          <p className="text-xs text-slate-400">Uji wawasan sejarah bangsa, jawab kuis interaktif & kumpulkan poin kemerdekaan.</p>
         </div>
 
         <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
