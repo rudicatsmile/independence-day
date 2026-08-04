@@ -57,7 +57,7 @@ export default function LivePage() {
           <span>Siaran Langsung & Partisipasi Massal Lapangan</span>
         </div>
 
-        <h2 className="text-2xl font-black text-gradient-gold">Live Salute & Polling Perayaan</h2>
+        <h2 className="text-2xl font-black text-gradient-gold">Hormat Bendera & Polling Perayaan</h2>
         <p className="text-sm text-slate-300">
           Suarakan rasa hormatmu! Jumlah ketukan Hormat! tersinkronisasi secara real-time ke layar proyektor panggung utama.
         </p>

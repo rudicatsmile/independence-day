@@ -176,7 +176,7 @@ export const MOCK_MISSIONS: Mission[] = [
   {
     id: 'm-05',
     slug: 'video-gelora-merdeka',
-    title: 'Live Salute & Polling Perayaan',
+    title: 'Hormat Bendera & Polling Perayaan',
     description: 'Suarakan rasa hormatmu dan ikuti voting polling interaktif di lokasi acara.',
     type: 'video',
     points_reward: 125,
