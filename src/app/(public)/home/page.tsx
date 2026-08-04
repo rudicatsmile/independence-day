@@ -88,10 +88,10 @@ export default function HomePage() {
             ) : (
               <>
                 <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-                  Selamat Datang di <span className="text-gradient-gold">Perayaan Merdeka 81!</span>
+                  Selamat Datang di <span className="text-gradient-gold">Perayaan HUT RI Ke-81</span>
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-300">
-                  Silakan masuk atau mendaftar untuk mulai mengumpulkan poin, scan QR Hunt, & klaim sertifikat digital.
+                  Silakan masuk atau mendaftar untuk mulai mengumpulkan poin & klaim sertifikat digital.
                 </p>
               </>
             )}
@@ -254,7 +254,7 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-2">
-          {missions.map((mission) => {
+          {missions.filter((m) => m.is_active !== false).map((mission) => {
             const isCompleted = userMissions[mission.id]?.status === 'completed';
             return (
               <div

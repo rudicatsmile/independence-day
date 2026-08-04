@@ -139,7 +139,7 @@ export const MOCK_MISSIONS: Mission[] = [
     type: 'qr_hunt',
     points_reward: 150,
     icon_name: 'MapPin',
-    is_active: true,
+    is_active: false,
     order_index: 2,
     location_name: 'Area Perayaan HUT RI ke-81',
     coordinates: { lat: -6.175392, lng: 106.827153 },
