@@ -67,13 +67,13 @@ export default function LivePage() {
       <div className="glass-card-red rounded-3xl p-8 text-center space-y-6 relative overflow-hidden border border-merdeka-red/40 shadow-glow">
         <div className="space-y-1">
           <span className="text-xs font-bold text-amber-300 uppercase tracking-widest block">
-            🇮🇩 KETUKAN HORMAT! KEMERDEKAAN MASSAL
+            🇮🇩 KETUKAN HORMAT! KEMERDEKAAN
           </span>
           <div className="text-5xl font-black text-white tracking-tight drop-shadow-lg font-mono">
             {saluteCount.toLocaleString('id-ID')}
           </div>
           <p className="text-xs text-slate-300">
-            {isRealtimeConnected ? '🟢 Supabase Realtime Active' : '🟡 Offline Mode'}
+            {isRealtimeConnected ? '🟢 Realtime ' : '🟡 Offline Mode'}
           </p>
         </div>
 
