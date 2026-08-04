@@ -753,3 +753,55 @@ export async function updateCosplayPublishedStatusInSupabase(published: boolean)
   }
   return { error: null };
 }
+
+
+
+/**
+ * Update Poll Question & Options in Supabase Cloud by Admin
+ */
+export async function updatePollInSupabase(
+  question: string,
+  options: { id: string; label: string; votes: number }[]
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const totalVotes = options.reduce((sum, opt) => sum + (opt.votes || 0), 0);
+
+  const { error } = await supabase
+    .from('polls')
+    .upsert({
+      id: 'poll-main',
+      question: question,
+      options: options,
+      total_votes: totalVotes,
+      is_active: true,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Reset Poll Votes in Supabase Cloud by Admin
+ */
+export async function resetPollVotesInSupabase(): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const currentPoll = await fetchActivePollFromSupabase();
+  const resetOptions = currentPoll.options.map((opt) => ({ ...opt, votes: 0 }));
+
+  const { error } = await supabase
+    .from('polls')
+    .upsert({
+      id: 'poll-main',
+      question: currentPoll.question,
+      options: resetOptions,
+      total_votes: 0,
+      is_active: true,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
