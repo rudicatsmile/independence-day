@@ -64,24 +64,22 @@ export default function PublicCosplayPage() {
       <div className="grid grid-cols-3 gap-3">
         <button
           onClick={() => setActiveCategory('usia_dini')}
-          className={`p-3 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_dini'
+          className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_dini'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-xl block mb-1">🧸</span>
           <p className="text-xs font-black text-white">Usia Dini</p>
-          <p className="text-[10px] text-amber-300 font-bold">TK / PAUD</p>
+          <p className="text-[10px] text-amber-300 font-bold">PAUD / TK</p>
         </button>
 
         <button
           onClick={() => setActiveCategory('usia_menengah')}
-          className={`p-3 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_menengah'
+          className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_menengah'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-xl block mb-1">🎒</span>
           <p className="text-xs font-black text-white">Usia Menengah</p>
@@ -90,15 +88,14 @@ export default function PublicCosplayPage() {
 
         <button
           onClick={() => setActiveCategory('usia_atas')}
-          className={`p-3 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_atas'
+          className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_atas'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-xl block mb-1">🎓</span>
           <p className="text-xs font-black text-white">Usia Atas</p>
-          <p className="text-[10px] text-amber-300 font-bold">SMA / DP</p>
+          <p className="text-[10px] text-amber-300 font-bold">SMK : DP1 & DP2</p>
         </button>
       </div>
 

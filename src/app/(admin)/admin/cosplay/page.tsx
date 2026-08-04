@@ -90,7 +90,7 @@ export default function AdminCosplayPage() {
   const openScoringModal = (p: CosplayParticipant) => {
     setActiveParticipant(p);
     const existingScores = p.scores_by_judge?.[selectedJudge]?.scores || {};
-    
+
     // Initialize default scores if not present
     const initScores: Record<string, number> = {};
     criteriaList.forEach((c) => {
@@ -228,11 +228,10 @@ export default function AdminCosplayPage() {
             {/* Toggle Publication Button */}
             <button
               onClick={handleTogglePublish}
-              className={`px-4 py-2.5 rounded-xl font-black text-xs shadow-gold-glow flex items-center gap-2 transition-all ${
-                isPublished
+              className={`px-4 py-2.5 rounded-xl font-black text-xs shadow-gold-glow flex items-center gap-2 transition-all ${isPublished
                   ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400'
                   : 'bg-slate-900 border border-amber-400/50 text-amber-300 hover:bg-slate-800'
-              }`}
+                }`}
             >
               {isPublished ? (
                 <>
@@ -281,11 +280,10 @@ export default function AdminCosplayPage() {
       <div className="grid grid-cols-3 gap-3">
         <button
           onClick={() => setActiveCategory('usia_dini')}
-          className={`p-4 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_dini'
+          className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_dini'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-2xl block mb-1">🧸</span>
           <p className="text-xs font-black text-white">Jenjang Usia Dini</p>
@@ -294,11 +292,10 @@ export default function AdminCosplayPage() {
 
         <button
           onClick={() => setActiveCategory('usia_menengah')}
-          className={`p-4 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_menengah'
+          className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_menengah'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-2xl block mb-1">🎒</span>
           <p className="text-xs font-black text-white">Jenjang Usia Menengah</p>
@@ -307,15 +304,14 @@ export default function AdminCosplayPage() {
 
         <button
           onClick={() => setActiveCategory('usia_atas')}
-          className={`p-4 rounded-2xl border text-center transition-all ${
-            activeCategory === 'usia_atas'
+          className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_atas'
               ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
               : 'glass-card border-slate-800 text-slate-400 hover:text-white'
-          }`}
+            }`}
         >
           <span className="text-2xl block mb-1">🎓</span>
           <p className="text-xs font-black text-white">Jenjang Usia Atas</p>
-          <p className="text-[10px] text-amber-300 font-bold">SMA / SMK / DP-1 & DP-2</p>
+          <p className="text-[10px] text-amber-300 font-bold">SMK : DP1 & DP2</p>
         </button>
       </div>
 
