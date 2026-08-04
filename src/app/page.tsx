@@ -38,7 +38,7 @@ export default function LandingPage() {
           href="/home"
           className="px-8 py-4 rounded-2xl bg-gradient-to-r from-merdeka-red via-amber-500 to-merdeka-red text-slate-950 font-black text-base shadow-gold-glow shimmer-btn inline-flex items-center gap-3 hover:scale-105 transition-transform"
         >
-          <span>MASUK KE PERAYAAN SEKARANG</span>
+          <span>MASUK KE PORTAL</span>
           <ArrowRight className="w-5 h-5 text-slate-950" />
         </Link>
       </div>
