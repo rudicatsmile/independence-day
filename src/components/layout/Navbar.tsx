@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldAlert, Award, Radio, Tv, Database, LogIn, LogOut, ShieldCheck, Image as ImageIcon, ChevronDown, Sparkles, MapPin, HelpCircle } from 'lucide-react';
+import { ShieldAlert, Award, Radio, Tv, LogOut, ShieldCheck, Image as ImageIcon, ChevronDown, Sparkles, MapPin, HelpCircle } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import { logoutUser } from '@/lib/supabase/auth';
@@ -53,47 +53,42 @@ export const Navbar: React.FC = () => {
   };
 
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
-  const hasConfig = isSupabaseConfigured();
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full glass-card border-b border-merdeka-red/20 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {/* Brand & Logo */}
-          <Link href="/home" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-merdeka-red to-merdeka-crimson flex items-center justify-center shadow-glow border border-merdeka-gold/30 group-hover:scale-105 transition-transform">
-              <span className="text-white font-black text-lg">81</span>
+      <header className="sticky top-0 z-40 w-full glass-card border-b border-merdeka-red/20 px-3 sm:px-4 py-2.5">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          {/* Brand & Logo Yayasan */}
+          <Link href="/home" className="flex items-center gap-2 group shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 border border-amber-400/50 p-1 flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform overflow-hidden shrink-0">
+              <img
+                src="/logo-yayasan.png"
+                alt="Logo Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-base font-black tracking-wider text-gradient-gold uppercase leading-tight">
-                  Merdeka 81
-                </h1>
-                {hasConfig && (
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-[9px] font-bold text-emerald-400" title="Terhubung ke Supabase Cloud Database">
-                    <Database className="w-2.5 h-2.5" />
-                    <span>DB LIVE</span>
-                  </span>
-                )}
-              </div>
-              <p className="text-[10px] text-slate-400 font-medium tracking-wide">
+              <h1 className="text-sm sm:text-base font-black tracking-wider text-gradient-gold uppercase leading-tight">
+                Merdeka 81
+              </h1>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
                 HUT RI KE-81 • 17 AGUSTUS 2026
               </p>
             </div>
           </Link>
 
           {/* Action Pills & User Auth */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* ADMIN SPECIAL MENU DROPDOWN */}
             {isAdmin && (
               <div className="relative">
                 <button
                   onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow hover:scale-105 transition-transform"
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow hover:scale-105 transition-transform"
                 >
-                  <ShieldCheck className="w-4 h-4 text-slate-950" />
-                  <span>Panel Admin</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-950" />
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />
+                  <span className="text-[11px] sm:text-xs">Admin</span>
+                  <ChevronDown className="w-3 h-3 text-slate-950" />
                 </button>
 
                 {/* Dropdown Options */}
@@ -166,13 +161,13 @@ export const Navbar: React.FC = () => {
             </Link>
 
             {/* Points Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-merdeka-red/20 border border-merdeka-gold/40 text-xs font-bold text-amber-300">
-              <Award className="w-4 h-4 text-amber-400" />
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-merdeka-red/20 border border-merdeka-gold/40 text-xs font-bold text-amber-300">
+              <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
               <span>{isLoggedIn ? profile.total_points : 0} PTS</span>
             </div>
 
-            {/* Auth Login / Logout Action Button */}
-            {isLoggedIn ? (
+            {/* Logout Action (Only shown when logged in) */}
+            {isLoggedIn && (
               <div className="flex items-center gap-2">
                 <div className="hidden md:flex flex-col items-end leading-tight">
                   <span className="text-xs font-black text-white truncate max-w-[120px]">
@@ -180,27 +175,19 @@ export const Navbar: React.FC = () => {
                   </span>
                   {isAdmin && (
                     <span className="text-[9px] font-extrabold text-amber-400 tracking-wider">
-                      🛡️ ADMIN PANITIA
+                      🛡️ ADMIN
                     </span>
                   )}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-red-950/80 border border-slate-700 hover:border-red-500/50 text-slate-300 hover:text-red-400 text-xs font-bold transition-all"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-red-950/80 border border-slate-700 hover:border-red-500/50 text-slate-300 hover:text-red-400 text-xs font-bold transition-all"
                   title="Keluar / Logout"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white text-xs font-bold shadow-glow hover:scale-105 transition-transform"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Masuk</span>
-              </button>
             )}
           </div>
         </div>
