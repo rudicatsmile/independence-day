@@ -121,7 +121,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: SMA Al-Wathoniyah 9 / PAUD"
+                  placeholder="Isi sesuai Lembaga masing-masing"
                   value={instansi}
                   onChange={(e) => setInstansi(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400"
