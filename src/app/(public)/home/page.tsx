@@ -58,6 +58,11 @@ export default function HomePage() {
     }
   }, []);
 
+  const activeMissions = missions.filter((m) => m.is_active !== false);
+  const completedActiveCount = activeMissions.filter(
+    (m) => userMissions[m.id]?.status === 'completed'
+  ).length;
+
   return (
     <div className="space-y-6">
       {/* Hero Welcome Banner */}
@@ -248,13 +253,13 @@ export default function HomePage() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-black text-gradient-gold">Daftar Misi Kemerdekaan</h2>
-          <span className="text-xs font-bold text-amber-300">
-            {Object.keys(userMissions).length} / {missions.length} Selesai
+          <span className="text-xs font-bold text-amber-300 font-mono">
+            {completedActiveCount} / {activeMissions.length} Selesai
           </span>
         </div>
 
         <div className="space-y-2">
-          {missions.filter((m) => m.is_active !== false).map((mission) => {
+          {activeMissions.map((mission) => {
             const isCompleted = userMissions[mission.id]?.status === 'completed';
             return (
               <div
