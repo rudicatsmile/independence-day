@@ -160,7 +160,7 @@ export default function HomePage() {
             <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center mb-2">
               <Radio className="w-4 h-4" />
             </div>
-            <p className="text-xs font-bold text-white">Live Salute ({saluteCount})</p>
+            <p className="text-xs font-bold text-white">Hormat Bendera ({saluteCount})</p>
             <p className="text-[10px] text-slate-400">Tekan Hormat!</p>
           </Link>
 
