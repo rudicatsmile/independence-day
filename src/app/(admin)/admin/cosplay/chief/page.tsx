@@ -9,6 +9,7 @@ import {
   fetchCosplayPublishedStatusFromSupabase,
   updateCosplayPublishedStatusInSupabase,
 } from '@/lib/supabase/services';
+import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
 
 export default function ChiefCosplayRefereePage() {
@@ -41,11 +42,33 @@ export default function ChiefCosplayRefereePage() {
   useEffect(() => {
     if (isPinUnlocked) {
       loadData();
-      // Auto refresh for Wasit Utama every 3 seconds
-      const timer = setInterval(() => {
-        loadData();
-      }, 3000);
-      return () => clearInterval(timer);
+
+      // Zero-Load Realtime Supabase WebSockets Subscription
+      if (isSupabaseConfigured()) {
+        const supabase = createClient();
+        const channel = supabase
+          .channel('chief_cosplay_realtime')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'cosplay_scores' },
+            () => loadData()
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'cosplay_participants' },
+            () => loadData()
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'live_event_state' },
+            () => loadData()
+          )
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(channel);
+        };
+      }
     }
   }, [activeCategory, isPinUnlocked]);
 

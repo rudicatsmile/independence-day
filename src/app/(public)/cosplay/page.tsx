@@ -5,6 +5,7 @@ import { Trophy, Award, Sparkles, RefreshCw, Star, ShieldCheck, Lock } from 'luc
 import { CosplayCategory, CosplayParticipant } from '@/lib/types';
 import { COSPLAY_CRITERIA_MAP } from '@/lib/mockData';
 import { fetchCosplayParticipantsFromSupabase, fetchCosplayPublishedStatusFromSupabase } from '@/lib/supabase/services';
+import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
 
 export default function PublicCosplayPage() {
@@ -32,11 +33,32 @@ export default function PublicCosplayPage() {
   useEffect(() => {
     loadData();
 
-    // Auto refresh leaderboard and publication status every 4 seconds
-    const timer = setInterval(() => {
-      loadData();
-    }, 4000);
-    return () => clearInterval(timer);
+    // Zero-Load Realtime Supabase WebSockets Subscription for Public
+    if (isSupabaseConfigured()) {
+      const supabase = createClient();
+      const channel = supabase
+        .channel('public_cosplay_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'cosplay_scores' },
+          () => loadData()
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'cosplay_participants' },
+          () => loadData()
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'live_event_state' },
+          () => loadData()
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, [activeCategory]);
 
   const sortedParticipants = [...participants].sort((a, b) => (b.final_score || 0) - (a.final_score || 0));
