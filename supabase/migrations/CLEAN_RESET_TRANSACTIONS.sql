@@ -42,7 +42,7 @@ begin;
         )
         from jsonb_array_elements(options) as opt
       )
-  where id = 'poll-main';
+  where is_active = true;
 
   -- 5. Kosongkan Riwayat Misi & Lencana Peserta
   truncate table public.user_missions restart identity cascade;
