@@ -139,6 +139,14 @@ export const Navbar: React.FC = () => {
                       <span>Penilaian Cosplay</span>
                     </Link>
                     <Link
+                      href="/admin/cosplay/chief"
+                      onClick={() => setIsAdminDropdownOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-merdeka-red/30 transition-colors"
+                    >
+                      <ShieldAlert className="w-4 h-4 text-amber-400" />
+                      <span>Wasit Utama Cosplay</span>
+                    </Link>
+                    <Link
                       href="/stage-display"
                       onClick={() => setIsAdminDropdownOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-white hover:bg-merdeka-red/30 transition-colors"
