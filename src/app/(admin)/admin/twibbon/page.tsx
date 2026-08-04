@@ -207,31 +207,24 @@ export default function AdminTwibbonPage() {
                   <div className="flex flex-wrap gap-2 text-xs">
                     <button
                       type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/frame-garuda-gold.svg' })}
-                      className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 border border-amber-400/40 text-amber-300 text-[11px] font-semibold transition-all"
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-v1.png' })}
+                      className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/40 border border-amber-400/40 text-amber-300 text-[11px] font-bold transition-all"
                     >
-                      🖼️ Sample 1: Garuda Emas (.svg)
+                      🖼️ Twibbon Versi 1 (v1.png)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/frame-merah-putih.svg' })}
-                      className="px-2.5 py-1 rounded-lg bg-merdeka-red/20 hover:bg-merdeka-red/40 border border-merdeka-red/40 text-red-300 text-[11px] font-semibold transition-all"
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-v2.png' })}
+                      className="px-3 py-1.5 rounded-xl bg-merdeka-red/20 hover:bg-merdeka-red/40 border border-merdeka-red/40 text-red-300 text-[11px] font-bold transition-all"
                     >
-                      🇮🇩 Sample 2: Merah Putih (.svg)
+                      🖼️ Twibbon Versi 2 (v2.png)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-yalwash1.png' })}
-                      className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-400/40 text-emerald-300 text-[11px] font-semibold transition-all"
+                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-v3.png' })}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold transition-all"
                     >
-                      🏫 Sample 3: Twibbon Yalwash 1 (.png)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditingFrame({ ...editingFrame, frame_image_url: '/twibbon-assets/twibbon-yalwash2.png' })}
-                      className="px-2.5 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/40 text-blue-300 text-[11px] font-semibold transition-all"
-                    >
-                      🏫 Sample 4: Twibbon Yalwash 2 (.png)
+                      🖼️ Twibbon Versi 3 (v3.png)
                     </button>
                   </div>
                 </div>
