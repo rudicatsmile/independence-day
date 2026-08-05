@@ -301,12 +301,12 @@ export const StageVisualizer: React.FC = () => {
           </div>
 
           {/* Giant Animated Flag Emblem */}
-          <div className="relative w-52 h-52 mx-auto my-4 flex items-center justify-center">
+          <div className="relative w-56 h-56 mx-auto my-4 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-merdeka-red via-amber-500 to-merdeka-red animate-spin-slow opacity-40 blur-xl" />
-            <div className="relative z-10 w-48 h-48 rounded-full bg-slate-950 border-4 border-amber-400 flex flex-col items-center justify-center shadow-gold-glow animate-pulse overflow-hidden p-2">
-              <img src="/hormat.png" alt="Hormat Bendera" className="w-28 h-28 object-contain drop-shadow-2xl scale-110" />
+            <div className="relative z-10 w-52 h-52 rounded-full bg-slate-950 border-4 border-amber-400 flex flex-col items-center justify-center shadow-gold-glow animate-pulse overflow-hidden p-1.5">
+              <img src="/hormat.png" alt="Hormat Bendera" className="w-36 h-36 object-contain drop-shadow-2xl scale-125 -mt-1" />
               {/* Dynamic Emblem Label */}
-              <span className="text-[10px] font-black text-amber-300 uppercase tracking-widest mt-0.5">Hormat Bendera</span>
+              <span className="text-[9px] font-black text-amber-300 uppercase tracking-widest -mt-1">Hormat Bendera</span>
             </div>
           </div>
 
