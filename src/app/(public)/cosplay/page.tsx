@@ -130,15 +130,15 @@ export default function PublicCosplayPage() {
           </div>
           <div className="space-y-2 max-w-lg mx-auto">
             <h2 className="text-2xl font-black text-white">
-              Penilaian Lomba Cosplay <span className="text-gradient-gold">Sedang Berlangsung</span>
+              Pengumuman Pemenang Lomba Cosplay <span className="text-gradient-gold">Belum Dipublikasikan</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Tim Juri (<strong className="text-amber-300">Bapak Sofyan Jamaludin, S.H.I.</strong> & <strong className="text-amber-300">Bapak H. Mulyana, S.H., M.M.</strong>) sedang melakukan pengisian skor instrumen. Klasemen Pemenang akan secara otomatis dibuka dari Panggung Utama setelah proses penilaian selesai!
+              Hasil penilaian resmi Lomba Cosplay (Presiden RI & Pahlawan Nasional) oleh Tim Juri (<strong className="text-amber-300">Bapak Sofyan Jamaludin, S.H.I.</strong> & <strong className="text-amber-300">Bapak H. Mulyana, S.H., M.M.</strong>) akan ditayangkan secara live pada Puncak Perayaan 17 Agustus 2026 setelah disahkan oleh Sie Acara!
             </p>
           </div>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/80 border border-amber-500/40 text-amber-400 text-xs font-bold animate-pulse">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            <span>Menunggu Pengumuman Resmi Panggung...</span>
+            <span>Menunggu Pengesahan Sie Acara...</span>
           </div>
         </div>
       ) : (
