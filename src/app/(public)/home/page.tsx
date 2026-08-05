@@ -87,7 +87,7 @@ export default function HomePage() {
                   )}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-300">
-                  {profile.instansi} • Status Sesi: <span className="text-emerald-400 font-bold">Terautentikasi</span>
+                  {profile.instansi}
                 </p>
               </>
             ) : (
@@ -211,19 +211,17 @@ export default function HomePage() {
             return (
               <div
                 key={mission.id}
-                className={`p-4 rounded-2xl border flex items-center justify-between transition-all ${
-                  isCompleted
+                className={`p-4 rounded-2xl border flex items-center justify-between transition-all ${isCompleted
                     ? 'glass-card border-emerald-500/30 bg-emerald-950/20'
                     : 'glass-card border-slate-800 hover:border-slate-600'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${
-                      isCompleted
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${isCompleted
                         ? 'bg-emerald-500 text-slate-950'
                         : 'bg-merdeka-red/20 text-amber-300 border border-amber-400/30'
-                    }`}
+                      }`}
                   >
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : `+${mission.points_reward}`}
                   </div>
@@ -252,12 +250,12 @@ export default function HomePage() {
                         mission.slug === 'selfie-guru'
                           ? '/selfie-guru'
                           : mission.slug === 'selfie-patriotik'
-                          ? '/twibbon'
-                          : mission.type === 'qr_hunt'
-                          ? '/map'
-                          : mission.type === 'quiz'
-                          ? '/quiz'
-                          : '/live'
+                            ? '/twibbon'
+                            : mission.type === 'qr_hunt'
+                              ? '/map'
+                              : mission.type === 'quiz'
+                                ? '/quiz'
+                                : '/live'
                       }
                       className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white font-bold text-xs flex items-center gap-1 shadow-glow"
                     >

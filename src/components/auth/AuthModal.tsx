@@ -69,7 +69,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div className="relative w-full max-w-md glass-card-gold rounded-3xl p-6 sm:p-8 border border-amber-400/50 shadow-2xl space-y-6">
-        
+
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -129,8 +129,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   <option value="TK Al-Wathoniyah 9">TK Al-Wathoniyah 9</option>
                   <option value="SD Al-Wathoniyah 9">SD Al-Wathoniyah 9</option>
                   <option value="SMP Al-Wathoniyah 9">SMP Al-Wathoniyah 9</option>
-                  <option value="SMK Dinamika Pembangunan 1">SMK Dinamika Pembangunan 1</option>
-                  <option value="SMK Dinamika Pembangunan 2">SMK Dinamika Pembangunan 2</option>
+                  <option value="SMK Dinamika Pembangunan 1 Jakarta">SMK Dinamika Pembangunan 1 Jakarta</option>
+                  <option value="SMK Dinamika Pembangunan 2 Jakarta">SMK Dinamika Pembangunan 2 Jakarta</option>
                 </select>
               </div>
             </>

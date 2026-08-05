@@ -199,10 +199,10 @@ export default function SelfieGuruPage() {
           <span>MISI GURU & MURID PATRIOT</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-gradient-gold uppercase">
-          SELFIE BERSAMA GURU PATRIOT (+150 PTS)
+          SELFIE BERSAMA BESTIE (+150 PTS)
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto">
-          Pilih nama guru favoritmu, ambil foto selfie bersama, dan tayangkan momen kebersamaan kalian langsung di Layar Panggung Utama HUT RI ke-81!
+          Pilih teman favoritmu, ambil foto selfie bersama, dan tayangkan momen kebersamaan kalian langsung di Layar Panggung Utama HUT RI ke-81!
         </p>
       </div>
 

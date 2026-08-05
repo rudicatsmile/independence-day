@@ -36,7 +36,7 @@ export const StageVisualizer: React.FC = () => {
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
   const [eventYearNumber, setEventYearNumber] = useState('81');
-  
+
   // Admin Header Settings Modal State
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editTitleInput, setEditTitleInput] = useState(eventTitle);
@@ -337,7 +337,7 @@ export const StageVisualizer: React.FC = () => {
                 title="Perluas Layar untuk Menampilkan Seluruh Foto Twibbon"
               >
                 <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
-                <span>🔍 Perluas Galeri Grid</span>
+
               </button>
             </div>
           </div>
@@ -402,8 +402,8 @@ export const StageVisualizer: React.FC = () => {
                     key={item.id || idx}
                     onClick={() => setSelectedParticipant(item)}
                     className={`p-2 rounded-xl border text-center transition-all cursor-pointer hover:scale-105 ${idx === 0
-                        ? 'glass-card-gold border-amber-400 text-amber-300 font-bold shadow-gold-glow'
-                        : 'glass-card border-slate-800 text-slate-300 hover:border-amber-400/50'
+                      ? 'glass-card-gold border-amber-400 text-amber-300 font-bold shadow-gold-glow'
+                      : 'glass-card border-slate-800 text-slate-300 hover:border-amber-400/50'
                       }`}
                     title="Klik untuk inspeksi foto Twibbon & Selfie Guru"
                   >
