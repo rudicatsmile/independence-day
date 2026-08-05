@@ -210,17 +210,17 @@ export default function SelfieGuruPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Left Column: Form Controls */}
           <div className="md:col-span-5 space-y-5 glass-card rounded-3xl p-6 border border-slate-800">
-            {/* Step 1: Select Teacher */}
+            {/* Step 1: Select Teacher / Bestie */}
             <div className="space-y-2">
               <label className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4" /> 1. Pilih Nama Guru:
+                <UserCheck className="w-4 h-4" /> 1. Pilih Nama Bestie:
               </label>
 
               {!isCustomTeacher ? (
                 <select
                   value={selectedTeacher}
                   onChange={(e) => setSelectedTeacher(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 font-semibold"
                 >
                   {PRESET_TEACHERS.map((t) => (
                     <option key={t.id} value={t.name}>
@@ -231,7 +231,7 @@ export default function SelfieGuruPage() {
               ) : (
                 <input
                   type="text"
-                  placeholder="Ketik Nama Guru lengkap..."
+                  placeholder="Ketik Nama Bestie lengkap..."
                   value={customTeacher}
                   onChange={(e) => setCustomTeacher(e.target.value)}
                   className="w-full bg-slate-900 border border-amber-500/50 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none"
@@ -243,21 +243,21 @@ export default function SelfieGuruPage() {
                 onClick={() => setIsCustomTeacher(!isCustomTeacher)}
                 className="text-[11px] text-amber-300 hover:underline font-semibold block pt-1"
               >
-                {isCustomTeacher ? '← Pilih dari Daftar Guru Sekolah' : '+ Ketik Nama Guru Lainnya'}
+                {isCustomTeacher ? '← Pilih dari Daftar Bestie' : '+ Ketik Nama Bestie Lainnya'}
               </button>
             </div>
 
             {/* Step 2: Message/Caption */}
             <div className="space-y-2">
               <label className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Heart className="w-4 h-4 text-red-400" /> 2. Pesan untuk Guru:
+                <Heart className="w-4 h-4 text-red-400" /> 2. PESAN UNTUK BESTIE KU:
               </label>
               <textarea
                 rows={3}
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400 resize-none"
-                placeholder="Tuliskan ucapan Kemerdekaan atau pesan terima kasih untuk guru..."
+                placeholder="Tuliskan ucapan Kemerdekaan atau pesan hangat untuk bestie ku..."
               />
             </div>
 

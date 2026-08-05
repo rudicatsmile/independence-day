@@ -80,16 +80,15 @@ export default function LivePage() {
         {/* Big Interactive Salute Button */}
         <button
           onClick={handleSaluteTap}
-          className={`w-36 h-36 rounded-full bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 shadow-gold-glow flex items-center justify-center mx-auto p-2 transition-transform active:scale-95 overflow-hidden ${
-            isSaluteAnimating ? 'scale-110' : 'hover:scale-105'
-          }`}
+          className={`w-36 h-36 rounded-full bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 shadow-gold-glow flex items-center justify-center mx-auto p-2 transition-transform active:scale-95 overflow-hidden ${isSaluteAnimating ? 'scale-110' : 'hover:scale-105'
+            }`}
           title="Ketuk untuk Hormat!"
         >
           <img src="/hormat.png" alt="Hormat" className="w-full h-full object-contain drop-shadow-xl" />
         </button>
 
         <p className="text-xs text-slate-300 max-w-sm mx-auto">
-          💡 Bebas ketuk tombol **Hormat!** sebanyak mungkin! Setiap ketukan akan langsung menambah angka counter di Layar Proyektor Panggung.
+          💡 Bebas ketuk tombol **Hormat!** . Setiap ketukan akan langsung menambah angka counter di Layar Proyektor Panggung.
         </p>
       </div>
 
@@ -129,11 +128,10 @@ export default function LivePage() {
                 <button
                   onClick={() => handleVote(opt.id)}
                   disabled={!!poll.user_voted_option}
-                  className={`relative z-10 w-full p-4 rounded-2xl border text-left text-xs sm:text-sm flex items-center justify-between transition-all ${
-                    isVoted
+                  className={`relative z-10 w-full p-4 rounded-2xl border text-left text-xs sm:text-sm flex items-center justify-between transition-all ${isVoted
                       ? 'border-amber-400 bg-amber-500/30 font-bold text-white shadow-gold-glow'
                       : 'border-slate-800 hover:border-slate-600 text-slate-200'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-2">
                     {isVoted && <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" />}
