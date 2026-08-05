@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame, Settings, Save, X, Edit3 } from 'lucide-react';
+import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame, Settings, Save, X, Edit3, Maximize2, Minimize2, ZoomIn } from 'lucide-react';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { useUserStore } from '@/stores/useUserStore';
 import {
@@ -36,7 +36,7 @@ export const StageVisualizer: React.FC = () => {
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
   const [eventYearNumber, setEventYearNumber] = useState('81');
-
+  
   // Admin Header Settings Modal State
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editTitleInput, setEditTitleInput] = useState(eventTitle);
@@ -46,6 +46,10 @@ export const StageVisualizer: React.FC = () => {
 
   // Objective Committee Inspection Modal State
   const [selectedParticipant, setSelectedParticipant] = useState<Profile | null>(null);
+
+  // Full-Screen Wall of Merdeka Mode State
+  const [isWallExpanded, setIsWallExpanded] = useState<boolean>(false);
+  const [selectedPhotoForZoom, setSelectedPhotoForZoom] = useState<any | null>(null);
 
   const refreshLeaderboard = async () => {
     const data = await fetchLeaderboardFromSupabase();
@@ -317,14 +321,25 @@ export const StageVisualizer: React.FC = () => {
 
         {/* Right Column: Wall of Merdeka Live Photo Slideshow */}
         <div className="lg:col-span-7 glass-card rounded-3xl p-6 border border-amber-400/40 space-y-4 flex flex-col justify-between shadow-2xl">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
               <Sparkles className="w-4 h-4" />
               <span>WALL OF MERDEKA • SLIDESHOW TWIBBON</span>
             </div>
-            <span className="text-xs text-slate-400 font-bold">
-              Foto {currentSlideIndex + 1} dari {galleryItems.length}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 font-bold hidden sm:inline">
+                Foto {currentSlideIndex + 1} dari {galleryItems.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsWallExpanded(true)}
+                className="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500/30 transition-all font-bold text-xs flex items-center gap-1.5 shadow-gold-glow hover:scale-105"
+                title="Perluas Layar untuk Menampilkan Seluruh Foto Twibbon"
+              >
+                <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>🔍 Perluas Galeri Grid</span>
+              </button>
+            </div>
           </div>
 
           {/* Active Photo Carousel Card */}
@@ -601,6 +616,148 @@ export const StageVisualizer: React.FC = () => {
                 className="px-6 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-xs hover:bg-slate-800"
               >
                 Tutup Inspeksi Panitia
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-Screen Expanded Wall of Merdeka Grid Mode (Overlay covering Stage Display & Counter) */}
+      {isWallExpanded && (
+        <div className="fixed inset-0 z-50 bg-[#070A12]/98 backdrop-blur-2xl p-4 sm:p-8 overflow-y-auto space-y-6 animate-fade-in flex flex-col justify-between">
+          {/* Top Bar Header */}
+          <div className="flex items-center justify-between border-b border-amber-500/30 pb-4 flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center text-amber-400 shadow-gold-glow">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
+                  GALERI FOTO RESMI STAGE DISPLAY
+                </span>
+                <h2 className="text-2xl font-black text-white">
+                  Wall of Merdeka <span className="text-gradient-gold">• Seluruh Foto Twibbon</span>
+                </h2>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-amber-300 text-xs font-mono font-bold">
+                {galleryItems.length} Foto Terpublikasi
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsWallExpanded(false)}
+                className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-merdeka-red via-amber-500 to-merdeka-red text-slate-950 font-black text-xs shadow-gold-glow flex items-center gap-2 hover:scale-105 transition-transform"
+              >
+                <Minimize2 className="w-4 h-4 text-slate-950" />
+                <span>↙️ Kecilkan Layar (Kembali)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Full Grid of All Twibbon Photos */}
+          {galleryItems.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-2 my-auto">
+              {galleryItems.map((photo, idx) => (
+                <div
+                  key={photo.id || idx}
+                  onClick={() => setSelectedPhotoForZoom(photo)}
+                  className="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 hover:border-amber-400/80 transition-all duration-300 cursor-pointer shadow-xl hover:scale-105 hover:shadow-gold-glow"
+                >
+                  <img
+                    src={photo.image_url}
+                    alt={photo.caption || 'Foto Twibbon'}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+                  {/* Top Zoom Icon Indicator */}
+                  <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 backdrop-blur-md text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ZoomIn className="w-4 h-4" />
+                  </div>
+
+                  {/* Bottom Caption & User Badge */}
+                  <div className="absolute bottom-0 inset-x-0 p-3 space-y-0.5 text-left">
+                    <p className="text-xs font-black text-white truncate drop-shadow">
+                      {photo.user_name || 'Peserta Perayaan'}
+                    </p>
+                    <p className="text-[10px] text-amber-300 font-bold truncate">
+                      {photo.instansi || 'Yayasan Al-Wathoniyah 9'}
+                    </p>
+                    {photo.caption && (
+                      <p className="text-[9px] text-slate-300 line-clamp-1 italic opacity-80 pt-0.5">
+                        "{photo.caption}"
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-12 rounded-3xl bg-slate-950/80 border border-slate-800 text-center space-y-3 my-auto">
+              <span className="text-4xl">🖼️</span>
+              <h3 className="text-lg font-bold text-white">Belum Ada Foto Terpublikasi</h3>
+              <p className="text-xs text-slate-400">
+                Foto Twibbon yang diunggah oleh peserta akan muncul di sini secara otomatis secara live!
+              </p>
+            </div>
+          )}
+
+          {/* Footer Bar inside Overlay */}
+          <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>💡 Klik salah satu foto untuk memperbesar foto dalam resolusi tinggi</span>
+            <button
+              onClick={() => setIsWallExpanded(false)}
+              className="text-amber-400 hover:underline font-bold"
+            >
+              Tutup Galeri Grid
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Zoom Photo Popup Viewer Modal */}
+      {selectedPhotoForZoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-xl glass-card-gold rounded-3xl p-6 border-2 border-amber-400/60 space-y-4 shadow-gold-glow relative max-h-[90vh] overflow-y-auto text-left">
+            <div className="flex items-center justify-between border-b border-amber-500/30 pb-3">
+              <div>
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">
+                  DETAIL FOTO TWIBBON • WALL OF MERDEKA
+                </span>
+                <h3 className="text-lg font-black text-white">{selectedPhotoForZoom.user_name || 'Peserta'}</h3>
+                <p className="text-xs text-slate-300">{selectedPhotoForZoom.instansi || 'Yayasan Al-Wathoniyah 9'}</p>
+              </div>
+              <button
+                onClick={() => setSelectedPhotoForZoom(null)}
+                className="p-2 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="aspect-square w-full rounded-2xl overflow-hidden bg-slate-950 border border-amber-400/50 shadow-2xl relative">
+              <img
+                src={selectedPhotoForZoom.image_url}
+                alt={selectedPhotoForZoom.caption || 'Zoom Photo'}
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            {selectedPhotoForZoom.caption && (
+              <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs text-slate-200">
+                <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">Pesan / Caption:</p>
+                <p className="italic">"{selectedPhotoForZoom.caption}"</p>
+              </div>
+            )}
+
+            <div className="text-right pt-2 border-t border-amber-500/20">
+              <button
+                onClick={() => setSelectedPhotoForZoom(null)}
+                className="px-6 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-xs hover:bg-slate-800"
+              >
+                Tutup Foto
               </button>
             </div>
           </div>
