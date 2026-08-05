@@ -299,10 +299,10 @@ export const StageVisualizer: React.FC = () => {
           {/* Giant Animated Flag Emblem */}
           <div className="relative w-48 h-48 mx-auto my-4 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-merdeka-red via-amber-500 to-merdeka-red animate-spin-slow opacity-40 blur-xl" />
-            <div className="relative z-10 w-44 h-44 rounded-full bg-slate-950 border-4 border-amber-400 flex flex-col items-center justify-center shadow-gold-glow animate-pulse">
-              <span className="text-6xl mb-1">🫡</span>
-              {/* Dynamic Emblem Year Number */}
-              <span className="text-xs font-black text-amber-300 uppercase tracking-widest">NUSANTARA {eventYearNumber}</span>
+            <div className="relative z-10 w-44 h-44 rounded-full bg-slate-950 border-4 border-amber-400 flex flex-col items-center justify-center shadow-gold-glow animate-pulse overflow-hidden p-3">
+              <img src="/hormat.png" alt="Hormat Bendera" className="w-20 h-20 object-contain drop-shadow-xl mb-1" />
+              {/* Dynamic Emblem Label */}
+              <span className="text-xs font-black text-amber-300 uppercase tracking-widest">Hormat Bendera</span>
             </div>
           </div>
 

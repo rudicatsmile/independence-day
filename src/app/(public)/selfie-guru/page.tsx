@@ -36,7 +36,7 @@ export default function SelfieGuruPage() {
   const [selectedTeacher, setSelectedTeacher] = useState(PRESET_TEACHERS[0].name);
   const [customTeacher, setCustomTeacher] = useState('');
   const [isCustomTeacher, setIsCustomTeacher] = useState(false);
-  const [caption, setCaption] = useState('Terima kasih Guruku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
+  const [caption, setCaption] = useState('Terima kasih Bestie ku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
@@ -273,7 +273,7 @@ export default function SelfieGuruPage() {
                   onClick={startCamera}
                   className="px-4 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-xs flex items-center justify-center gap-2 hover:brightness-110 shadow-lg"
                 >
-                  <Camera className="w-4 h-4" /> Kamera HP
+                  <Camera className="w-4 h-4" /> Kamera
                 </button>
 
                 <button
@@ -281,7 +281,7 @@ export default function SelfieGuruPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className="px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-700"
                 >
-                  <Upload className="w-4 h-4 text-amber-400" /> Upload Foto
+                  <Upload className="w-4 h-4 text-amber-400" /> Galeri
                 </button>
               </div>
 
