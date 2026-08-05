@@ -656,53 +656,59 @@ export const StageVisualizer: React.FC = () => {
             </div>
           </div>
 
-          {/* Full Grid of All Twibbon Photos */}
-          {galleryItems.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-2 my-auto">
-              {galleryItems.map((photo, idx) => (
-                <div
-                  key={photo.id || idx}
-                  onClick={() => setSelectedPhotoForZoom(photo)}
-                  className="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 hover:border-amber-400/80 transition-all duration-300 cursor-pointer shadow-xl hover:scale-105 hover:shadow-gold-glow"
-                >
-                  <img
-                    src={photo.image_url}
-                    alt={photo.caption || 'Foto Twibbon'}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+          {/* Full Grid of All Twibbon Photos Only (Exclude Selfie Guru / Bestie) */}
+          {(() => {
+            const twibbonOnlyItems = galleryItems.filter(
+              (photo) => !photo.caption?.toLowerCase().includes('selfie bersama') && !photo.caption?.toLowerCase().includes('guru')
+            );
 
-                  {/* Top Zoom Icon Indicator */}
-                  <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 backdrop-blur-md text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ZoomIn className="w-4 h-4" />
-                  </div>
+            return twibbonOnlyItems.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-2 my-auto">
+                {twibbonOnlyItems.map((photo, idx) => (
+                  <div
+                    key={photo.id || idx}
+                    onClick={() => setSelectedPhotoForZoom(photo)}
+                    className="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 hover:border-amber-400/80 transition-all duration-300 cursor-pointer shadow-xl hover:scale-105 hover:shadow-gold-glow"
+                  >
+                    <img
+                      src={photo.image_url}
+                      alt={photo.caption || 'Foto Twibbon'}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
 
-                  {/* Bottom Caption & User Badge */}
-                  <div className="absolute bottom-0 inset-x-0 p-3 space-y-0.5 text-left">
-                    <p className="text-xs font-black text-white truncate drop-shadow">
-                      {photo.user_name || 'Peserta Perayaan'}
-                    </p>
-                    <p className="text-[10px] text-amber-300 font-bold truncate">
-                      {photo.instansi || 'Yayasan Al-Wathoniyah 9'}
-                    </p>
-                    {photo.caption && (
-                      <p className="text-[9px] text-slate-300 line-clamp-1 italic opacity-80 pt-0.5">
-                        "{photo.caption}"
+                    {/* Top Zoom Icon Indicator */}
+                    <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 backdrop-blur-md text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ZoomIn className="w-4 h-4" />
+                    </div>
+
+                    {/* Bottom Caption & User Badge */}
+                    <div className="absolute bottom-0 inset-x-0 p-3 space-y-0.5 text-left">
+                      <p className="text-xs font-black text-white truncate drop-shadow">
+                        {photo.user_name || 'Peserta Perayaan'}
                       </p>
-                    )}
+                      <p className="text-[10px] text-amber-300 font-bold truncate">
+                        {photo.instansi || 'Yayasan Al-Wathoniyah 9'}
+                      </p>
+                      {photo.caption && (
+                        <p className="text-[9px] text-slate-300 line-clamp-1 italic opacity-80 pt-0.5">
+                          "{photo.caption}"
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-12 rounded-3xl bg-slate-950/80 border border-slate-800 text-center space-y-3 my-auto">
-              <span className="text-4xl">🖼️</span>
-              <h3 className="text-lg font-bold text-white">Belum Ada Foto Terpublikasi</h3>
-              <p className="text-xs text-slate-400">
-                Foto Twibbon yang diunggah oleh peserta akan muncul di sini secara otomatis secara live!
-              </p>
-            </div>
-          )}
+                ))}
+              </div>
+            ) : (
+              <div className="p-12 rounded-3xl bg-slate-950/80 border border-slate-800 text-center space-y-3 my-auto">
+                <span className="text-4xl">🖼️</span>
+                <h3 className="text-lg font-bold text-white">Belum Ada Foto Twibbon Terpublikasi</h3>
+                <p className="text-xs text-slate-400">
+                  Foto Twibbon yang diunggah oleh peserta akan muncul di sini secara otomatis secara live!
+                </p>
+              </div>
+            );
+          })()}
 
           {/* Footer Bar inside Overlay */}
           <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
