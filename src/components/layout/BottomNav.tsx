@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Flag, Image as ImageIcon, HelpCircle, Sparkles, BookOpen } from 'lucide-react';
+import { Home, Sparkles, HelpCircle, Radio, Camera } from 'lucide-react';
 
 export const BottomNav: React.FC = () => {
   const pathname = usePathname();
@@ -12,8 +12,8 @@ export const BottomNav: React.FC = () => {
     { href: '/home', label: 'Beranda', icon: Home },
     { href: '/twibbon', label: 'Twibbon', icon: Sparkles },
     { href: '/quiz', label: 'Kuis', icon: HelpCircle },
-    { href: '/gallery', label: 'Galeri', icon: ImageIcon },
-    { href: '/passport', label: 'Paspor', icon: BookOpen },
+    { href: '/live', label: 'Hormat', icon: Radio },
+    { href: '/selfie-guru', label: 'My Photo', icon: Camera },
   ];
 
   return (
