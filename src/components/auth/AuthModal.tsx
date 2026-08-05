@@ -20,7 +20,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
-  const [instansi, setInstansi] = useState('');
+  const [instansi, setInstansi] = useState('Yayasan');
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -119,14 +119,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-300">Lembaga:</label>
-                <input
-                  type="text"
+                <select
                   required
-                  placeholder="Isi sesuai Lembaga masing-masing"
                   value={instansi}
                   onChange={(e) => setInstansi(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400"
-                />
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400 font-semibold cursor-pointer"
+                >
+                  <option value="Yayasan">Yayasan</option>
+                  <option value="TK Al-Wathoniyah 9">TK Al-Wathoniyah 9</option>
+                  <option value="SD Al-Wathoniyah 9">SD Al-Wathoniyah 9</option>
+                  <option value="SMP Al-Wathoniyah 9">SMP Al-Wathoniyah 9</option>
+                  <option value="SMK Dinamika Pembangunan 1">SMK Dinamika Pembangunan 1</option>
+                  <option value="SMK Dinamika Pembangunan 2">SMK Dinamika Pembangunan 2</option>
+                </select>
               </div>
             </>
           )}
