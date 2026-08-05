@@ -39,7 +39,7 @@ export default function SelfieGuruPage() {
   const [customTeacher, setCustomTeacher] = useState('');
   const [isCustomTeacher, setIsCustomTeacher] = useState(false);
   const [caption, setCaption] = useState('Terima kasih Guruku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
-  
+
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -184,7 +184,7 @@ export default function SelfieGuruPage() {
       instansi: profile.instansi,
       type: 'photo',
       image_url: generatedDataUrl,
-      caption: `Selfie Bersama Guru: ${teacherNameFinal} - "${caption}"`,
+      caption: `Selfie Bersama : ${teacherNameFinal} - "${caption}"`,
     });
 
     completeMission('m-06', 150);
@@ -217,7 +217,7 @@ export default function SelfieGuruPage() {
               <label className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                 <UserCheck className="w-4 h-4" /> 1. Pilih Nama Guru:
               </label>
-              
+
               {!isCustomTeacher ? (
                 <select
                   value={selectedTeacher}

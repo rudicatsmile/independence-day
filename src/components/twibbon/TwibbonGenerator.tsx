@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, Move, RotateCcw } from 'lucide-react';
+import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, Move, RotateCcw, Camera, SwitchCamera, X, Image as ImageIcon } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '@/stores/useUserStore';
 import { TwibbonFrame } from '@/lib/types';
@@ -26,13 +26,79 @@ export const TwibbonGenerator: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
+  // Camera Live Capture State
+  const [isCapturing, setIsCapturing] = useState<boolean>(false);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const profile = useUserStore((state) => state.profile);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const addGalleryItem = useUserStore((state) => state.addGalleryItem);
   const completeMission = useUserStore((state) => state.completeMission);
+
+  // Clean up camera stream on unmount
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
+  const startCamera = async (mode = facingMode) => {
+    setIsCapturing(true);
+    try {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const oldStream = videoRef.current.srcObject as MediaStream;
+        oldStream.getTracks().forEach((track) => track.stop());
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: mode, width: { ideal: 1080 }, height: { ideal: 1080 } },
+        audio: false,
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error('Camera access error:', err);
+      alert('Gagal membuka kamera. Pastikan Anda telah memberikan izin akses kamera di perangkat.');
+      setIsCapturing(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCapturing(false);
+  };
+
+  const toggleCamera = () => {
+    const nextMode = facingMode === 'user' ? 'environment' : 'user';
+    setFacingMode(nextMode);
+    startCamera(nextMode);
+  };
+
+  const captureFromCamera = () => {
+    if (!videoRef.current) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0, 1080, 1080);
+      const dataUrl = canvas.toDataURL('image/png', 0.95);
+      setImageSrc(dataUrl);
+      setIsSavedToGallery(false);
+      setZoomScale(1.0);
+      setOffsetX(0);
+      setOffsetY(0);
+      stopCamera();
+    }
+  };
 
   // Load frames dynamically from Supabase Cloud
   useEffect(() => {
@@ -57,6 +123,7 @@ export const TwibbonGenerator: React.FC = () => {
           setZoomScale(1.0);
           setOffsetX(0);
           setOffsetY(0);
+          stopCamera();
         }
       };
       reader.readAsDataURL(file);
@@ -313,22 +380,82 @@ export const TwibbonGenerator: React.FC = () => {
 
       {/* Main Upload / Preview Canvas Box */}
       <div className="glass-card-red rounded-2xl p-6 text-center space-y-4 relative overflow-hidden border border-merdeka-red/30">
-        {!imageSrc ? (
-          <div className="py-12 space-y-4">
+        {isCapturing ? (
+          /* Live Camera Viewport Screen */
+          <div className="space-y-4 max-w-sm mx-auto animate-fade-in">
+            <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-slate-950 border-2 border-amber-400 shadow-2xl">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-amber-400/40 text-[10px] font-bold text-amber-300 flex items-center gap-1.5 animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                <span>Kamera Live Aktif</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={captureFromCamera}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow flex items-center gap-2 hover:scale-105 transition-transform"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Jepret Foto Sekarang</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleCamera}
+                className="px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-xs hover:bg-slate-800 flex items-center gap-1.5"
+                title="Putar Kamera"
+              >
+                <SwitchCamera className="w-4 h-4 text-amber-400" />
+                <span>Putar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={stopCamera}
+                className="px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 font-bold text-xs hover:text-white"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        ) : !imageSrc ? (
+          /* Option Selection Screen: Camera Live vs File Gallery */
+          <div className="py-10 space-y-5">
             <div className="w-16 h-16 rounded-full bg-merdeka-red/20 border border-merdeka-gold/40 flex items-center justify-center mx-auto text-amber-400 animate-float-slow">
-              <Upload className="w-8 h-8" />
+              <Camera className="w-8 h-8" />
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Unggah Foto Kamu</h3>
-              <p className="text-xs text-slate-300">Bebas diakses tanpa login! Format JPG, PNG atau HEIC</p>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-white">Ambil atau Unggah Foto Kamu</h3>
+              <p className="text-xs text-slate-300">Pilih foto dari galeri HP atau langsung ambil foto menggunakan kamera live!</p>
             </div>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white font-bold text-sm shadow-glow shimmer-btn inline-flex items-center gap-2 hover:scale-105 transition-transform"
-            >
-              <Upload className="w-4 h-4" />
-              <span>Pilih Foto Sekarang</span>
-            </button>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => startCamera('user')}
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-merdeka-red via-amber-500 to-merdeka-red text-slate-950 font-black text-xs shadow-gold-glow shimmer-btn inline-flex items-center justify-center gap-2 hover:scale-105 transition-transform"
+              >
+                <Camera className="w-4.5 h-4.5 text-slate-950" />
+                <span>📷 Ambil Foto dari Kamera Live</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-900 border border-amber-500/50 hover:border-amber-400 text-white font-bold text-xs inline-flex items-center justify-center gap-2 hover:scale-105 transition-transform"
+              >
+                <ImageIcon className="w-4.5 h-4.5 text-amber-400" />
+                <span>🖼️ Pilih Foto dari Galeri HP</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -413,7 +540,10 @@ export const TwibbonGenerator: React.FC = () => {
             {/* Action Buttons (Download & Share are FREE for all guests) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2">
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => {
+                  setImageSrc(null);
+                  stopCamera();
+                }}
                 className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-600"
               >
                 <RefreshCw className="w-4 h-4" />

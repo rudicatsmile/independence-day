@@ -36,7 +36,7 @@ export const StageVisualizer: React.FC = () => {
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
   const [eventYearNumber, setEventYearNumber] = useState('81');
-  
+
   // Admin Header Settings Modal State
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editTitleInput, setEditTitleInput] = useState(eventTitle);
@@ -339,7 +339,7 @@ export const StageVisualizer: React.FC = () => {
               {/* Special Badge if photo is Teacher Selfie */}
               {activePhoto.caption.includes('Selfie Bersama Guru') && (
                 <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-gold-glow flex items-center gap-1.5 animate-bounce">
-                  <span>🎓 MOMEN PATRIOT: SELFIE GURU & MURID</span>
+                  <span>🎓 MOMEN BERSAMA </span>
                 </div>
               )}
 
@@ -386,11 +386,10 @@ export const StageVisualizer: React.FC = () => {
                   <div
                     key={item.id || idx}
                     onClick={() => setSelectedParticipant(item)}
-                    className={`p-2 rounded-xl border text-center transition-all cursor-pointer hover:scale-105 ${
-                      idx === 0
+                    className={`p-2 rounded-xl border text-center transition-all cursor-pointer hover:scale-105 ${idx === 0
                         ? 'glass-card-gold border-amber-400 text-amber-300 font-bold shadow-gold-glow'
                         : 'glass-card border-slate-800 text-slate-300 hover:border-amber-400/50'
-                    }`}
+                      }`}
                     title="Klik untuk inspeksi foto Twibbon & Selfie Guru"
                   >
                     <div className="text-[10px] font-black text-amber-400">#{idx + 1}</div>
