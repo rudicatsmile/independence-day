@@ -80,12 +80,12 @@ export default function LivePage() {
         {/* Big Interactive Salute Button */}
         <button
           onClick={handleSaluteTap}
-          className={`w-36 h-36 rounded-full bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 shadow-gold-glow flex flex-col items-center justify-center mx-auto text-white transition-transform active:scale-95 ${
+          className={`w-36 h-36 rounded-full bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 shadow-gold-glow flex items-center justify-center mx-auto p-2 transition-transform active:scale-95 overflow-hidden ${
             isSaluteAnimating ? 'scale-110' : 'hover:scale-105'
           }`}
+          title="Ketuk untuk Hormat!"
         >
-          <img src="/hormat.png" alt="Hormat" className="w-14 h-14 object-contain drop-shadow-md" />
-          <span className="text-xs font-black tracking-wider uppercase mt-1">HORMAT!</span>
+          <img src="/hormat.png" alt="Hormat" className="w-full h-full object-contain drop-shadow-xl" />
         </button>
 
         <p className="text-xs text-slate-300 max-w-sm mx-auto">
