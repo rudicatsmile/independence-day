@@ -22,11 +22,9 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import confetti from 'canvas-confetti';
 
 const PRESET_TEACHERS = [
-  { id: 't-1', name: 'Pak Rudi Kurniawan, ST', subject: 'Guru Pembina & ST', school: 'Yayasan Merdeka' },
-  { id: 't-2', name: 'Ibu Titi Wijaya', subject: 'Guru Kepala Sekolah', school: 'SD AL-Wathoniyah 9' },
-  { id: 't-3', name: 'Pak Bagas Kencana', subject: 'Guru Pembimbing Garuda', school: 'Sekretariat Negara' },
-  { id: 't-4', name: 'Ibu Fatmawati', subject: 'Guru Kebangsaan', school: 'SMA Merdeka 81' },
-  { id: 't-5', name: 'Pak Sayuti Melik', subject: 'Guru Sejarah Nusantara', school: 'SMP Al-Wathoniyah 9' },
+  { id: 't-2', name: 'Ibu Kartini', subject: 'Guru Sejarah', school: 'SD AL-Wathoniyah 9' },
+  { id: 't-3', name: 'Pak Ahmad Yani', subject: 'Guru Pembimbing BK', school: 'SMK Dinamika Pembangunan 1' },
+  { id: 't-4', name: 'Ibu Fatmawati', subject: 'Guru Kebangsaan', school: 'SMK Dinamika Pembangunan 2' },
   { id: 't-6', name: 'Ibu Dewi Sartika', subject: 'Guru Bahasa & Seni', school: 'TK Al-Wathoniyah 9' },
 ];
 

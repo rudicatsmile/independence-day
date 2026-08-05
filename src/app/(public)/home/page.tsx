@@ -102,8 +102,8 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isLoggedIn ? (
+          {!isLoggedIn && (
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsAuthModalOpen(true)}
                 className="px-6 py-3 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow shimmer-btn hover:scale-105 transition-transform flex items-center gap-2"
@@ -111,13 +111,8 @@ export default function HomePage() {
                 <LogIn className="w-4 h-4" />
                 <span>Masuk / Login Akun</span>
               </button>
-            ) : (
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-merdeka-red to-amber-500 border-2 border-amber-300 flex flex-col items-center justify-center text-white shadow-gold-glow animate-pulse">
-                <span className="text-2xl font-black leading-none">{eventYearNumber}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase">Tahun</span>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
