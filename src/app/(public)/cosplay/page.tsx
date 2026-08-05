@@ -66,6 +66,23 @@ export default function PublicCosplayPage() {
   const top2 = sortedParticipants[1];
   const top3 = sortedParticipants[2];
 
+  // Dynamic Date Phase Calculation for Event Day (17 August)
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const eventDate = new Date(currentYear, 7, 17); // 17 August
+
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const eventStr = `${currentYear}-08-17`;
+
+  let eventPhase: 'before_event' | 'event_day' | 'after_event' = 'before_event';
+  if (todayStr === eventStr) {
+    eventPhase = 'event_day';
+  } else if (now > eventDate) {
+    eventPhase = 'after_event';
+  } else {
+    eventPhase = 'before_event';
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -123,23 +140,61 @@ export default function PublicCosplayPage() {
 
       {/* Locked / Unlocked Condition */}
       {!isPublished ? (
-        /* Locked Status Card during Jury Evaluation */
+        /* Locked Status Card with 3 Date Phase Cases */
         <div className="glass-card-gold rounded-3xl p-8 border-2 border-amber-400/60 text-center space-y-4 shadow-gold-glow my-8">
           <div className="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-amber-400 shadow-glow animate-pulse">
             <Lock className="w-8 h-8" />
           </div>
-          <div className="space-y-2 max-w-lg mx-auto">
-            <h2 className="text-2xl font-black text-white">
-              Pengumuman Pemenang Lomba Cosplay <span className="text-gradient-gold">Belum Dipublikasikan</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Hasil penilaian resmi Lomba Cosplay (Presiden RI & Pahlawan Nasional) oleh Tim Juri (<strong className="text-amber-300">Bapak Sofyan Jamaludin, S.H.I.</strong> & <strong className="text-amber-300">Bapak H. Mulyana, S.H., M.M.</strong>) akan ditayangkan secara live pada Puncak Perayaan 17 Agustus 2026 setelah disahkan oleh Sie Acara!
-            </p>
-          </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/80 border border-amber-500/40 text-amber-400 text-xs font-bold animate-pulse">
-            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            <span>Menunggu Pengesahan Sie Acara...</span>
-          </div>
+
+          {eventPhase === 'before_event' ? (
+            /* Case 1: Sebelum Hari-H */
+            <>
+              <div className="space-y-2 max-w-lg mx-auto">
+                <h2 className="text-2xl font-black text-white">
+                  Pengumuman Pemenang Lomba Cosplay <span className="text-gradient-gold">Akan Datang</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Hasil penilaian resmi Lomba Cosplay Pahlawan Nasional oleh Tim Juri (<strong className="text-amber-300">Bapak Sofyan Jamaludin, S.H.I.</strong> & <strong className="text-amber-300">Bapak H. Mulyana, S.H., M.M.</strong>) akan ditayangkan secara live pada Puncak Perayaan 17 Agustus setelah disahkan oleh Sie Acara!
+                </p>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/80 border border-amber-500/40 text-amber-400 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>⏳ Acara Dilaksanakan 17 Agustus</span>
+              </div>
+            </>
+          ) : eventPhase === 'event_day' ? (
+            /* Case 2: Hari-H (17 Agustus) */
+            <>
+              <div className="space-y-2 max-w-lg mx-auto">
+                <h2 className="text-2xl font-black text-white">
+                  Penilaian Lomba Cosplay <span className="text-gradient-gold">Sedang Berlangsung</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Tim Juri (<strong className="text-amber-300">Bapak Sofyan Jamaludin, S.H.I.</strong> & <strong className="text-amber-300">Bapak H. Mulyana, S.H., M.M.</strong>) sedang menguji dan menginput skor instrumen penilaian peserta di lokasi perayaan. Klasemen Pemenang akan secara otomatis dibuka dari Panggung Utama setelah pengesahan Sie Acara!
+                </p>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/80 border border-amber-500/40 text-amber-400 text-xs font-bold animate-pulse">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>Menunggu Pengesahan Sie Acara...</span>
+              </div>
+            </>
+          ) : (
+            /* Case 3: Setelah Hari-H & Belum Di-publish */
+            <>
+              <div className="space-y-2 max-w-lg mx-auto">
+                <h2 className="text-2xl font-black text-white">
+                  Pengumuman Pemenang Lomba Cosplay <span className="text-gradient-gold">Belum Dipublikasikan</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Proses penilaian Lomba Cosplay Pahlawan Nasional telah selesai dilaksanakan. Pengumuman Pemenang resmi sedang menunggu konfirmasi pengesahan & peluncuran oleh Sie Acara!
+                </p>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/80 border border-amber-500/40 text-amber-400 text-xs font-bold">
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <span>🔒 Pengumuman Terkunci oleh Sie Acara</span>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         /* Published Winners Podium & Full Leaderboard */
