@@ -317,7 +317,7 @@ export const StageVisualizer: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
               <Sparkles className="w-4 h-4" />
-              <span>WALL OF MERDEKA • SLIDESHOW TERBARU</span>
+              <span>WALL OF MERDEKA • SLIDESHOW TWIBBON</span>
             </div>
             <span className="text-xs text-slate-400 font-bold">
               Foto {currentSlideIndex + 1} dari {galleryItems.length}
