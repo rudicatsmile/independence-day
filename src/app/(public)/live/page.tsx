@@ -84,7 +84,7 @@ export default function LivePage() {
             isSaluteAnimating ? 'scale-110' : 'hover:scale-105'
           }`}
         >
-          <span className="text-4xl">🫡</span>
+          <img src="/hormat.png" alt="Hormat" className="w-14 h-14 object-contain drop-shadow-md" />
           <span className="text-xs font-black tracking-wider uppercase mt-1">HORMAT!</span>
         </button>
 
