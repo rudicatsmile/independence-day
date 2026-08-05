@@ -44,6 +44,9 @@ export const StageVisualizer: React.FC = () => {
   const [editYearInput, setEditYearInput] = useState(eventYearNumber);
   const [isSavingHeader, setIsSavingHeader] = useState(false);
 
+  // Objective Committee Inspection Modal State
+  const [selectedParticipant, setSelectedParticipant] = useState<Profile | null>(null);
+
   const refreshLeaderboard = async () => {
     const data = await fetchLeaderboardFromSupabase();
     setLeaderboard(data.slice(0, 5));
@@ -372,7 +375,7 @@ export const StageVisualizer: React.FC = () => {
           <div className="pt-2 border-t border-slate-800 space-y-2">
             <div className="flex items-center justify-between text-xs font-bold">
               <span className="text-amber-400 flex items-center gap-1">
-                <Trophy className="w-4 h-4" /> LEADERBOARD TOP 5 KEMERDEKAAN (STRICT LIVE DB)
+                <Trophy className="w-4 h-4" /> TOP 5 POINT TERATAS
               </span>
               <span className="text-slate-400 text-[10px]">Data Murni Database Profiles ({leaderboard.length} Peserta)</span>
             </div>
@@ -382,11 +385,13 @@ export const StageVisualizer: React.FC = () => {
                 {leaderboard.map((item, idx) => (
                   <div
                     key={item.id || idx}
-                    className={`p-2 rounded-xl border text-center transition-all ${
+                    onClick={() => setSelectedParticipant(item)}
+                    className={`p-2 rounded-xl border text-center transition-all cursor-pointer hover:scale-105 ${
                       idx === 0
                         ? 'glass-card-gold border-amber-400 text-amber-300 font-bold shadow-gold-glow'
-                        : 'glass-card border-slate-800 text-slate-300'
+                        : 'glass-card border-slate-800 text-slate-300 hover:border-amber-400/50'
                     }`}
+                    title="Klik untuk inspeksi foto Twibbon & Selfie Guru"
                   >
                     <div className="text-[10px] font-black text-amber-400">#{idx + 1}</div>
                     <p className="text-[11px] font-bold text-white truncate">{item.full_name}</p>
@@ -481,6 +486,124 @@ export const StageVisualizer: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Participant Inspector Modal for Committee/Panitia Objective Verification */}
+      {selectedParticipant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-2xl glass-card-gold rounded-3xl p-6 border-2 border-amber-400/60 space-y-4 shadow-gold-glow relative max-h-[90vh] overflow-y-auto text-left">
+            <div className="flex items-center justify-between border-b border-amber-500/30 pb-3">
+              <div>
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">
+                  INSPEKSI OBJEKTIF PANITIA • TOP 5 POIN TERATAS
+                </span>
+                <h3 className="text-xl font-black text-white flex items-center gap-2">
+                  <span>{selectedParticipant.full_name}</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-mono font-bold border border-amber-400/40">
+                    {selectedParticipant.total_points} PTS
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-300">
+                  Lembaga / Instansi: <strong className="text-amber-300">{selectedParticipant.instansi || 'Yayasan Al-Wathoniyah 9'}</strong>
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedParticipant(null)}
+                className="p-2 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Photos Grid for Inspection */}
+            {(() => {
+              const userPhotos = galleryItems.filter(
+                (g) => g.user_id === selectedParticipant.id || g.user_name === selectedParticipant.full_name
+              );
+              const twibbonPhoto = userPhotos.find(
+                (g) => !g.caption?.toLowerCase().includes('guru')
+              ) || userPhotos[0];
+              const guruPhoto = userPhotos.find(
+                (g) => g.caption?.toLowerCase().includes('guru')
+              );
+
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  {/* Card 1: Foto Twibbon */}
+                  <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-amber-400" /> Foto Twibbon Upload
+                      </span>
+                      {twibbonPhoto && (
+                        <span className="text-[10px] text-emerald-400 font-bold">✓ Terverifikasi</span>
+                      )}
+                    </div>
+
+                    {twibbonPhoto ? (
+                      <div className="aspect-square w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-700 relative">
+                        <img
+                          src={twibbonPhoto.image_url}
+                          alt={twibbonPhoto.caption || 'Twibbon Participant'}
+                          className="w-full h-full object-cover"
+                        />
+                        <p className="absolute bottom-0 inset-x-0 p-2 text-[10px] bg-black/70 text-slate-200 line-clamp-1">
+                          {twibbonPhoto.caption || 'Twibbon Photobooth'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="aspect-square w-full rounded-xl bg-slate-900/50 border border-dashed border-slate-800 flex flex-col items-center justify-center text-center p-4 space-y-1">
+                        <span className="text-2xl">🖼️</span>
+                        <p className="text-xs font-bold text-slate-400">Belum Ada Foto Twibbon</p>
+                        <p className="text-[10px] text-slate-500">Peserta belum mengunggah twibbon ke galeri</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card 2: Foto Selfie Bersama Guru Patriot */}
+                  <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                        <Trophy className="w-4 h-4 text-amber-400" /> Selfie bersama Guru Patriot
+                      </span>
+                      {guruPhoto && (
+                        <span className="text-[10px] text-emerald-400 font-bold">✓ Terverifikasi</span>
+                      )}
+                    </div>
+
+                    {guruPhoto ? (
+                      <div className="aspect-square w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-700 relative">
+                        <img
+                          src={guruPhoto.image_url}
+                          alt={guruPhoto.caption || 'Selfie Guru'}
+                          className="w-full h-full object-cover"
+                        />
+                        <p className="absolute bottom-0 inset-x-0 p-2 text-[10px] bg-black/70 text-slate-200 line-clamp-1">
+                          {guruPhoto.caption || 'Selfie bersama Guru Patriot'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="aspect-square w-full rounded-xl bg-slate-900/50 border border-dashed border-slate-800 flex flex-col items-center justify-center text-center p-4 space-y-1">
+                        <span className="text-2xl">📸</span>
+                        <p className="text-xs font-bold text-slate-400">Belum Mengunggah Foto Guru</p>
+                        <p className="text-[10px] text-slate-500">Peserta belum menyelesaikan Misi Selfie Guru Patriot</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="pt-2 text-right border-t border-amber-500/20">
+              <button
+                onClick={() => setSelectedParticipant(null)}
+                className="px-6 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-xs hover:bg-slate-800"
+              >
+                Tutup Inspeksi Panitia
+              </button>
+            </div>
           </div>
         </div>
       )}
