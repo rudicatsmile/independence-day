@@ -119,67 +119,6 @@ export default function HomePage() {
             )}
           </div>
         </div>
-
-        {/* Quick Action Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          <Link
-            href="/twibbon"
-            className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
-          >
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-2">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <p className="text-xs font-bold text-white">Twibbon Photobooth</p>
-            <p className="text-[10px] text-slate-400">Buat bingkai 17-an</p>
-          </Link>
-
-          {!isLoggedIn ? (
-            <button
-              type="button"
-              onClick={() => setIsAuthModalOpen(true)}
-              className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105 w-full"
-            >
-              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-2">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <p className="text-xs font-bold text-white">Selfie Guru Patriot</p>
-              <p className="text-[10px] text-amber-300 font-semibold">Foto & Klaim +150 PTS</p>
-            </button>
-          ) : (
-            <Link
-              href="/selfie-guru"
-              className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
-            >
-              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-2">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <p className="text-xs font-bold text-white">Selfie Guru Patriot</p>
-              <p className="text-[10px] text-amber-300 font-semibold">Foto & Klaim +150 PTS</p>
-            </Link>
-          )}
-
-          <Link
-            href="/live"
-            className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
-          >
-            <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center mb-2">
-              <Radio className="w-4 h-4" />
-            </div>
-            <p className="text-xs font-bold text-white">Hormat Bendera ({saluteCount})</p>
-            <p className="text-[10px] text-slate-400">Tekan Hormat!</p>
-          </Link>
-
-          <Link
-            href="/passport"
-            className="p-3 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 text-left transition-all hover:scale-105"
-          >
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2">
-              <Trophy className="w-4 h-4" />
-            </div>
-            <p className="text-xs font-bold text-white">Paspor & Badge</p>
-            <p className="text-[10px] text-slate-400">Gelar Achievement</p>
-          </Link>
-        </div>
       </div>
 
       {/* Admin Panel Quick Banner */}

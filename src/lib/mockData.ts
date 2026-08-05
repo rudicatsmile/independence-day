@@ -123,8 +123,8 @@ export const MOCK_MISSIONS: Mission[] = [
   {
     id: 'm-01',
     slug: 'selfie-patriotik',
-    title: 'Selfie Patriotik 17-an',
-    description: 'Ambil foto selfie terbaikmu dengan busana adat / pakaian tema Merah Putih!',
+    title: 'Buat Twibbon Photobooth',
+    description: 'Buat twibbon dengan foto terbaik dan upload ke layar utama',
     type: 'checkin',
     points_reward: 100,
     icon_name: 'Camera',
@@ -170,8 +170,8 @@ export const MOCK_MISSIONS: Mission[] = [
   {
     id: 'm-06',
     slug: 'selfie-guru',
-    title: 'Selfie Bersama Guru Patriot',
-    description: 'Pilih nama guru favoritmu, jepret foto selfie bersama, dan dapatkan tambahan +150 PTS!',
+    title: 'Selfie kebersamaan',
+    description: 'Pilih teman favoritmu, jepret foto selfie bersama, dan dapatkan tambahan +150 PTS!',
     type: 'checkin',
     points_reward: 150,
     icon_name: 'GraduationCap',
