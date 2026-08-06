@@ -1047,3 +1047,41 @@ export async function fetchAdminStatsFromSupabase(): Promise<{
     return defaults;
   }
 }
+
+/**
+ * Fetch all profiles for Admin Role Management
+ */
+export async function fetchAllProfilesForAdmin(): Promise<Profile[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('full_name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching all profiles for admin:', error);
+    return [];
+  }
+
+  return data as Profile[];
+}
+
+/**
+ * Update a user's role
+ */
+export async function updateProfileRole(userId: string, newRole: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role: newRole })
+    .eq('id', userId);
+
+  if (error) {
+    console.error('Error updating profile role:', error);
+    return false;
+  }
+
+  return true;
+}

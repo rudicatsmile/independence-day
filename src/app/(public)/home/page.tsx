@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp } from 'lucide-react';
+import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp, UserCog } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
+import RoleManagementModal from '@/components/admin/RoleManagementModal';
 import { fetchLiveEventHeaderFromSupabase, fetchFullLeaderboardFromSupabase } from '@/lib/supabase/services';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Profile } from '@/lib/types';
@@ -30,7 +31,7 @@ export default function HomePage() {
   const [eventYearNumber, setEventYearNumber] = useState('81');
   const [leaderboard, setLeaderboard] = useState<Profile[]>([]);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
-
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   useEffect(() => {
     // Initial fetch for dynamic event title, date, & year number from Supabase Cloud
@@ -231,18 +232,33 @@ export default function HomePage() {
             )}
 
             {isAdmin && (
-              <Link
-                href="/admin/dashboard"
-                className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-white">Dashboard Statistik</p>
-                  <p className="text-[10px] text-blue-300">Statistik & Kontrol Fitur</p>
-                </div>
-              </Link>
+              <>
+                <Link
+                  href="/admin/dashboard"
+                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Dashboard Statistik</p>
+                    <p className="text-[10px] text-blue-300">Statistik & Kontrol Fitur</p>
+                  </div>
+                </Link>
+                
+                <button
+                  onClick={() => setIsRoleModalOpen(true)}
+                  className="p-4 text-left rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                    <UserCog className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Manajemen Akses & Role</p>
+                    <p className="text-[10px] text-amber-300">Angkat Panitia & Juri</p>
+                  </div>
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -406,6 +422,12 @@ export default function HomePage() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+      />
+
+      {/* Role Management Modal Popup */}
+      <RoleManagementModal 
+        isOpen={isRoleModalOpen}
+        onClose={() => setIsRoleModalOpen(false)}
       />
     </div>
   );
