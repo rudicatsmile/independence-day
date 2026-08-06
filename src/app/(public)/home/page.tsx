@@ -205,6 +205,19 @@ export default function HomePage() {
             </Link>
 
             <Link
+              href="/admin/cosplay"
+              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+            >
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <Trophy className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">Panel Penilaian Cosplay</p>
+                <p className="text-[10px] text-purple-300">Input Peserta & Publikasi</p>
+              </div>
+            </Link>
+
+            <Link
               href="/admin/dashboard"
               className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
             >
