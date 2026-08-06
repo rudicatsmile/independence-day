@@ -630,8 +630,13 @@ export async function fetchCosplayParticipantsFromSupabase(category: CosplayCate
     .select('*')
     .eq('category', category);
 
-  if (pErr || !participants || participants.length === 0) {
-    return MOCK_COSPLAY_PARTICIPANTS.filter((p) => p.category === category);
+  if (pErr) {
+    console.error('Error fetching cosplay participants:', pErr);
+    return [];
+  }
+
+  if (!participants || participants.length === 0) {
+    return [];
   }
 
   const pIds = participants.map((p) => p.id);
