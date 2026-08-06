@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, MapPin, Trophy, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp } from 'lucide-react';
+import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -153,15 +153,15 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="/admin/map"
+              href="/admin/cosplay/chief"
               className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
             >
-              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center">
-                <MapPin className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <Crown className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-white">Kelola Peta QR Hunt</p>
-                <p className="text-[10px] text-amber-300">Atur Titik & Radius GPS</p>
+                <p className="text-xs font-bold text-white">Chief Referee Cosplay</p>
+                <p className="text-[10px] text-purple-300">Pengesahan Pemenang</p>
               </div>
             </Link>
 

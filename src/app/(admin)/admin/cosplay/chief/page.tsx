@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Trophy, Crown, CheckCircle2, AlertTriangle, Lock, Unlock, KeyRound, RefreshCw, Star, Users, Eye, Sparkles } from 'lucide-react';
+import { ShieldCheck, Trophy, Crown, CheckCircle2, AlertTriangle, Lock, Unlock, KeyRound, RefreshCw, Star, Users, Eye, Sparkles, UserPlus, X, Save } from 'lucide-react';
 import { CosplayCategory, CosplayParticipant } from '@/lib/types';
 import { COSPLAY_JUDGES, COSPLAY_CRITERIA_MAP } from '@/lib/mockData';
 import {
   fetchCosplayParticipantsFromSupabase,
   fetchCosplayPublishedStatusFromSupabase,
   updateCosplayPublishedStatusInSupabase,
+  saveCosplayParticipantToSupabase,
 } from '@/lib/supabase/services';
 import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
@@ -23,6 +24,13 @@ export default function ChiefCosplayRefereePage() {
   const [isPublished, setIsPublished] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDetailParticipant, setSelectedDetailParticipant] = useState<CosplayParticipant | null>(null);
+
+  // Add Participant Modal State
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newClass, setNewClass] = useState('');
+  const [newCharacter, setNewCharacter] = useState('');
+  const [isSavingParticipant, setIsSavingParticipant] = useState(false);
 
   const criteriaList = COSPLAY_CRITERIA_MAP[activeCategory];
   const judge1Name = COSPLAY_JUDGES[0]; // Bapak Sofyan Jamaludin,S.H.I.
@@ -98,6 +106,30 @@ export default function ChiefCosplayRefereePage() {
     }
   };
 
+  const handleAddParticipant = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingParticipant(true);
+
+    const { error } = await saveCosplayParticipantToSupabase({
+      name: newName,
+      class_level: newClass,
+      character_name: newCharacter,
+      category: activeCategory,
+    });
+
+    setIsSavingParticipant(false);
+
+    if (error) {
+      alert('Gagal menambah peserta: ' + error);
+    } else {
+      setNewName('');
+      setNewClass('');
+      setNewCharacter('');
+      setIsAddModalOpen(false);
+      loadData();
+    }
+  };
+
   // Calculate jury completion stats
   const judge1CompletedCount = participants.filter((p) => !!p.scores_by_judge?.[judge1Name]).length;
   const judge2CompletedCount = participants.filter((p) => !!p.scores_by_judge?.[judge2Name]).length;
@@ -169,8 +201,15 @@ export default function ChiefCosplayRefereePage() {
             </p>
           </div>
 
-          {/* Toggle Official Winner Release Button */}
-          <div className="shrink-0 w-full md:w-auto">
+          {/* Toggle Official Winner Release & Add Participant Buttons */}
+          <div className="shrink-0 w-full md:w-auto flex flex-col gap-2">
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full px-5 py-3 rounded-2xl font-black text-xs sm:text-sm bg-slate-900 border border-amber-400/50 text-amber-300 flex items-center justify-center gap-2 transition-all hover:bg-slate-800"
+            >
+              <UserPlus className="w-5 h-5" />
+              <span>TAMBAH PESERTA BARU (SIE ACARA)</span>
+            </button>
             <button
               onClick={handleTogglePublish}
               className={`w-full md:w-auto px-5 py-3.5 rounded-2xl font-black text-xs sm:text-sm shadow-gold-glow flex items-center justify-center gap-2.5 transition-all hover:scale-105 ${
@@ -442,6 +481,76 @@ export default function ChiefCosplayRefereePage() {
                 Tutup Inspeksi
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Participant Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md glass-card-gold rounded-3xl p-6 border border-amber-400/60 space-y-5 shadow-gold-glow relative">
+            <div className="flex items-center justify-between border-b border-amber-500/30 pb-3">
+              <h3 className="text-lg font-black text-white">Tambah Peserta Cosplay Baru</h3>
+              <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddParticipant} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 block">Nama Peserta:</label>
+                <input
+                  type="text"
+                  required
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  placeholder="Contoh: Ahmad Sofyan"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 block">Kelas:</label>
+                <input
+                  type="text"
+                  required
+                  value={newClass}
+                  onChange={(e) => setNewClass(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  placeholder="Contoh: A / B1 / SD / SMP / DP-1"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 block">Tokoh yang Diperankan:</label>
+                <input
+                  type="text"
+                  required
+                  value={newCharacter}
+                  onChange={(e) => setNewCharacter(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  placeholder="Contoh: Ir. Soekarno / Cut Nyak Dhien"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 font-bold text-xs"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingParticipant}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow flex items-center gap-1.5"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSavingParticipant ? 'Menyimpan...' : 'Simpan Peserta'}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
