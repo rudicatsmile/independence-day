@@ -95,7 +95,7 @@ export default function PublicCosplayPage() {
           Klasemen Penilaian <span className="text-gradient-gold">Lomba Cosplay</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-          Presiden RI & Pahlawan Nasional • Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta
+          Presiden RI & Pahlawan Nasional • Yayasan Al-Wathoniyah Asshodriyah 9
         </p>
       </div>
 
@@ -104,8 +104,8 @@ export default function PublicCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_dini')}
           className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_dini'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-xl block mb-1">🧸</span>
@@ -116,8 +116,8 @@ export default function PublicCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_menengah')}
           className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_menengah'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-xl block mb-1">🎒</span>
@@ -128,8 +128,8 @@ export default function PublicCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_atas')}
           className={`p-3 rounded-2xl border text-center transition-all ${activeCategory === 'usia_atas'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-xl block mb-1">🎓</span>

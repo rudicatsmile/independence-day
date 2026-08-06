@@ -67,7 +67,7 @@ export const Navbar: React.FC = () => {
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 border border-amber-400/50 p-1 flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform overflow-hidden shrink-0">
               <img
                 src="/logo-yayasan.png"
-                alt="Logo Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta"
+                alt="Logo Yayasan Al-Wathoniyah Asshodriyah 9"
                 className="w-full h-full object-contain"
               />
             </div>

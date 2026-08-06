@@ -25,7 +25,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-          Yayasan Al-Wathoniyah <span className="text-gradient-gold">Asshodriyah 9 Jakarta</span>
+          Yayasan Al-Wathoniyah <span className="text-gradient-gold">Asshodriyah 9</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
           Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Wall of Merdeka, dan Gerakan Penghormatan Bendera di Panggung Utama!

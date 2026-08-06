@@ -188,7 +188,7 @@ export default function AdminCosplayPage() {
               Penilaian Cosplay Presiden RI & Pahlawan Nasional
             </h1>
             <p className="text-xs sm:text-sm text-slate-300">
-              Yayasan Al-Wathoniyah Asshodriyah 9 Jakarta • Perayaan Kemerdekaan RI ke-81
+              Yayasan Al-Wathoniyah Asshodriyah 9 • Perayaan Kemerdekaan RI ke-81
             </p>
           </div>
 
@@ -197,8 +197,8 @@ export default function AdminCosplayPage() {
             <button
               onClick={handleTogglePublish}
               className={`px-4 py-2.5 rounded-xl font-black text-xs shadow-gold-glow flex items-center gap-2 transition-all ${isPublished
-                  ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400'
-                  : 'bg-slate-900 border border-amber-400/50 text-amber-300 hover:bg-slate-800'
+                ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400'
+                : 'bg-slate-900 border border-amber-400/50 text-amber-300 hover:bg-slate-800'
                 }`}
             >
               {isPublished ? (
@@ -242,8 +242,8 @@ export default function AdminCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_dini')}
           className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_dini'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-2xl block mb-1">🧸</span>
@@ -254,8 +254,8 @@ export default function AdminCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_menengah')}
           className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_menengah'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-2xl block mb-1">🎒</span>
@@ -266,8 +266,8 @@ export default function AdminCosplayPage() {
         <button
           onClick={() => setActiveCategory('usia_atas')}
           className={`p-4 rounded-2xl border text-center transition-all ${activeCategory === 'usia_atas'
-              ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
-              : 'glass-card border-slate-800 text-slate-400 hover:text-white'
+            ? 'glass-card-gold border-amber-400 scale-102 shadow-gold-glow'
+            : 'glass-card border-slate-800 text-slate-400 hover:text-white'
             }`}
         >
           <span className="text-2xl block mb-1">🎓</span>
