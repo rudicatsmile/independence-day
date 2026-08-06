@@ -30,7 +30,6 @@ export default function HomePage() {
   const [leaderboard, setLeaderboard] = useState<Profile[]>([]);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
 
-  const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
 
   useEffect(() => {
     // Initial fetch for dynamic event title, date, & year number from Supabase Cloud
