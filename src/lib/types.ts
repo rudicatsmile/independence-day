@@ -11,6 +11,7 @@ export interface Profile {
   total_points: number;
   onboarding_completed: boolean;
   rank?: number;
+  judge_id?: string;
 }
 
 export type MissionType = 'checkin' | 'qr_hunt' | 'quiz' | 'video' | 'referral';

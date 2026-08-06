@@ -22,7 +22,7 @@ export default function AdminCosplayPage() {
   const isJuri = isLoggedIn && (profile.role === 'admin' || profile.role === 'juri_cosplay');
 
   const [activeCategory, setActiveCategory] = useState<CosplayCategory>('usia_dini');
-  const [selectedJudge, setSelectedJudge] = useState<string>(COSPLAY_JUDGES[0]);
+  const selectedJudge = profile?.judge_id === 'judge_2' ? COSPLAY_JUDGES[1] : COSPLAY_JUDGES[0];
   const [participants, setParticipants] = useState<CosplayParticipant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
@@ -224,23 +224,16 @@ export default function AdminCosplayPage() {
           </div>
         </div>
 
-        {/* Judge Selector Dropdown */}
+        {/* Judge Identity Badge */}
         <div className="pt-2 border-t border-amber-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <UserCheck className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-bold text-amber-300">Pilih Identitas Juri Penilai:</span>
+            <span className="text-xs font-bold text-amber-300">Identitas Juri Aktif:</span>
           </div>
-          <select
-            value={selectedJudge}
-            onChange={(e) => setSelectedJudge(e.target.value)}
-            className="bg-slate-950 border border-amber-400/50 rounded-xl px-4 py-2 text-xs font-bold text-amber-300 focus:outline-none focus:border-amber-400 cursor-pointer"
-          >
-            {COSPLAY_JUDGES.map((j) => (
-              <option key={j} value={j} className="bg-slate-900 text-white">
-                👨‍⚖️ {j}
-              </option>
-            ))}
-          </select>
+          <div className="bg-slate-900 border border-amber-400/50 rounded-xl px-4 py-2 flex items-center gap-2">
+            <span>👨‍⚖️</span>
+            <span className="text-xs font-bold text-amber-300">{selectedJudge}</span>
+          </div>
         </div>
       </div>
 

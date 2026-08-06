@@ -38,12 +38,12 @@ export default function RoleManagementModal({ isOpen, onClose }: RoleManagementM
     setIsLoading(false);
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRole, judgeId?: string) => {
     setUpdatingId(userId);
-    const success = await updateProfileRole(userId, newRole);
+    const success = await updateProfileRole(userId, newRole, judgeId);
     if (success) {
       setProfiles((prev) =>
-        prev.map((p) => (p.id === userId ? { ...p, role: newRole } : p))
+        prev.map((p) => (p.id === userId ? { ...p, role: newRole, judge_id: judgeId } : p))
       );
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 3000);
@@ -128,22 +128,37 @@ export default function RoleManagementModal({ isOpen, onClose }: RoleManagementM
                     <p className="text-xs text-slate-400 mt-1">{profile.instansi}</p>
                   </div>
                   
-                  <div className="flex items-center gap-3">
-                    {updatingId === profile.id && (
-                      <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
+                  <div className="flex flex-col gap-2 items-end">
+                    <div className="flex items-center gap-3">
+                      {updatingId === profile.id && (
+                        <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
+                      )}
+                      <select
+                        value={profile.role}
+                        onChange={(e) => handleRoleChange(profile.id, e.target.value as UserRole, profile.judge_id)}
+                        disabled={updatingId === profile.id}
+                        className="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50 disabled:opacity-50 min-w-[150px] appearance-none cursor-pointer"
+                      >
+                        {ROLE_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {profile.role === 'juri_cosplay' && (
+                      <select
+                        value={profile.judge_id || ''}
+                        onChange={(e) => handleRoleChange(profile.id, profile.role, e.target.value)}
+                        disabled={updatingId === profile.id}
+                        className="bg-purple-950 border border-purple-500/40 rounded-xl px-3 py-1.5 text-xs font-bold text-purple-200 focus:outline-none focus:border-purple-400 disabled:opacity-50 min-w-[150px] appearance-none cursor-pointer"
+                      >
+                        <option value="" disabled>-- Pilih Identitas Juri --</option>
+                        <option value="judge_1">Juri 1 (Bapak Sofyan)</option>
+                        <option value="judge_2">Juri 2 (Bapak H. Mulyana)</option>
+                      </select>
                     )}
-                    <select
-                      value={profile.role}
-                      onChange={(e) => handleRoleChange(profile.id, e.target.value as UserRole)}
-                      disabled={updatingId === profile.id}
-                      className="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50 disabled:opacity-50 min-w-[150px] appearance-none cursor-pointer"
-                    >
-                      {ROLE_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
                   </div>
                 </div>
               ))}

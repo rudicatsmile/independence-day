@@ -1070,12 +1070,23 @@ export async function fetchAllProfilesForAdmin(): Promise<Profile[]> {
 /**
  * Update a user's role
  */
-export async function updateProfileRole(userId: string, newRole: string): Promise<boolean> {
+export async function updateProfileRole(userId: string, newRole: string, judgeId?: string | null): Promise<boolean> {
   if (!isSupabaseConfigured()) return false;
+
+  const updateData: any = { role: newRole };
+  
+  if (newRole === 'juri_cosplay') {
+    if (judgeId !== undefined) {
+      updateData.judge_id = judgeId;
+    }
+  } else {
+    // If not a jury, ensure judge_id is null
+    updateData.judge_id = null;
+  }
 
   const { error } = await supabase
     .from('profiles')
-    .update({ role: newRole })
+    .update(updateData)
     .eq('id', userId);
 
   if (error) {
