@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   BarChart3, Users, Camera, Heart, HelpCircle, Flag, Vote,
   ArrowLeft, RefreshCw, Clock, Megaphone, Trophy, Music,
-  ToggleLeft, ToggleRight, Save, Timer
+  ToggleLeft, ToggleRight, Save, Timer, Sparkles
 } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
