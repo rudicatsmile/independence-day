@@ -90,7 +90,7 @@ export const TwibbonGenerator: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.drawImage(videoRef.current, 0, 0, 1080, 1080);
-      const dataUrl = canvas.toDataURL('image/png', 0.95);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       setImageSrc(dataUrl);
       setIsSavedToGallery(false);
       setZoomScale(1.0);
@@ -228,7 +228,7 @@ export const TwibbonGenerator: React.FC = () => {
 
     function finishRender() {
       if (canvasRef.current) {
-        setGeneratedDataUrl(canvasRef.current.toDataURL('image/png'));
+        setGeneratedDataUrl(canvasRef.current.toDataURL('image/jpeg', 0.8));
       }
       setIsProcessing(false);
     }

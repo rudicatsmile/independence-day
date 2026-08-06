@@ -805,3 +805,200 @@ export async function resetPollVotesInSupabase(): Promise<{ error: string | null
   if (error) return { error: error.message };
   return { error: null };
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// NEW FEATURES: Countdown Timer, Announcement, Leaderboard, Admin Stats, SFX
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Fetch all live event toggles & extra fields from Supabase (countdown, announcement, leaderboard, sfx)
+ */
+export async function fetchLiveEventExtrasFromSupabase(): Promise<{
+  countdown_target_time: string | null;
+  countdown_enabled: boolean;
+  announcement_text: string;
+  announcement_enabled: boolean;
+  leaderboard_enabled: boolean;
+  sfx_enabled: boolean;
+}> {
+  const defaults = {
+    countdown_target_time: null,
+    countdown_enabled: false,
+    announcement_text: '',
+    announcement_enabled: false,
+    leaderboard_enabled: true,
+    sfx_enabled: true,
+  };
+
+  if (!isSupabaseConfigured()) return defaults;
+
+  const { data, error } = await supabase
+    .from('live_event_state')
+    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled')
+    .eq('id', 'main')
+    .single();
+
+  if (error || !data) return defaults;
+
+  return {
+    countdown_target_time: data.countdown_target_time ?? null,
+    countdown_enabled: data.countdown_enabled ?? false,
+    announcement_text: data.announcement_text ?? '',
+    announcement_enabled: data.announcement_enabled ?? false,
+    leaderboard_enabled: data.leaderboard_enabled ?? true,
+    sfx_enabled: data.sfx_enabled ?? true,
+  };
+}
+
+/**
+ * Update Countdown Timer target time and enabled flag by Admin
+ */
+export async function updateCountdownInSupabase(
+  targetTime: string | null,
+  enabled: boolean
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      countdown_target_time: targetTime,
+      countdown_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Update Running Text Announcement by Admin
+ */
+export async function updateAnnouncementInSupabase(
+  text: string,
+  enabled: boolean
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      announcement_text: text,
+      announcement_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Update Leaderboard visibility toggle by Admin
+ */
+export async function updateLeaderboardToggleInSupabase(enabled: boolean): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      leaderboard_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Update SFX toggle by Admin
+ */
+export async function updateSfxToggleInSupabase(enabled: boolean): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      sfx_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Fetch Full Leaderboard (all participants, no limit) for public view
+ */
+export async function fetchFullLeaderboardFromSupabase(): Promise<Profile[]> {
+  if (!isSupabaseConfigured()) return MOCK_LEADERBOARD;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('total_points', { ascending: false });
+
+  if (error || !data) return MOCK_LEADERBOARD;
+  return (data || []).map((p, idx) => ({ ...p, rank: idx + 1 }));
+}
+
+/**
+ * Fetch Admin Dashboard Statistics (aggregated counts) from Supabase
+ */
+export async function fetchAdminStatsFromSupabase(): Promise<{
+  totalParticipants: number;
+  totalTwibbonPhotos: number;
+  totalSelfiePhotos: number;
+  totalQuizCompleted: number;
+  totalSaluteCount: number;
+  totalPollVotes: number;
+}> {
+  const defaults = {
+    totalParticipants: 0,
+    totalTwibbonPhotos: 0,
+    totalSelfiePhotos: 0,
+    totalQuizCompleted: 0,
+    totalSaluteCount: 1945,
+    totalPollVotes: 0,
+  };
+
+  if (!isSupabaseConfigured()) return defaults;
+
+  try {
+    // Fetch all stats in parallel
+    const [profilesRes, galleryRes, saluteRes, pollRes, quizMissionsRes] = await Promise.all([
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      supabase.from('gallery_items').select('id, caption'),
+      supabase.from('live_event_state').select('salute_count').eq('id', 'main').single(),
+      supabase.from('polls').select('total_votes').eq('is_active', true).single(),
+      supabase.from('user_missions').select('id', { count: 'exact', head: true }).eq('mission_id', 'm-04').eq('status', 'completed'),
+    ]);
+
+    const totalParticipants = profilesRes.count || 0;
+    const totalSaluteCount = saluteRes.data?.salute_count || 1945;
+    const totalPollVotes = pollRes.data?.total_votes || 0;
+    const totalQuizCompleted = quizMissionsRes.count || 0;
+
+    // Count gallery items by type (twibbon vs selfie) based on caption
+    const allGallery = galleryRes.data || [];
+    const totalSelfiePhotos = allGallery.filter((g: { caption?: string }) =>
+      g.caption?.toLowerCase().includes('selfie bersama')
+    ).length;
+    const totalTwibbonPhotos = allGallery.length - totalSelfiePhotos;
+
+    return {
+      totalParticipants,
+      totalTwibbonPhotos,
+      totalSelfiePhotos,
+      totalQuizCompleted,
+      totalSaluteCount,
+      totalPollVotes,
+    };
+  } catch (err) {
+    console.warn('Admin stats fetch error:', err);
+    return defaults;
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame, Settings, Save, X, Edit3, Maximize2, Minimize2, ZoomIn } from 'lucide-react';
+import { Flag, Trophy, Sparkles, Volume2, VolumeX, Tv, Flame, Settings, Save, X, Edit3, Maximize2, Minimize2, ZoomIn, Clock, Megaphone, Music } from 'lucide-react';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { useUserStore } from '@/stores/useUserStore';
 import {
@@ -15,11 +15,45 @@ import { Profile } from '@/lib/types';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
 
+function useCountdown(targetTime: string | null) {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0, expired: true });
+
+  useEffect(() => {
+    if (!targetTime) { setTimeLeft({ hours: 0, minutes: 0, seconds: 0, expired: true }); return; }
+
+    const tick = () => {
+      const diff = new Date(targetTime).getTime() - Date.now();
+      if (diff <= 0) {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0, expired: true });
+      } else {
+        setTimeLeft({
+          hours: Math.floor(diff / 3600000),
+          minutes: Math.floor((diff % 3600000) / 60000),
+          seconds: Math.floor((diff % 60000) / 1000),
+          expired: false,
+        });
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [targetTime]);
+
+  return timeLeft;
+}
+
 export const StageVisualizer: React.FC = () => {
   const saluteCount = useLiveStore((state) => state.saluteCount);
   const triggerSalute = useLiveStore((state) => state.incrementSalute);
   const activePoll = useLiveStore((state) => state.poll);
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
+
+  const countdownTargetTime = useLiveStore((state) => state.countdownTargetTime);
+  const isCountdownEnabled = useLiveStore((state) => state.isCountdownEnabled);
+  const announcementText = useLiveStore((state) => state.announcementText);
+  const isAnnouncementEnabled = useLiveStore((state) => state.isAnnouncementEnabled);
+  const isSfxEnabled = useLiveStore((state) => state.isSfxEnabled);
 
   const profile = useUserStore((state) => state.profile);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
@@ -51,6 +85,9 @@ export const StageVisualizer: React.FC = () => {
   const [isWallExpanded, setIsWallExpanded] = useState<boolean>(false);
   const [selectedPhotoForZoom, setSelectedPhotoForZoom] = useState<any | null>(null);
 
+  const countdown = useCountdown(isCountdownEnabled ? countdownTargetTime : null);
+  const pad = (n: number) => String(n).padStart(2, '0');
+
   const refreshLeaderboard = async () => {
     const data = await fetchLeaderboardFromSupabase();
     setLeaderboard(data.slice(0, 5));
@@ -72,9 +109,17 @@ export const StageVisualizer: React.FC = () => {
     refreshHeaderInfo();
 
     // Polling fallback every 3 seconds to guarantee updates
-    const lbTimer = setInterval(() => {
+    let pollCount = 0;
+    const lbTimer = setInterval(async () => {
       refreshLeaderboard();
       refreshHeaderInfo();
+      
+      // Fallback: Fetch gallery every 9 seconds to bypass Realtime 1MB limits
+      pollCount++;
+      if (pollCount % 3 === 0) {
+        const fallbackGallery = await fetchGalleryFromSupabase();
+        useUserStore.setState({ galleryItems: fallbackGallery });
+      }
     }, 3000);
 
     // Direct Realtime listener subscription on Stage Visualizer component
@@ -212,9 +257,19 @@ export const StageVisualizer: React.FC = () => {
     }
   };
 
+  const playExternalAudio = (filename: string) => {
+    if (isAudioMuted || !isSfxEnabled) return;
+    try {
+      const audio = new Audio(`/sfx/${filename}`);
+      audio.play().catch(e => console.warn('Could not play external audio (might need interaction first):', e));
+    } catch(e) {
+      console.warn('Audio play error:', e);
+    }
+  };
+
   const handleStageSalute = () => {
     triggerSalute();
-    playTrumpetSFX();
+    if (isSfxEnabled) playTrumpetSFX();
     confetti({ particleCount: 120, spread: 100, origin: { y: 0.4 } });
   };
 
@@ -256,49 +311,117 @@ export const StageVisualizer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Admin Control Button to edit Header Title & Date (Only visible to logged-in Admin) */}
+        {/* Top Right Admin Actions & Controls */}
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <div className="flex items-center gap-3">
+            {isAdmin && isSfxEnabled && (
+              <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+                <span className="text-[10px] text-amber-300 font-bold px-2 flex items-center gap-1">
+                  <Music className="w-3 h-3" /> SFX:
+                </span>
+                <button onClick={() => playExternalAudio('terompet.mp3')} className="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/30 border border-slate-700 hover:border-amber-400 text-amber-300 transition-all shadow-glow" title="Terompet Fanfare">
+                  🎺
+                </button>
+                <button onClick={() => playExternalAudio('tepuk-tangan.mp3')} className="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/30 border border-slate-700 hover:border-amber-400 text-amber-300 transition-all shadow-glow" title="Tepuk Tangan">
+                  👏
+                </button>
+                <button onClick={() => playExternalAudio('drum-roll.mp3')} className="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/30 border border-slate-700 hover:border-amber-400 text-amber-300 transition-all shadow-glow" title="Drum Roll">
+                  🥁
+                </button>
+                <button onClick={() => playExternalAudio('indonesia-raya.mp3')} className="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/30 border border-slate-700 hover:border-amber-400 text-amber-300 transition-all shadow-glow" title="Indonesia Raya">
+                  🎵
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={() => setIsAudioMuted(!isAudioMuted)}
+              className={`p-3 rounded-2xl border transition-all ${
+                isAudioMuted
+                  ? 'bg-slate-900 border-slate-700 text-slate-400'
+                  : 'bg-amber-500/20 border-amber-400/50 text-amber-300 shadow-gold-glow'
+              }`}
+              title={isAudioMuted ? 'Nyalakan Efek Suara' : 'Matikan Efek Suara'}
+            >
+              {isAudioMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+            
+            {isAdmin && (
+              <button
+                onClick={handleStageSalute}
+                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-sm uppercase shadow-gold-glow shimmer-btn hover:scale-105 active:scale-95 transition-transform flex items-center gap-2"
+              >
+                <Flame className="w-5 h-5" />
+                <span>Picu Hormat Panggung</span>
+              </button>
+            )}
+          </div>
+
           {isAdmin && (
             <button
               onClick={() => setIsAdminModalOpen(true)}
-              className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30 transition-colors flex items-center justify-center"
-              title="Kelola Header Panggung (Admin)"
+              className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-400 text-[10px] font-bold hover:bg-slate-800 hover:text-amber-300 transition-all flex items-center gap-1.5"
             >
-              <Settings className="w-5 h-5 text-amber-400" />
+              <Settings className="w-3.5 h-3.5" />
+              <span>Ubah Teks Header (Admin)</span>
             </button>
           )}
-
-          <button
-            onClick={() => setIsAudioMuted(!isAudioMuted)}
-            className="p-3 rounded-2xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-            title={isAudioMuted ? 'Unmute Audio Sirine' : 'Mute Audio Sirine'}
-          >
-            {isAudioMuted ? <VolumeX className="w-5 h-5 text-red-400" /> : <Volume2 className="w-5 h-5 text-amber-400" />}
-          </button>
-
-          <button
-            onClick={handleStageSalute}
-            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-slate-950 font-black text-xs shadow-gold-glow shimmer-btn flex items-center gap-2 hover:scale-105 transition-transform"
-          >
-            <Flame className="w-4 h-4" />
-            <span>Picu Hormat Panggung (SFX)</span>
-          </button>
         </div>
       </header>
 
-      {/* Main Grid: Visualizer Live Salute + Wall of Merdeka Carousel */}
+      {/* Running Text / Announcement Banner (Admin Controlled) */}
+      {isAnnouncementEnabled && announcementText && (
+        <div className="w-full glass-card border-y border-amber-500/40 bg-amber-500/10 py-2.5 overflow-hidden shadow-gold-glow relative z-10 flex items-center">
+          <div className="absolute left-0 top-0 bottom-0 px-4 bg-gradient-to-r from-[#070A12] via-[#070A12] to-transparent z-20 flex items-center gap-2 border-r border-amber-500/30">
+            <Megaphone className="w-5 h-5 text-amber-400 animate-pulse" />
+            <span className="text-xs font-black text-amber-300 uppercase tracking-widest hidden sm:inline">PENGUMUMAN</span>
+          </div>
+          <div className="flex-1 overflow-hidden pl-32 sm:pl-48">
+            <p className="text-xl font-black text-amber-200 whitespace-nowrap animate-marquee">
+              📢 {announcementText}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Main Stage Split Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto">
         {/* Left Column: Huge Live Salute Visualizer */}
-        <div className="lg:col-span-5 glass-card-red rounded-3xl p-8 border border-merdeka-red/50 text-center space-y-6 flex flex-col justify-between shadow-glow relative overflow-hidden">
+        <div className="lg:col-span-5 glass-card-red rounded-3xl p-6 sm:p-8 border border-merdeka-red/40 space-y-6 flex flex-col justify-center text-center shadow-2xl relative">
+          
+          {/* Main Event Title Info */}
           <div className="space-y-2">
-            <span className="text-xs font-bold text-amber-300 uppercase tracking-widest block">
-              🇮🇩 GELORA HORMAT! KEMERDEKAAN MASSAL
+            <span className="text-sm font-bold text-amber-300 uppercase tracking-widest">
+              GELORA HORMAT! KEMERDEKAAN MASAL
             </span>
-            <div className="text-6xl sm:text-7xl font-black text-white tracking-tight font-mono drop-shadow-2xl text-gradient-gold">
+            <div className="text-6xl sm:text-7xl font-black text-white drop-shadow-xl font-mono tracking-tight">
               {saluteCount.toLocaleString('id-ID')}
             </div>
             <p className="text-xs text-slate-300">Total ketukan Hormat! dari seluruh HP peserta di lokasi acara</p>
           </div>
+
+          {/* Countdown Timer Panggung */}
+          {isCountdownEnabled && !countdown.expired && (
+            <div className="glass-card bg-slate-950/80 rounded-2xl p-4 border border-amber-400/50 text-center space-y-2 shadow-gold-glow mx-auto max-w-md">
+              <div className="flex items-center justify-center gap-2 text-amber-300 text-[10px] font-bold uppercase tracking-widest">
+                <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span>Menuju Detik Proklamasi</span>
+              </div>
+              <div className="flex items-center justify-center gap-3 font-mono">
+                <div className="px-4 py-2.5 rounded-xl bg-slate-900 border border-amber-500/40 text-4xl font-black text-white shadow-glow">
+                  {pad(countdown.hours)}
+                </div>
+                <span className="text-2xl font-black text-amber-400 animate-pulse mt-2">:</span>
+                <div className="px-4 py-2.5 rounded-xl bg-slate-900 border border-amber-500/40 text-4xl font-black text-white shadow-glow">
+                  {pad(countdown.minutes)}
+                </div>
+                <span className="text-2xl font-black text-amber-400 animate-pulse mt-2">:</span>
+                <div className="px-4 py-2.5 rounded-xl bg-slate-900 border border-merdeka-red/50 text-4xl font-black text-red-400 shadow-glow">
+                  {pad(countdown.seconds)}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Giant Animated Flag Emblem */}
           <div className="relative w-56 h-56 mx-auto my-4 flex items-center justify-center">

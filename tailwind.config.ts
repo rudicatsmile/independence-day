@@ -32,6 +32,7 @@ const config: Config = {
         'gold-pulse': 'goldPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float-slow': 'float 4s ease-in-out infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        'marquee': 'marquee 15s linear infinite',
       },
       keyframes: {
         flagWave: {
@@ -49,6 +50,10 @@ const config: Config = {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 15px rgba(217, 39, 45, 0.4)' },
           '50%': { boxShadow: '0 0 35px rgba(245, 158, 11, 0.7)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
         },
       },
     },

@@ -6,6 +6,7 @@ import {
   incrementLiveSaluteInSupabase,
   fetchActivePollFromSupabase,
   submitPollVoteToSupabase,
+  fetchLiveEventExtrasFromSupabase,
 } from '@/lib/supabase/services';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
@@ -14,6 +15,15 @@ interface LiveState {
   poll: Poll;
   isAudioMuted: boolean;
   isRealtimeConnected: boolean;
+
+  // New Feature States
+  countdownTargetTime: string | null;
+  isCountdownEnabled: boolean;
+  announcementText: string;
+  isAnnouncementEnabled: boolean;
+  isLeaderboardEnabled: boolean;
+  isSfxEnabled: boolean;
+
   initLiveSupabase: (userId?: string) => Promise<void>;
   incrementSalute: () => void;
   votePoll: (userId: string, optionId: string) => Promise<void>;
@@ -26,22 +36,37 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   isAudioMuted: false,
   isRealtimeConnected: false,
 
+  // New Feature Defaults
+  countdownTargetTime: null,
+  isCountdownEnabled: false,
+  announcementText: '',
+  isAnnouncementEnabled: false,
+  isLeaderboardEnabled: true,
+  isSfxEnabled: true,
+
   initLiveSupabase: async (userId?: string) => {
     if (!isSupabaseConfigured()) return;
 
     try {
-      const [count, activePoll] = await Promise.all([
+      const [count, activePoll, extras] = await Promise.all([
         fetchLiveSaluteCountFromSupabase(),
         fetchActivePollFromSupabase(userId),
+        fetchLiveEventExtrasFromSupabase(),
       ]);
 
       set({
         saluteCount: count,
         poll: activePoll,
         isRealtimeConnected: true,
+        countdownTargetTime: extras.countdown_target_time,
+        isCountdownEnabled: extras.countdown_enabled,
+        announcementText: extras.announcement_text,
+        isAnnouncementEnabled: extras.announcement_enabled,
+        isLeaderboardEnabled: extras.leaderboard_enabled,
+        isSfxEnabled: extras.sfx_enabled,
       });
 
-      // Subscribe to Supabase Realtime for Live Salute Counter
+      // Subscribe to Supabase Realtime for Live Salute Counter + New Features
       const supabase = createClient();
       supabase
         .channel('live-salute-channel')
@@ -49,8 +74,17 @@ export const useLiveStore = create<LiveState>((set, get) => ({
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'live_event_state' },
           (payload) => {
-            if (payload.new && payload.new.salute_count) {
-              set({ saluteCount: payload.new.salute_count });
+            const newData = payload.new as Record<string, unknown>;
+            if (newData) {
+              const updates: Partial<LiveState> = {};
+              if (typeof newData.salute_count === 'number') updates.saluteCount = newData.salute_count;
+              if (typeof newData.countdown_target_time === 'string' || newData.countdown_target_time === null) updates.countdownTargetTime = newData.countdown_target_time as string | null;
+              if (typeof newData.countdown_enabled === 'boolean') updates.isCountdownEnabled = newData.countdown_enabled;
+              if (typeof newData.announcement_text === 'string') updates.announcementText = newData.announcement_text;
+              if (typeof newData.announcement_enabled === 'boolean') updates.isAnnouncementEnabled = newData.announcement_enabled;
+              if (typeof newData.leaderboard_enabled === 'boolean') updates.isLeaderboardEnabled = newData.leaderboard_enabled;
+              if (typeof newData.sfx_enabled === 'boolean') updates.isSfxEnabled = newData.sfx_enabled;
+              set(updates);
             }
           }
         )
