@@ -13,6 +13,8 @@ import { Profile } from '@/lib/types';
 export default function HomePage() {
   const profile = useUserStore((state) => state.profile);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
+  const isPanitiaCosplay = isLoggedIn && profile.role === 'panitia_cosplay';
   const missions = useUserStore((state) => state.missions);
   const userMissions = useUserStore((state) => state.userMissions);
   const saluteCount = useLiveStore((state) => state.saluteCount);
@@ -128,29 +130,30 @@ export default function HomePage() {
       </div>
 
       {/* Admin Panel Quick Banner */}
-      {isAdmin && (
+      {(isAdmin || isPanitiaCosplay) && (
         <div className="glass-card-gold rounded-3xl p-5 border border-amber-400/60 space-y-3 shadow-gold-glow">
           <div className="flex items-center gap-2 text-amber-300">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
-            <h2 className="text-base font-black text-white">Panel Kontrol Utama Administrator</h2>
+            <h2 className="text-base font-black text-white">{isAdmin ? 'Panel Kontrol Utama Administrator' : 'Panel Khusus Panitia Lomba'}</h2>
           </div>
           <p className="text-xs text-slate-300">
-            Akses khusus Panitia Utama: Kelola bingkai Twibbon publik, pemicu suara sirine panggung, & takedown galeri foto.
+            {isAdmin ? 'Akses khusus Panitia Utama: Kelola bingkai Twibbon publik, pemicu suara sirine panggung, & takedown galeri foto.' : 'Akses jalan pintas menuju halaman kontrol penilaian Cosplay.'}
           </p>
-
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
-            <Link
-              href="/admin/twibbon"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                <ImageIcon className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Kelola Bingkai Twibbon</p>
-                <p className="text-[10px] text-amber-300">Tambah/Edit PNG Custom</p>
-              </div>
-            </Link>
+            {isAdmin && (
+              <Link
+                href="/admin/twibbon"
+                className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <ImageIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Kelola Bingkai Twibbon</p>
+                  <p className="text-[10px] text-amber-300">Tambah/Edit PNG Custom</p>
+                </div>
+              </Link>
+            )}
 
             <Link
               href="/admin/cosplay/chief"
@@ -165,44 +168,48 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link
-              href="/admin/poll"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center">
-                <Radio className="w-5 h-5 text-amber-400" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Kelola Polling Lapangan</p>
-                <p className="text-[10px] text-amber-300">Atur Soal & Reset Suara</p>
-              </div>
-            </Link>
+            {isAdmin && (
+              <>
+                <Link
+                  href="/admin/poll"
+                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center">
+                    <Radio className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Kelola Polling Lapangan</p>
+                    <p className="text-[10px] text-amber-300">Atur Soal & Reset Suara</p>
+                  </div>
+                </Link>
 
-            <Link
-              href="/stage-display"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
-                <Tv className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Layar Panggung Utama</p>
-                <p className="text-[10px] text-red-300">Picu Sirine & Slideshow</p>
-              </div>
-            </Link>
+                <Link
+                  href="/stage-display"
+                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
+                    <Tv className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Layar Panggung Utama</p>
+                    <p className="text-[10px] text-red-300">Picu Sirine & Slideshow</p>
+                  </div>
+                </Link>
 
-            <Link
-              href="/gallery"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Moderasi Wall of Merdeka</p>
-                <p className="text-[10px] text-emerald-300">Takedown Konten Lapangan</p>
-              </div>
-            </Link>
+                <Link
+                  href="/gallery"
+                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Moderasi Wall of Merdeka</p>
+                    <p className="text-[10px] text-emerald-300">Takedown Konten Lapangan</p>
+                  </div>
+                </Link>
+              </>
+            )}
 
             <Link
               href="/admin/cosplay"
@@ -217,18 +224,20 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link
-              href="/admin/dashboard"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Dashboard Statistik</p>
-                <p className="text-[10px] text-blue-300">Statistik & Kontrol Fitur</p>
-              </div>
-            </Link>
+            {isAdmin && (
+              <Link
+                href="/admin/dashboard"
+                className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Dashboard Statistik</p>
+                  <p className="text-[10px] text-blue-300">Statistik & Kontrol Fitur</p>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       )}
