@@ -715,6 +715,46 @@ export async function saveCosplayParticipantToSupabase(
 }
 
 /**
+ * Update an existing cosplay participant
+ */
+export async function updateCosplayParticipantInSupabase(
+  id: string,
+  participant: Partial<CosplayParticipant>
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('cosplay_participants')
+    .update({
+      name: participant.name,
+      class_level: participant.class_level,
+      character_name: participant.character_name,
+      category: participant.category,
+    })
+    .eq('id', id);
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Delete a cosplay participant
+ */
+export async function deleteCosplayParticipantFromSupabase(
+  id: string
+): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('cosplay_participants')
+    .delete()
+    .eq('id', id);
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
  * Fetch Cosplay competition publication status for public viewing
  */
 export async function fetchCosplayPublishedStatusFromSupabase(): Promise<boolean> {
