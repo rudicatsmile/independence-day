@@ -14,12 +14,13 @@ import {
 } from '@/lib/supabase/services';
 import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
+import { useUserStore } from '@/stores/useUserStore';
+import Link from 'next/link';
 
 export default function ChiefCosplayRefereePage() {
-  // Chief Referee PIN Gate State (Default PIN: 8181)
-  const [pinInput, setPinInput] = useState('');
-  const [isPinUnlocked, setIsPinUnlocked] = useState(false);
-  const [pinError, setPinError] = useState(false);
+  const profile = useUserStore((state) => state.profile);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const isChief = isLoggedIn && (profile.role === 'admin' || profile.role === 'panitia_cosplay');
 
   const [activeCategory, setActiveCategory] = useState<CosplayCategory>('usia_dini');
   const [participants, setParticipants] = useState<CosplayParticipant[]>([]);
@@ -51,7 +52,7 @@ export default function ChiefCosplayRefereePage() {
   };
 
   useEffect(() => {
-    if (isPinUnlocked) {
+    if (isChief) {
       loadData();
 
       // Zero-Load Realtime Supabase WebSockets Subscription
@@ -81,18 +82,7 @@ export default function ChiefCosplayRefereePage() {
         };
       }
     }
-  }, [activeCategory, isPinUnlocked]);
-
-  const handleUnlockPin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pinInput === '8181' || pinInput === '9999') {
-      setIsPinUnlocked(true);
-      setPinError(false);
-      confetti({ particleCount: 70, spread: 80, origin: { y: 0.4 } });
-    } else {
-      setPinError(true);
-    }
-  };
+  }, [activeCategory, isChief]);
 
   const handleTogglePublish = async () => {
     const nextState = !isPublished;
@@ -182,46 +172,28 @@ export default function ChiefCosplayRefereePage() {
   // Sort participants by final_score descending for leaderboard preview
   const sortedParticipants = [...participants].sort((a, b) => (b.final_score || 0) - (a.final_score || 0));
 
-  // PIN Unlock Gate for Wasit Utama (Chief Referee)
-  if (!isPinUnlocked) {
+  // Role-Based Access Control Gate for Chief
+  if (!isChief) {
     return (
-      <div className="max-w-md mx-auto py-12 space-y-6 text-center">
-        <div className="glass-card-gold rounded-3xl p-8 border-2 border-amber-400 space-y-5 shadow-gold-glow">
-          <div className="w-16 h-16 rounded-3xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-amber-400 shadow-glow animate-pulse">
-            <Crown className="w-8 h-8 text-amber-300" />
+      <div className="max-w-md mx-auto py-12 space-y-6 text-center px-4">
+        <div className="glass-card-gold rounded-3xl p-8 border-2 border-red-500/50 space-y-5 shadow-[0_0_30px_-5px_rgba(239,68,68,0.3)]">
+          <div className="w-16 h-16 rounded-3xl bg-red-500/20 border-2 border-red-500/50 flex items-center justify-center mx-auto text-red-400 shadow-glow animate-pulse">
+            <Lock className="w-8 h-8 text-red-400" />
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white">Sie Acara Penilaian Cosplay</h2>
+            <h2 className="text-xl font-black text-white">Akses Ditolak</h2>
             <p className="text-xs text-slate-300">
-              Halaman Akses Khusus Sie Acara (PIN Default Wasit: <strong className="text-amber-300 font-mono">8181</strong>)
+              Halaman ini khusus untuk Chief Referee (Panitia Utama). Anda tidak memiliki hak akses ke halaman ini.
             </p>
           </div>
 
-          <form onSubmit={handleUnlockPin} className="space-y-4">
-            <input
-              type="password"
-              maxLength={4}
-              required
-              value={pinInput}
-              onChange={(e) => setPinInput(e.target.value)}
-              placeholder="Masukkan PIN Wasit (8181)"
-              className="w-full text-center text-2xl tracking-[0.5em] font-mono font-black bg-slate-950 border-2 border-amber-400/60 rounded-2xl py-3 text-amber-300 focus:outline-none focus:border-amber-400"
-            />
-
-            {pinError && (
-              <p className="text-xs text-red-400 font-bold animate-bounce">
-                ❌ PIN Akses Wasit Salah. Silakan masukkan PIN 8181
-              </p>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-merdeka-red via-amber-500 to-merdeka-red text-slate-950 font-black text-sm shadow-gold-glow shimmer-btn hover:scale-102 transition-transform"
-            >
-              MASUK KONTROL ROOM
-            </button>
-          </form>
+          <Link
+            href="/home"
+            className="block w-full py-3.5 rounded-2xl bg-slate-800 border border-slate-700 text-white font-bold text-sm hover:bg-slate-700 transition-colors"
+          >
+            Kembali ke Beranda
+          </Link>
         </div>
       </div>
     );
