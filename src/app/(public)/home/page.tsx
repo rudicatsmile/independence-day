@@ -15,6 +15,7 @@ export default function HomePage() {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
   const isPanitiaCosplay = isLoggedIn && profile.role === 'panitia_cosplay';
+  const isJuriCosplay = isLoggedIn && profile.role === 'juri_cosplay';
   const missions = useUserStore((state) => state.missions);
   const userMissions = useUserStore((state) => state.userMissions);
   const saluteCount = useLiveStore((state) => state.saluteCount);
@@ -129,7 +130,7 @@ export default function HomePage() {
       </div>
 
       {/* Admin Panel Quick Banner */}
-      {(isAdmin || isPanitiaCosplay) && (
+      {(isAdmin || isPanitiaCosplay || isJuriCosplay) && (
         <div className="glass-card-gold rounded-3xl p-5 border border-amber-400/60 space-y-3 shadow-gold-glow">
           <div className="flex items-center gap-2 text-amber-300">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
@@ -154,18 +155,21 @@ export default function HomePage() {
               </Link>
             )}
 
-            <Link
-              href="/admin/cosplay/chief"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                <Crown className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Chief Referee Cosplay</p>
-                <p className="text-[10px] text-purple-300">Pengesahan Pemenang</p>
-              </div>
-            </Link>
+            {/* Chief Referee - Hanya untuk Admin dan Chief (Panitia Cosplay) */}
+            {(isAdmin || isPanitiaCosplay) && (
+              <Link
+                href="/admin/cosplay/chief"
+                className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+              >
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Chief Referee Cosplay</p>
+                  <p className="text-[10px] text-purple-300">Pengesahan Pemenang</p>
+                </div>
+              </Link>
+            )}
 
             {isAdmin && (
               <>
@@ -210,18 +214,21 @@ export default function HomePage() {
               </>
             )}
 
-            <Link
-              href="/admin/cosplay"
-              className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
-            >
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                <Trophy className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Panel Penilaian Cosplay</p>
-                <p className="text-[10px] text-purple-300">Input Peserta & Publikasi</p>
-              </div>
-            </Link>
+            {/* Penilaian Juri - Hanya untuk Admin dan Juri Cosplay */}
+            {(isAdmin || isJuriCosplay) && (
+              <Link
+                href="/admin/cosplay"
+                className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+              >
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <Trophy className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Panel Penilaian Cosplay</p>
+                  <p className="text-[10px] text-purple-300">Input Peserta & Publikasi</p>
+                </div>
+              </Link>
+            )}
 
             {isAdmin && (
               <Link

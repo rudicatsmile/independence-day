@@ -1,4 +1,4 @@
-export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay';
+export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay' | 'juri_cosplay';
 
 export interface Profile {
   id: string;
