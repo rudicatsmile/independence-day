@@ -135,7 +135,7 @@ export default function HomePage() {
         <div className="glass-card-gold rounded-3xl p-5 border border-amber-400/60 space-y-3 shadow-gold-glow">
           <div className="flex items-center gap-2 text-amber-300">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
-            <h2 className="text-base font-black text-white">{isAdmin ? 'Panel Kontrol Utama Administrator' : 'Panel Khusus Panitia Lomba / Sie Acara'}</h2>
+            <h2 className="text-base font-black text-white">{isAdmin ? 'Panel Kontrol Utama Administrator' : 'Panel Khusus Panitia Lomba'}</h2>
           </div>
           <p className="text-xs text-slate-300">
             {isAdmin ? 'Akses khusus Panitia Utama: Kelola bingkai Twibbon publik, pemicu suara sirine panggung, & takedown galeri foto.' : 'Akses jalan pintas menuju halaman kontrol penilaian Cosplay.'}
