@@ -1,13 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { HelpCircle, Plus, Edit2, Trash2, CheckCircle2, ShieldAlert, Save, RefreshCw } from 'lucide-react';
+import { HelpCircle, Plus, Edit2, Trash2, CheckCircle2, ShieldAlert, Save, RefreshCw, Lock } from 'lucide-react';
 import { QuizQuestion } from '@/lib/types';
 import { fetchQuizQuestionsFromSupabase, saveQuizQuestionToSupabase, deleteQuizQuestionFromSupabase } from '@/lib/supabase/services';
 import { MOCK_QUIZ_QUESTIONS } from '@/lib/mockData';
+import { useUserStore } from '@/stores/useUserStore';
+import Link from 'next/link';
 import confetti from 'canvas-confetti';
 
 export default function AdminQuizPage() {
+  const profile = useUserStore((state) => state.profile);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const isAuthorized = isLoggedIn && (profile?.role === 'admin' || profile?.role === 'panitia_cosplay');
+
   const [questions, setQuestions] = useState<QuizQuestion[]>(MOCK_QUIZ_QUESTIONS);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -28,8 +34,10 @@ export default function AdminQuizPage() {
   };
 
   useEffect(() => {
-    loadQuestions();
-  }, []);
+    if (isAuthorized) {
+      loadQuestions();
+    }
+  }, [isAuthorized]);
 
   const handleSaveQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +78,33 @@ export default function AdminQuizPage() {
     setIsLoading(false);
     setQuestions((prev) => prev.filter((q) => q.id !== id));
   };
+
+  // Role-Based Access Control Gate
+  if (!isAuthorized) {
+    return (
+      <div className="max-w-md mx-auto py-12 space-y-6 text-center px-4">
+        <div className="glass-card-gold rounded-3xl p-8 border border-red-500/50 space-y-5 shadow-[0_0_30px_-5px_rgba(239,68,68,0.3)]">
+          <div className="w-16 h-16 rounded-3xl bg-red-500/20 border-2 border-red-500 flex items-center justify-center mx-auto text-red-400 shadow-glow animate-pulse">
+            <Lock className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-xl font-black text-white">Akses Ditolak</h2>
+            <p className="text-xs text-slate-300">
+              Halaman ini khusus untuk Administrator dan Panitia Kuis. Anda tidak memiliki hak akses.
+            </p>
+          </div>
+
+          <Link
+            href="/home"
+            className="block w-full py-3.5 rounded-2xl bg-slate-800 border border-slate-700 text-white font-bold text-sm hover:bg-slate-700 transition-colors"
+          >
+            Kembali ke Beranda
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
