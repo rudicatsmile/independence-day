@@ -54,6 +54,8 @@ export const useLiveStore = create<LiveState>((set, get) => ({
         fetchLiveEventExtrasFromSupabase(),
       ]);
 
+      const wasConnected = get().isRealtimeConnected;
+
       set({
         saluteCount: count,
         poll: activePoll,
@@ -65,6 +67,10 @@ export const useLiveStore = create<LiveState>((set, get) => ({
         isLeaderboardEnabled: extras.leaderboard_enabled,
         isSfxEnabled: extras.sfx_enabled,
       });
+
+      if (wasConnected) {
+        return; // Already connected, do not subscribe again
+      }
 
       // Subscribe to Supabase Realtime for Live Salute Counter + New Features
       const supabase = createClient();
