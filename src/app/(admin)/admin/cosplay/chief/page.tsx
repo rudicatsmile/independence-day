@@ -405,11 +405,11 @@ export default function ChiefCosplayRefereePage() {
                   <tr key={p.id} className="hover:bg-slate-900/50 transition-colors">
                     <td className="p-3 font-bold">
                       {idx === 0 ? (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px]">🥇 JUARA 1</span>
+                        <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px]">🥇 1</span>
                       ) : idx === 1 ? (
-                        <span className="px-2 py-0.5 rounded-full bg-slate-300 text-slate-950 font-black text-[10px]">🥈 JUARA 2</span>
+                        <span className="px-2 py-0.5 rounded-full bg-slate-300 text-slate-950 font-black text-[10px]">🥈 2</span>
                       ) : idx === 2 ? (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-700 text-white font-black text-[10px]">🥉 JUARA 3</span>
+                        <span className="px-2 py-0.5 rounded-full bg-amber-700 text-white font-black text-[10px]">🥉 3</span>
                       ) : (
                         <span className="text-slate-400">#{idx + 1}</span>
                       )}
