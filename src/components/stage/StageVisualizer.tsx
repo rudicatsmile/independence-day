@@ -114,7 +114,7 @@ export const StageVisualizer: React.FC = () => {
     const lbTimer = setInterval(async () => {
       refreshLeaderboard();
       refreshHeaderInfo();
-      
+
       // Fallback: Fetch gallery every 9 seconds to bypass Realtime 1MB limits
       pollCount++;
       if (pollCount % 3 === 0) {
@@ -263,7 +263,7 @@ export const StageVisualizer: React.FC = () => {
     try {
       const audio = new Audio(`/sfx/${filename}`);
       audio.play().catch(e => console.warn('Could not play external audio (might need interaction first):', e));
-    } catch(e) {
+    } catch (e) {
       console.warn('Audio play error:', e);
     }
   };
@@ -337,16 +337,15 @@ export const StageVisualizer: React.FC = () => {
 
             <button
               onClick={() => setIsAudioMuted(!isAudioMuted)}
-              className={`p-3 rounded-2xl border transition-all ${
-                isAudioMuted
+              className={`p-3 rounded-2xl border transition-all ${isAudioMuted
                   ? 'bg-slate-900 border-slate-700 text-slate-400'
                   : 'bg-amber-500/20 border-amber-400/50 text-amber-300 shadow-gold-glow'
-              }`}
+                }`}
               title={isAudioMuted ? 'Nyalakan Efek Suara' : 'Matikan Efek Suara'}
             >
               {isAudioMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </button>
-            
+
             {isAdmin && (
               <button
                 onClick={handleStageSalute}
@@ -389,7 +388,7 @@ export const StageVisualizer: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto">
         {/* Left Column: Huge Live Salute Visualizer */}
         <div className="lg:col-span-5 glass-card-red rounded-3xl p-6 sm:p-8 border border-merdeka-red/40 space-y-6 flex flex-col justify-center text-center shadow-2xl relative">
-          
+
           {/* Main Event Title Info */}
           <div className="space-y-2">
             <span className="text-sm font-bold text-amber-300 uppercase tracking-widest">
@@ -539,7 +538,7 @@ export const StageVisualizer: React.FC = () => {
               </div>
             ) : (
               <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-center text-xs text-slate-400">
-                Belum ada data profil terdaftar di database Supabase Cloud.
+                Belum ada data profil terdaftar di database.
               </div>
             )}
           </div>
