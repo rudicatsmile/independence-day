@@ -383,7 +383,8 @@ create table if not exists public.cosplay_participants (
   id text primary key default 'cp-' || extract(epoch from now())::text || '-' || floor(random()*1000)::text,
   name text not null,
   class_level text not null, -- A, B1, B2, SD, SMP, DP-1, DP-2, etc.
-  character_name text not null, -- e.g., Ir. Soekarno, Jenderal Soedirman, Cut Nyak Dhien
+  character_name text not null,
+  image_urls text[] default '{}', -- e.g., Ir. Soekarno, Jenderal Soedirman, Cut Nyak Dhien
   category text not null check (category in ('usia_dini', 'usia_menengah', 'usia_atas')),
   created_at timestamptz default now()
 );

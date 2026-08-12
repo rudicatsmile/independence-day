@@ -713,6 +713,7 @@ export async function saveCosplayParticipantToSupabase(
       class_level: participant.class_level,
       character_name: participant.character_name,
       category: participant.category,
+      image_urls: participant.image_urls || [],
     });
 
   if (error) return { error: error.message };
@@ -735,11 +736,100 @@ export async function updateCosplayParticipantInSupabase(
       class_level: participant.class_level,
       character_name: participant.character_name,
       category: participant.category,
+      image_urls: participant.image_urls,
     })
     .eq('id', id);
 
   if (error) return { error: error.message };
   return { error: null };
+}
+
+/**
+ * Compress an image file before upload (max 500KB roughly by scaling down if needed)
+ */
+export async function compressImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const max_dim = 1200; // max dimension
+
+        if (width > height && width > max_dim) {
+          height *= max_dim / width;
+          width = max_dim;
+        } else if (height > max_dim) {
+          width *= max_dim / height;
+          height = max_dim;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Quality 0.7 usually gets it under 500kb for 1200px
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Canvas to Blob failed'));
+        }, 'image/jpeg', 0.7);
+      };
+      img.onerror = (e) => reject(e);
+    };
+    reader.onerror = (e) => reject(e);
+  });
+}
+
+/**
+ * Upload multiple cosplay images to Supabase Storage
+ */
+export async function uploadCosplayImages(files: File[]): Promise<{ urls: string[], error: string | null }> {
+  if (!isSupabaseConfigured() || files.length === 0) return { urls: [], error: null };
+  
+  const urls: string[] = [];
+  
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      // Skip non-images
+      if (!file.type.startsWith('image/')) continue;
+      
+      const compressedBlob = await compressImage(file);
+      const ext = 'jpg';
+      const fileName = `cp_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+      
+      const { data, error } = await supabase.storage
+        .from('cosplay-images')
+        .upload(fileName, compressedBlob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
+        
+      if (error) {
+        console.error('Error uploading cosplay image:', error);
+        continue; // Try others even if one fails
+      }
+      
+      if (data) {
+        const { data: pubData } = supabase.storage
+          .from('cosplay-images')
+          .getPublicUrl(data.path);
+          
+        if (pubData) {
+          urls.push(pubData.publicUrl);
+        }
+      }
+    }
+    
+    return { urls, error: null };
+  } catch (err: any) {
+    return { urls, error: err.message || 'Failed to upload images' };
+  }
 }
 
 /**

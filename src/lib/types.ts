@@ -1,4 +1,4 @@
-export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay' | 'juri_cosplay';
+﻿export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay' | 'juri_cosplay';
 
 export interface Profile {
   id: string;
@@ -122,6 +122,7 @@ export interface CosplayParticipant {
   name: string;
   class_level: string;
   character_name: string;
+  image_urls?: string[];
   category: CosplayCategory;
   created_at?: string;
   final_score?: number;

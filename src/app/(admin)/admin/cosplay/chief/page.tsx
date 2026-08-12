@@ -11,6 +11,7 @@ import {
   saveCosplayParticipantToSupabase,
   updateCosplayParticipantInSupabase,
   deleteCosplayParticipantFromSupabase,
+  uploadCosplayImages,
 } from '@/lib/supabase/services';
 import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 import confetti from 'canvas-confetti';
@@ -34,6 +35,8 @@ export default function ChiefCosplayRefereePage() {
   const [newName, setNewName] = useState('');
   const [newClass, setNewClass] = useState('');
   const [newCharacter, setNewCharacter] = useState('');
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [isSavingParticipant, setIsSavingParticipant] = useState(false);
 
   const criteriaList = COSPLAY_CRITERIA_MAP[activeCategory];
@@ -104,6 +107,8 @@ export default function ChiefCosplayRefereePage() {
     setNewName('');
     setNewClass('');
     setNewCharacter('');
+    setNewImages([]);
+    setExistingImages([]);
     setIsAddModalOpen(true);
   };
 
@@ -112,6 +117,8 @@ export default function ChiefCosplayRefereePage() {
     setNewName(p.name);
     setNewClass(p.class_level);
     setNewCharacter(p.character_name);
+    setNewImages([]);
+    setExistingImages(p.image_urls || []);
     setIsAddModalOpen(true);
   };
 
@@ -127,11 +134,23 @@ export default function ChiefCosplayRefereePage() {
     setIsSavingParticipant(true);
 
     if (editingParticipantId) {
+      let finalImageUrls = [...existingImages];
+      if (newImages.length > 0) {
+        const { urls, error: uploadErr } = await uploadCosplayImages(newImages);
+        if (uploadErr) {
+          alert('Gagal upload gambar: ' + uploadErr);
+          setIsSavingParticipant(false);
+          return;
+        }
+        finalImageUrls = [...finalImageUrls, ...urls];
+      }
+
       const { error } = await updateCosplayParticipantInSupabase(editingParticipantId, {
         name: newName,
         class_level: newClass,
         character_name: newCharacter,
         category: activeCategory,
+        image_urls: finalImageUrls,
       });
 
       setIsSavingParticipant(false);
@@ -143,11 +162,23 @@ export default function ChiefCosplayRefereePage() {
         loadData();
       }
     } else {
+      let finalImageUrls: string[] = [];
+      if (newImages.length > 0) {
+        const { urls, error: uploadErr } = await uploadCosplayImages(newImages);
+        if (uploadErr) {
+          alert('Gagal upload gambar: ' + uploadErr);
+          setIsSavingParticipant(false);
+          return;
+        }
+        finalImageUrls = urls;
+      }
+
       const { error } = await saveCosplayParticipantToSupabase({
         name: newName,
         class_level: newClass,
         character_name: newCharacter,
         category: activeCategory,
+        image_urls: finalImageUrls,
       });
 
       setIsSavingParticipant(false);
@@ -158,6 +189,8 @@ export default function ChiefCosplayRefereePage() {
         setNewName('');
         setNewClass('');
         setNewCharacter('');
+        setNewImages([]);
+        setExistingImages([]);
         setIsAddModalOpen(false);
         loadData();
       }
@@ -561,6 +594,54 @@ export default function ChiefCosplayRefereePage() {
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
                   placeholder="Contoh: Ir. Soekarno / Cut Nyak Dhien"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-amber-300 block">Foto Peserta (Maks. 4 Foto):</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length > 4) {
+                      alert('Maksimal 4 foto yang diizinkan!');
+                      return;
+                    }
+                    setNewImages(files);
+                  }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-400 file:text-slate-950 hover:file:bg-amber-300 cursor-pointer"
+                />
+                
+                {/* Preview Existing Images */}
+                {existingImages.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-[10px] text-slate-400 mb-1">Foto tersimpan:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {existingImages.map((url, i) => (
+                        <div key={i} className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-700">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt="Peserta" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Preview New Uploads */}
+                {newImages.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-[10px] text-amber-400/80 mb-1">Foto baru yang akan diunggah ({newImages.length}/4):</p>
+                    <div className="flex flex-wrap gap-2">
+                      {newImages.map((file, i) => (
+                        <div key={i} className="relative w-12 h-12 rounded-lg overflow-hidden border border-amber-400/50">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover opacity-80" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-2">
