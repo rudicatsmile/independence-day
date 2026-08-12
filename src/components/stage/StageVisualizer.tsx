@@ -90,7 +90,8 @@ export const StageVisualizer: React.FC = () => {
 
   const refreshLeaderboard = async () => {
     const data = await fetchLeaderboardFromSupabase();
-    setLeaderboard(data.slice(0, 5));
+    const filteredData = data.filter(p => p.total_points >= 100);
+    setLeaderboard(filteredData.slice(0, 5));
   };
 
   const refreshHeaderInfo = async () => {
