@@ -669,6 +669,7 @@ export async function fetchCosplayParticipantsFromSupabase(category: CosplayCate
       created_at: p.created_at,
       final_score: avgFinalScore,
       scores_by_judge: scoresByJudge,
+      image_urls: p.image_urls || [],
     };
   });
 }
