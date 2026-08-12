@@ -39,6 +39,10 @@ export default function ChiefCosplayRefereePage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [isSavingParticipant, setIsSavingParticipant] = useState(false);
 
+  // Gallery Modal State
+  const [galleryParticipant, setGalleryParticipant] = useState<CosplayParticipant | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const criteriaList = COSPLAY_CRITERIA_MAP[activeCategory];
   const judge1Name = COSPLAY_JUDGES[0]; // Bapak Sofyan Jamaludin,S.H.I.
   const judge2Name = COSPLAY_JUDGES[1]; // Bapak H. Mulyana, S.H., M.M.
@@ -412,7 +416,24 @@ export default function ChiefCosplayRefereePage() {
                     </td>
                     <td className="p-3 font-bold text-white">{p.name}</td>
                     <td className="p-3 text-amber-300 font-semibold">{p.class_level}</td>
-                    <td className="p-3 text-slate-300 italic">🇮🇩 {p.character_name}</td>
+                    <td className="p-3">
+                      {p.image_urls && p.image_urls.length > 0 ? (
+                        <button
+                          onClick={() => {
+                            setGalleryParticipant(p);
+                            setCurrentImageIndex(0);
+                          }}
+                          className="text-slate-200 italic font-medium hover:text-amber-400 underline decoration-amber-400/50 underline-offset-4 cursor-pointer text-left flex items-center gap-2"
+                        >
+                          🇮🇩 {p.character_name}
+                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[9px] font-bold not-italic">
+                            📸 {p.image_urls.length} Foto
+                          </span>
+                        </button>
+                      ) : (
+                        <span className="text-slate-300 italic font-medium">🇮🇩 {p.character_name}</span>
+                      )}
+                    </td>
 
                     {/* Juri 1 Score */}
                     <td className="p-3 text-center">
@@ -662,6 +683,69 @@ export default function ChiefCosplayRefereePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Photo Gallery Modal */}
+      {galleryParticipant && galleryParticipant.image_urls && galleryParticipant.image_urls.length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-3xl glass-card-gold rounded-3xl overflow-hidden border border-amber-400/60 shadow-gold-glow relative flex flex-col">
+            <div className="p-4 flex items-center justify-between border-b border-amber-500/30 bg-slate-950/50">
+              <div>
+                <h3 className="text-lg font-black text-white">
+                  {galleryParticipant.name} <span className="text-amber-400">({galleryParticipant.class_level})</span>
+                </h3>
+                <p className="text-xs text-slate-300 italic">Memerankan: {galleryParticipant.character_name}</p>
+              </div>
+              <button
+                onClick={() => setGalleryParticipant(null)}
+                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="relative h-[60vh] bg-black flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={galleryParticipant.image_urls[currentImageIndex]} 
+                alt="Cosplay Photo" 
+                className="max-w-full max-h-full object-contain"
+              />
+              
+              {galleryParticipant.image_urls.length > 1 && (
+                <>
+                  <button 
+                    onClick={() => setCurrentImageIndex(prev => prev === 0 ? galleryParticipant.image_urls!.length - 1 : prev - 1)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 border border-white/20 text-white flex items-center justify-center hover:bg-amber-500 hover:border-amber-400 transition-colors"
+                  >
+                    ❮
+                  </button>
+                  <button 
+                    onClick={() => setCurrentImageIndex(prev => prev === galleryParticipant.image_urls!.length - 1 ? 0 : prev + 1)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 border border-white/20 text-white flex items-center justify-center hover:bg-amber-500 hover:border-amber-400 transition-colors"
+                  >
+                    ❯
+                  </button>
+                </>
+              )}
+            </div>
+            
+            {galleryParticipant.image_urls.length > 1 && (
+              <div className="p-4 bg-slate-950/80 flex items-center justify-center gap-2 overflow-x-auto">
+                {galleryParticipant.image_urls.map((url, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all shrink-0 ${idx === currentImageIndex ? 'border-amber-400 scale-110 shadow-glow' : 'border-slate-700 opacity-50 hover:opacity-100'}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt={`Thumbnail ${idx+1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
