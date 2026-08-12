@@ -1187,3 +1187,19 @@ export async function updateProfileRole(userId: string, newRole: string, judgeId
 
   return true;
 }
+
+/**
+ * Execute Full Factory Reset (Clear All User Data except Accounts/Cosplayers)
+ */
+export async function executeFactoryReset(): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase.rpc('factory_reset_data');
+
+  if (error) {
+    console.error('Factory Reset Error:', error);
+    return { error: error.message };
+  }
+
+  return { error: null };
+}

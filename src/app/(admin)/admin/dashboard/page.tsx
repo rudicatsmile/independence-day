@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   BarChart3, Users, Camera, Heart, HelpCircle, Flag, Vote,
   ArrowLeft, RefreshCw, Clock, Megaphone, Trophy, Music,
-  ToggleLeft, ToggleRight, Save, Timer, Sparkles
+  ToggleLeft, ToggleRight, Save, Timer, Sparkles, AlertTriangle
 } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
@@ -16,6 +16,7 @@ import {
   updateAnnouncementInSupabase,
   updateLeaderboardToggleInSupabase,
   updateSfxToggleInSupabase,
+  executeFactoryReset,
 } from '@/lib/supabase/services';
 
 export default function AdminDashboardPage() {
@@ -48,6 +49,8 @@ export default function AdminDashboardPage() {
   const [countdownInput, setCountdownInput] = useState('');
   const [announcementInput, setAnnouncementInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useEffect(() => {
     initSupabaseData();
@@ -119,6 +122,19 @@ export default function AdminDashboardPage() {
     useLiveStore.setState({ isSfxEnabled: !isSfxEnabled });
     await updateSfxToggleInSupabase(!isSfxEnabled);
     setIsSaving(false);
+  };
+
+  const handleFactoryReset = async () => {
+    setIsResetting(true);
+    const { error } = await executeFactoryReset();
+    if (error) {
+      alert('Gagal melakukan factory reset: ' + error);
+    } else {
+      alert('Factory Reset berhasil dieksekusi! Semua data percobaan telah dibersihkan.');
+      setShowResetConfirm(false);
+      refreshStats(); // Refresh dashboard stats
+    }
+    setIsResetting(false);
   };
 
   if (!isAdmin) {
@@ -316,6 +332,64 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Danger Zone */}
+      <div className="space-y-4 pt-10 pb-10">
+        <h2 className="text-lg font-black text-red-500 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5" />
+          Danger Zone
+        </h2>
+        <div className="glass-card-red rounded-2xl p-6 border border-red-500/40">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-white">Factory Reset Data Peserta</h3>
+              <p className="text-xs text-red-300 mt-1 max-w-xl">
+                Tindakan ini akan menghapus <strong>seluruh riwayat misi, polling, foto twibbon, dan poin</strong> semua peserta. Hanya profil akun dan peserta cosplay yang dipertahankan. Gunakan ini sebelum acara resmi dimulai untuk membersihkan data percobaan.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-glow whitespace-nowrap transition-all"
+            >
+              Reset Semua Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-red-500/50 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-6">
+            <div className="w-16 h-16 rounded-full bg-red-500/20 border border-red-500 mx-auto flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-black text-white">Peringatan Keras!</h3>
+              <p className="text-sm text-slate-300">
+                Anda yakin ingin menghapus <strong>SEMUA</strong> poin, misi, galeri, dan aktivitas peserta? Data yang dihapus tidak dapat dikembalikan.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                disabled={isResetting}
+                className="flex-1 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-700 disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleFactoryReset}
+                disabled={isResetting}
+                className="flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-500 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isResetting ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
+                <span>Ya, Hapus Semua</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
