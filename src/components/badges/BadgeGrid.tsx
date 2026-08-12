@@ -70,8 +70,11 @@ export const BadgeGrid: React.FC = () => {
             <p>Atas partisipasi aktif dan kontribusi nyata dalam Perayaan <strong>HUT RI ke-81 (17 Agustus 2026)</strong> dengan total pencapaian <strong>${profile.total_points} Poin</strong>.</p>
 
             <div class="badge-list">
-              <div class="badge-item">🎖️ Gelar: Pahlawan Tercepat</div>
-              <div class="badge-item">👑 Gelar: Raja Trivia Sejarah</div>
+              ${
+                earnedBadgeIds.length > 0 
+                  ? badges.filter(b => earnedBadgeIds.includes(b.id)).map(b => `<div class="badge-item">${b.icon} Gelar: ${b.name}</div>`).join('')
+                  : '<div class="badge-item">Belum Ada Gelar Patriotik</div>'
+              }
             </div>
 
             <div class="footer">
