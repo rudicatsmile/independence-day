@@ -88,6 +88,21 @@ export const useUserStore = create<UserState>((set, get) => ({
           }
         )
         .subscribe();
+
+      // Subscribe to Supabase Realtime channel for profile updates (total_points sync)
+      supabase
+        .channel('user-profile-realtime')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'profiles' },
+          (payload) => {
+            const currentProfile = get().profile;
+            if (currentProfile?.id === payload.new.id) {
+              set({ profile: { ...currentProfile, ...payload.new } });
+            }
+          }
+        )
+        .subscribe();
     } catch (err) {
       console.warn('Supabase Realtime fallback to local storage:', err);
     }
