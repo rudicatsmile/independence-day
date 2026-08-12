@@ -23,6 +23,9 @@ export const QuizGame: React.FC = () => {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const completeMission = useUserStore((state) => state.completeMission);
   const unlockBadge = useUserStore((state) => state.unlockBadge);
+  const userMissions = useUserStore((state) => state.userMissions);
+  
+  const isMissionCompleted = userMissions['m-04']?.status === 'completed';
 
   useEffect(() => {
     fetchQuizQuestionsFromSupabase().then((data) => {
@@ -91,7 +94,28 @@ export const QuizGame: React.FC = () => {
         </p>
       </div>
 
-      {!isFinished ? (
+      {isMissionCompleted ? (
+        <div className="glass-card-gold rounded-3xl p-8 border border-amber-400/50 space-y-5 shadow-2xl text-center">
+          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center mx-auto shadow-glow">
+            <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-black text-white">Misi Selesai!</h3>
+            <p className="text-slate-300 text-sm max-w-md mx-auto">
+              Anda telah berhasil menyelesaikan Kuis Kemerdekaan ini dan poin Anda sudah ditambahkan. Misi ini tidak dapat diulang.
+            </p>
+          </div>
+          <div className="pt-4">
+            <Link
+              href="/home"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700"
+            >
+              <ChevronRight className="w-5 h-5" />
+              Kembali ke Beranda
+            </Link>
+          </div>
+        </div>
+      ) : !isFinished ? (
         <div className="glass-card-gold rounded-3xl p-6 border border-amber-400/50 space-y-5 shadow-2xl relative overflow-hidden">
           {/* Question Progress Header */}
           <div className="flex items-center justify-between text-xs font-bold text-slate-300 border-b border-amber-500/30 pb-3">

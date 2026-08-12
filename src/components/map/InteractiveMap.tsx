@@ -59,7 +59,14 @@ export const InteractiveMap: React.FC = () => {
     },
   ]);
 
-  const [selectedPoint, setSelectedPoint] = useState<LocationPoint | null>(points[0]);
+  const mapPoints = points.map(p => ({
+    ...p,
+    isScanned: p.isScanned || userMissions[p.id]?.status === 'completed'
+  }));
+
+  const [selectedPointId, setSelectedPointId] = useState<string>(points[0].id);
+  const selectedPoint = mapPoints.find(p => p.id === selectedPointId) || mapPoints[0];
+
   const [gpsStatus, setGpsStatus] = useState<'idle' | 'checking' | 'verified' | 'failed'>('idle');
   const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
 
@@ -137,13 +144,13 @@ export const InteractiveMap: React.FC = () => {
 
         {/* Map Pins Interactive Layout */}
         <div className="relative z-10 grid grid-cols-3 gap-2 my-auto py-4">
-          {points.map((point, idx) => {
+          {mapPoints.map((point, idx) => {
             const isSelected = selectedPoint?.id === point.id;
             return (
               <button
                 key={point.id}
                 onClick={() => {
-                  setSelectedPoint(point);
+                  setSelectedPointId(point.id);
                   setGpsStatus('idle');
                 }}
                 className={`p-3 rounded-xl border text-center transition-all relative ${

@@ -38,6 +38,9 @@ export const TwibbonGenerator: React.FC = () => {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const addGalleryItem = useUserStore((state) => state.addGalleryItem);
   const completeMission = useUserStore((state) => state.completeMission);
+  const userMissions = useUserStore((state) => state.userMissions);
+  
+  const isMissionCompleted = userMissions['m-01']?.status === 'completed';
 
   // Clean up camera stream on unmount
   useEffect(() => {
@@ -377,6 +380,17 @@ export const TwibbonGenerator: React.FC = () => {
           </button>
         ))}
       </div>
+      {isMissionCompleted && !isCapturing && !imageSrc && (
+        <div className="glass-card-gold rounded-2xl p-4 border border-emerald-500/50 flex items-start gap-3 bg-emerald-950/20 mb-4 animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-white">Misi Twibbon Selesai!</h4>
+            <p className="text-xs text-slate-300">
+              Anda sudah mengklaim poin untuk misi ini. Anda tetap bisa membuat dan membagikan Twibbon baru untuk memeriahkan HUT RI ke-81, namun tidak akan mendapat tambahan poin.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Upload / Preview Canvas Box */}
       <div className="glass-card-red rounded-2xl p-6 text-center space-y-4 relative overflow-hidden border border-merdeka-red/30">

@@ -135,6 +135,11 @@ export const useUserStore = create<UserState>((set, get) => ({
   completeMission: (missionId: string, rewardPoints: number) => {
     const { userMissions, profile } = get();
 
+    // Guard: Prevent claiming points multiple times for the same mission
+    if (userMissions[missionId]?.status === 'completed') {
+      return;
+    }
+
     set({
       userMissions: {
         ...userMissions,
@@ -173,7 +178,12 @@ export const useUserStore = create<UserState>((set, get) => ({
     };
 
     const currentProfile = get().profile;
-    const newPoints = currentProfile.total_points + 100;
+    const { userMissions } = get();
+    const isTwibbonMissionCompleted = userMissions['m-01']?.status === 'completed';
+    
+    // Only add points if the twibbon mission hasn't been completed yet
+    const addedPoints = isTwibbonMissionCompleted ? 0 : 100;
+    const newPoints = currentProfile.total_points + addedPoints;
 
     set((state) => ({
       galleryItems: [newItem, ...state.galleryItems],
@@ -185,7 +195,12 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     if (isSupabaseConfigured()) {
       await insertGalleryItemToSupabase(itemData);
-      await saveCompletedMissionToSupabase(currentProfile.id, 'm-01', 100);
+      
+      // Only record mission completion in DB if it was actually newly completed
+      if (!isTwibbonMissionCompleted) {
+        get().completeMission('m-01', 100);
+      }
+      
       const updated = await fetchGalleryFromSupabase();
       set({ galleryItems: updated });
     }

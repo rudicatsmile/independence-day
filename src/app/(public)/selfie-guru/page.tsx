@@ -30,7 +30,9 @@ const PRESET_TEACHERS = [
 
 export default function SelfieGuruPage() {
   const router = useRouter();
-  const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData } = useUserStore();
+  const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData, userMissions } = useUserStore();
+  
+  const isMissionCompleted = userMissions['m-06']?.status === 'completed';
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(PRESET_TEACHERS[0].name);
@@ -205,6 +207,17 @@ export default function SelfieGuruPage() {
           Pilih teman favoritmu, ambil foto selfie bersama, dan tayangkan momen kebersamaan kalian langsung di Layar Panggung Utama HUT RI ke-81!
         </p>
       </div>
+      {isMissionCompleted && !isPublished && (
+        <div className="glass-card-gold rounded-2xl p-4 border border-emerald-500/50 flex items-start gap-3 bg-emerald-950/20 animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-white">Misi Selfie Bestie Selesai!</h4>
+            <p className="text-xs text-slate-300">
+              Anda sudah mengklaim poin (+150 PTS) untuk misi ini. Anda bebas mengunggah foto selfie lainnya untuk meramaikan galeri, namun tidak akan mendapatkan tambahan poin.
+            </p>
+          </div>
+        </div>
+      )}
 
       {!isPublished ? (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
