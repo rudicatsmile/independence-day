@@ -22,7 +22,7 @@ export const BadgeGrid: React.FC = () => {
     }
 
     confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
-    
+
     // Create print-friendly popup window with certificate layout
     const certWindow = window.open('', '_blank');
     if (!certWindow) return;
@@ -70,15 +70,14 @@ export const BadgeGrid: React.FC = () => {
             <p>Atas partisipasi aktif dan kontribusi nyata dalam Perayaan <strong>HUT RI ke-81 (17 Agustus 2026)</strong> dengan total pencapaian <strong>${profile.total_points} Poin</strong>.</p>
 
             <div class="badge-list">
-              ${
-                earnedBadgeIds.length > 0 
-                  ? badges.filter(b => earnedBadgeIds.includes(b.id)).map(b => `<div class="badge-item">${b.icon} Gelar: ${b.name}</div>`).join('')
-                  : '<div class="badge-item">Belum Ada Gelar Patriotik</div>'
-              }
+              ${earnedBadgeIds.length > 0
+        ? badges.filter(b => earnedBadgeIds.includes(b.id)).map(b => `<div class="badge-item">${b.icon} Gelar: ${b.name}</div>`).join('')
+        : '<div class="badge-item">Belum Ada Gelar Patriotik</div>'
+      }
             </div>
 
             <div class="footer">
-              Diterbitkan secara otomatis oleh Sistem Aplikasi Mobile Merdeka 81 • Panitia HUT RI ke-81
+              Diterbitkan oleh Panitia HUT ke-81 RI
             </div>
           </div>
           <script>
@@ -171,11 +170,10 @@ export const BadgeGrid: React.FC = () => {
             return (
               <div
                 key={badge.id}
-                className={`p-4 rounded-2xl border text-center transition-all relative overflow-hidden flex flex-col justify-between ${
-                  isUnlocked
-                    ? 'glass-card-gold border-amber-400 shadow-gold-glow scale-105'
-                    : 'glass-card border-slate-800 opacity-60'
-                }`}
+                className={`p-4 rounded-2xl border text-center transition-all relative overflow-hidden flex flex-col justify-between ${isUnlocked
+                  ? 'glass-card-gold border-amber-400 shadow-gold-glow scale-105'
+                  : 'glass-card border-slate-800 opacity-60'
+                  }`}
               >
                 <div>
                   <div className="text-4xl mb-2">{badge.icon}</div>
