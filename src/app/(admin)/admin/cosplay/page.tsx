@@ -29,7 +29,7 @@ export default function AdminCosplayPage() {
 
   // Scoring Modal State
   const [activeParticipant, setActiveParticipant] = useState<CosplayParticipant | null>(null);
-  const [currentScores, setCurrentScores] = useState<Record<string, number>>({});
+  const [currentScores, setCurrentScores] = useState<Record<string, number | ''>>({});
   const [isSavingScore, setIsSavingScore] = useState(false);
 
   // Add Participant Modal State
@@ -78,7 +78,7 @@ export default function AdminCosplayPage() {
     const existingScores = p.scores_by_judge?.[selectedJudge]?.scores || {};
 
     // Initialize default scores if not present
-    const initScores: Record<string, number> = {};
+    const initScores: Record<string, number | ''> = {};
     criteriaList.forEach((c) => {
       initScores[c.key] = existingScores[c.key] ?? 80;
     });
@@ -86,11 +86,12 @@ export default function AdminCosplayPage() {
     setCurrentScores(initScores);
   };
 
-  const calculateWeightedScore = (scores: Record<string, number>) => {
+  const calculateWeightedScore = (scores: Record<string, number | ''>) => {
     let total = 0;
     criteriaList.forEach((c) => {
-      const scoreVal = scores[c.key] || 0;
-      total += scoreVal * c.weight;
+      const scoreVal = scores[c.key];
+      const numericVal = typeof scoreVal === 'number' ? scoreVal : 0;
+      total += numericVal * c.weight;
     });
     return Number(total.toFixed(2));
   };
@@ -100,12 +101,19 @@ export default function AdminCosplayPage() {
     if (!activeParticipant) return;
 
     setIsSavingScore(true);
+    
+    // Convert empty strings to 0 for saving
+    const finalScoresToSave: Record<string, number> = {};
+    for (const key of Object.keys(currentScores)) {
+      finalScoresToSave[key] = currentScores[key] === '' ? 0 : (currentScores[key] as number);
+    }
+    
     const finalScore = calculateWeightedScore(currentScores);
 
     const { error } = await saveCosplayScoreToSupabase(
       activeParticipant.id,
       selectedJudge,
-      currentScores,
+      finalScoresToSave,
       finalScore
     );
 
@@ -401,8 +409,10 @@ export default function AdminCosplayPage() {
             <form onSubmit={handleSaveScore} className="space-y-4">
               <div className="space-y-3">
                 {criteriaList.map((criterion, idx) => {
-                  const val = currentScores[criterion.key] || 80;
-                  const weightedVal = Number((val * criterion.weight).toFixed(2));
+                  const rawVal = currentScores[criterion.key] !== undefined ? currentScores[criterion.key] : 80;
+                  const numericVal = typeof rawVal === 'number' ? rawVal : 0;
+                  const displayVal = rawVal;
+                  const weightedVal = Number((numericVal * criterion.weight).toFixed(2));
 
                   return (
                     <div key={criterion.key} className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2">
@@ -414,7 +424,7 @@ export default function AdminCosplayPage() {
                           <p className="text-[10px] text-slate-400">{criterion.indicator}</p>
                         </div>
                         <div className="text-right">
-                          <span className="text-sm font-black text-white font-mono">{val}</span>
+                          <span className="text-sm font-black text-white font-mono">{displayVal === '' ? '0' : displayVal}</span>
                           <span className="text-[10px] text-amber-400 font-bold block">({weightedVal} Pts)</span>
                         </div>
                       </div>
@@ -425,7 +435,7 @@ export default function AdminCosplayPage() {
                           min="50"
                           max="100"
                           step="1"
-                          value={val}
+                          value={numericVal}
                           onChange={(e) =>
                             setCurrentScores({ ...currentScores, [criterion.key]: parseInt(e.target.value) })
                           }
@@ -435,10 +445,11 @@ export default function AdminCosplayPage() {
                           type="number"
                           min="0"
                           max="100"
-                          value={val}
-                          onChange={(e) =>
-                            setCurrentScores({ ...currentScores, [criterion.key]: parseInt(e.target.value) || 0 })
-                          }
+                          value={displayVal}
+                          onChange={(e) => {
+                            const val = e.target.value === '' ? '' : parseInt(e.target.value);
+                            setCurrentScores({ ...currentScores, [criterion.key]: val });
+                          }}
                           className="w-16 px-2 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-center text-white focus:outline-none focus:border-amber-400"
                         />
                       </div>
