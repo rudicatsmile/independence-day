@@ -54,6 +54,7 @@ export default function LivePage() {
   const profile = useUserStore((state) => state.profile);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const completeMission = useUserStore((state) => state.completeMission);
+  const unlockBadge = useUserStore((state) => state.unlockBadge);
 
   const [isSaluteAnimating, setIsSaluteAnimating] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -79,6 +80,7 @@ export default function LivePage() {
 
     votePoll(profile.id, optionId);
     completeMission('m-05', 125); // Complete Live challenge mission
+    unlockBadge('b-03'); // Unlock Suara Kemerdekaan badge
     confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
   };
 

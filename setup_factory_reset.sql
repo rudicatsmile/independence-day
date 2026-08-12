@@ -13,9 +13,10 @@ BEGIN
 
     -- Note: cosplay_participants is intentionally NOT truncated as requested.
 
-    -- 2. Reset Poin Peserta ke nilai awal (100)
+    -- 2. Reset Poin Peserta ke nilai awal (0) dan hapus flag onboarding
     UPDATE public.profiles 
-    SET total_points = 100;
+    SET total_points = 0, onboarding_completed = false
+    WHERE id IS NOT NULL;
 
     -- 3. Reset Angka Hormat (Salute) ke 1945
     UPDATE public.live_event_state 

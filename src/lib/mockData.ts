@@ -183,11 +183,11 @@ export const MOCK_MISSIONS: Mission[] = [
 export const MOCK_BADGES: Badge[] = [
   {
     id: 'b-01',
-    code: 'pahlawan_tercepat',
-    name: 'Pahlawan Tercepat',
-    description: 'Diberikan kepada 10 peserta pertama yang melakukan check-in perayaan.',
-    icon: '⚡',
-    rarity: 'legendary',
+    code: 'fotografer_patriot',
+    name: 'Fotografer Patriot',
+    description: 'Membuat dan membagikan semangat kemerdekaan melalui Twibbon Merdeka.',
+    icon: '📸',
+    rarity: 'common',
   },
   {
     id: 'b-02',
@@ -199,19 +199,19 @@ export const MOCK_BADGES: Badge[] = [
   },
   {
     id: 'b-03',
-    code: 'penjelajah_nusantara',
-    name: 'Penjelajah Nusantara',
-    description: 'Berhasil memindai seluruh titik lokasi QR Hunt di lokasi acara.',
-    icon: '🧭',
-    rarity: 'rare',
+    code: 'suara_kemerdekaan',
+    name: 'Suara Kemerdekaan',
+    description: 'Memberikan hormat kebangsaan dan berpartisipasi dalam polling interaktif.',
+    icon: '📢',
+    rarity: 'legendary',
   },
   {
     id: 'b-04',
-    code: 'fotografer_patriot',
-    name: 'Fotografer Patriot',
-    description: 'Mengunggah 3+ foto keseruan 17-an di Wall of Merdeka.',
-    icon: '📸',
-    rarity: 'common',
+    code: 'bestie_merdeka',
+    name: 'Bestie Kemerdekaan',
+    description: 'Berhasil mengabadikan momen selfie bersama tokoh bestie guru.',
+    icon: '🤳',
+    rarity: 'rare',
   },
 ];
 

@@ -30,7 +30,7 @@ const PRESET_TEACHERS = [
 
 export default function SelfieGuruPage() {
   const router = useRouter();
-  const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData, userMissions } = useUserStore();
+  const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData, userMissions, unlockBadge } = useUserStore();
   
   const isMissionCompleted = userMissions['m-06']?.status === 'completed';
 
@@ -188,6 +188,7 @@ export default function SelfieGuruPage() {
     });
 
     completeMission('m-06', 150);
+    unlockBadge('b-04');
     setIsPublished(true);
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
   };

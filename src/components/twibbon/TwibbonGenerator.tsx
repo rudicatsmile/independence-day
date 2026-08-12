@@ -38,6 +38,7 @@ export const TwibbonGenerator: React.FC = () => {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const addGalleryItem = useUserStore((state) => state.addGalleryItem);
   const completeMission = useUserStore((state) => state.completeMission);
+  const unlockBadge = useUserStore((state) => state.unlockBadge);
   const userMissions = useUserStore((state) => state.userMissions);
   
   const isMissionCompleted = userMissions['m-01']?.status === 'completed';
@@ -341,6 +342,7 @@ export const TwibbonGenerator: React.FC = () => {
     });
     
     completeMission('m-01', 100); // Claim 100 PTS for Selfie Patriotik mission
+    unlockBadge('b-01'); // Unlock Fotografer Patriot badge
     setIsSavedToGallery(true);
     confetti({ particleCount: 80, spread: 90, origin: { y: 0.6 } });
   };

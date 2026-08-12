@@ -109,7 +109,6 @@ export const InteractiveMap: React.FC = () => {
     setPoints((prev) =>
       prev.map((p) => (p.id === point.id ? { ...p, isScanned: true } : p))
     );
-    unlockBadge('b-03'); // Unlock Penjelajah Nusantara badge
     confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
   };
 
