@@ -103,7 +103,7 @@ export function MissionLockScreen() {
             </div>
           </div>
           <p className="text-[11px] text-slate-500">
-            🗓️ 17 Agustus 2026 • HUT RI ke-81 • Mulai Pukul 08:00 WIB
+            🗓️ 17 Agustus 2026 • HUT ke-81 RI • Mulai Pukul 08:00 WIB
           </p>
         </div>
       ) : (
