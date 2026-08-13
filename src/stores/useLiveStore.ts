@@ -23,6 +23,7 @@ interface LiveState {
   isAnnouncementEnabled: boolean;
   isLeaderboardEnabled: boolean;
   isSfxEnabled: boolean;
+  isMissionsEnabled: boolean;
 
   initLiveSupabase: (userId?: string) => Promise<void>;
   incrementSalute: () => void;
@@ -43,6 +44,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   isAnnouncementEnabled: false,
   isLeaderboardEnabled: true,
   isSfxEnabled: true,
+  isMissionsEnabled: false,
 
   initLiveSupabase: async (userId?: string) => {
     if (!isSupabaseConfigured()) return;
@@ -66,6 +68,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
         isAnnouncementEnabled: extras.announcement_enabled,
         isLeaderboardEnabled: extras.leaderboard_enabled,
         isSfxEnabled: extras.sfx_enabled,
+        isMissionsEnabled: extras.missions_enabled,
       });
 
       if (wasConnected) {
@@ -90,6 +93,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
               if (typeof newData.announcement_enabled === 'boolean') updates.isAnnouncementEnabled = newData.announcement_enabled;
               if (typeof newData.leaderboard_enabled === 'boolean') updates.isLeaderboardEnabled = newData.leaderboard_enabled;
               if (typeof newData.sfx_enabled === 'boolean') updates.isSfxEnabled = newData.sfx_enabled;
+              if (typeof newData.missions_enabled === 'boolean') updates.isMissionsEnabled = newData.missions_enabled;
               set(updates);
             }
           }

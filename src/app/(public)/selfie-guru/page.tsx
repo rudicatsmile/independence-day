@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { useLiveStore } from '@/stores/useLiveStore';
+import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
 import confetti from 'canvas-confetti';
 
 const PRESET_TEACHERS = [
@@ -31,6 +33,7 @@ const PRESET_TEACHERS = [
 export default function SelfieGuruPage() {
   const router = useRouter();
   const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData, userMissions, unlockBadge } = useUserStore();
+  const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
   
   const isMissionCompleted = userMissions['m-06']?.status === 'completed';
 
@@ -192,6 +195,14 @@ export default function SelfieGuruPage() {
     setIsPublished(true);
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
   };
+
+  if (!isMissionsEnabled) {
+    return (
+      <div className="min-h-screen bg-[#070A12] text-white p-4 sm:p-6 max-w-4xl mx-auto pb-20">
+        <MissionLockScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#070A12] text-white p-4 sm:p-6 space-y-6 max-w-4xl mx-auto pb-20">

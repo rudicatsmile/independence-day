@@ -1,11 +1,17 @@
+'use client';
 import React from 'react';
 import { QuizGame } from '@/components/quiz/QuizGame';
-
-export const metadata = {
-  title: 'Kuis Trivia Kemerdekaan RI - Merdeka 81',
-  description: 'Uji pengetahuan sejarah Kemerdekaan Indonesia ke-81 dan dapatkan Lencana Raja Trivia Sejarah!',
-};
+import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
+import { useLiveStore } from '@/stores/useLiveStore';
 
 export default function QuizPage() {
+  const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
+  if (!isMissionsEnabled) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <MissionLockScreen />
+      </div>
+    );
+  }
   return <QuizGame />;
 }

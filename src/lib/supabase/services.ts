@@ -956,6 +956,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
   announcement_enabled: boolean;
   leaderboard_enabled: boolean;
   sfx_enabled: boolean;
+  missions_enabled: boolean;
 }> {
   const defaults = {
     countdown_target_time: null,
@@ -964,13 +965,14 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     announcement_enabled: false,
     leaderboard_enabled: true,
     sfx_enabled: true,
+    missions_enabled: false,
   };
 
   if (!isSupabaseConfigured()) return defaults;
 
   const { data, error } = await supabase
     .from('live_event_state')
-    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled')
+    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled, missions_enabled')
     .eq('id', 'main')
     .single();
 
@@ -983,6 +985,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     announcement_enabled: data.announcement_enabled ?? false,
     leaderboard_enabled: data.leaderboard_enabled ?? true,
     sfx_enabled: data.sfx_enabled ?? true,
+    missions_enabled: data.missions_enabled ?? false,
   };
 }
 
@@ -1059,6 +1062,24 @@ export async function updateSfxToggleInSupabase(enabled: boolean): Promise<{ err
     .upsert({
       id: 'main',
       sfx_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Update Missions enabled/disabled toggle by Admin (Global Mission Control)
+ */
+export async function updateMissionsToggleInSupabase(enabled: boolean): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .upsert({
+      id: 'main',
+      missions_enabled: enabled,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
 

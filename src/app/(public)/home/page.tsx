@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
 import RoleManagementModal from '@/components/admin/RoleManagementModal';
+import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
 import { fetchLiveEventHeaderFromSupabase, fetchFullLeaderboardFromSupabase } from '@/lib/supabase/services';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Profile } from '@/lib/types';
@@ -23,6 +24,7 @@ export default function HomePage() {
   const isLeaderboardEnabled = useLiveStore((state) => state.isLeaderboardEnabled);
   const announcementText = useLiveStore((state) => state.announcementText);
   const isAnnouncementEnabled = useLiveStore((state) => state.isAnnouncementEnabled);
+  const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -297,12 +299,16 @@ export default function HomePage() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-black text-gradient-gold">Daftar Misi Kemerdekaan</h2>
-          <span className="text-xs font-bold text-amber-300 font-mono">
-            {completedActiveCount} / {activeMissions.length} Selesai
-          </span>
+          {isMissionsEnabled && (
+            <span className="text-xs font-bold text-amber-300 font-mono">
+              {completedActiveCount} / {activeMissions.length} Selesai
+            </span>
+          )}
         </div>
 
-        <div className="space-y-2">
+        {!isMissionsEnabled ? (
+          <MissionLockScreen />
+        ) : (
           {activeMissions.map((mission) => {
             const isCompleted = userMissions[mission.id]?.status === 'completed';
             return (
@@ -364,7 +370,7 @@ export default function HomePage() {
               </div>
             );
           })}
-        </div>
+        )}
       </div>
 
       {/* Public Leaderboard Section (toggle from Admin) */}

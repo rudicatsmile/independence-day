@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
 
 function useCountdown(targetTime: string | null) {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0, expired: true });
@@ -55,6 +56,7 @@ export default function LivePage() {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const completeMission = useUserStore((state) => state.completeMission);
   const unlockBadge = useUserStore((state) => state.unlockBadge);
+  const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
 
   const [isSaluteAnimating, setIsSaluteAnimating] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -85,6 +87,14 @@ export default function LivePage() {
   };
 
   const pad = (n: number) => String(n).padStart(2, '0');
+
+  if (!isMissionsEnabled) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <MissionLockScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

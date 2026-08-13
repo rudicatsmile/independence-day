@@ -16,6 +16,7 @@ import {
   updateAnnouncementInSupabase,
   updateLeaderboardToggleInSupabase,
   updateSfxToggleInSupabase,
+  updateMissionsToggleInSupabase,
   executeFactoryReset,
 } from '@/lib/supabase/services';
 
@@ -32,6 +33,7 @@ export default function AdminDashboardPage() {
   const isAnnouncementEnabled = useLiveStore((state) => state.isAnnouncementEnabled);
   const isLeaderboardEnabled = useLiveStore((state) => state.isLeaderboardEnabled);
   const isSfxEnabled = useLiveStore((state) => state.isSfxEnabled);
+  const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
 
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
 
@@ -121,6 +123,13 @@ export default function AdminDashboardPage() {
     setIsSaving(true);
     useLiveStore.setState({ isSfxEnabled: !isSfxEnabled });
     await updateSfxToggleInSupabase(!isSfxEnabled);
+    setIsSaving(false);
+  };
+
+  const handleToggleMissions = async () => {
+    setIsSaving(true);
+    useLiveStore.setState({ isMissionsEnabled: !isMissionsEnabled });
+    await updateMissionsToggleInSupabase(!isMissionsEnabled);
     setIsSaving(false);
   };
 
@@ -229,6 +238,37 @@ export default function AdminDashboardPage() {
           <BarChart3 className="w-5 h-5 text-amber-400" />
           Kontrol Fitur Acara (Enable / Disable)
         </h2>
+
+        {/* === MISSION CONTROL - Main Switch === */}
+        <div className={`glass-card rounded-2xl p-5 border-2 space-y-2 transition-all ${
+          isMissionsEnabled ? 'border-emerald-400/60 shadow-[0_0_20px_rgba(52,211,153,0.2)]' : 'border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+        }`}>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{isMissionsEnabled ? '🟢' : '🔴'}</span>
+                <span className="text-base font-black text-white">Mission Control (Global)</span>
+              </div>
+              <p className="text-[11px] text-slate-400 pl-8">
+                {isMissionsEnabled
+                  ? 'Semua misi AKTIF — peserta bisa mengerjakan misi sekarang.'
+                  : 'Semua misi TERKUNCI — peserta hanya melihat countdown timer.'}
+              </p>
+            </div>
+            <button
+              onClick={handleToggleMissions}
+              disabled={isSaving}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black transition-all ${
+                isMissionsEnabled
+                  ? 'bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 hover:bg-emerald-500/30'
+                  : 'bg-red-500/20 border-2 border-red-400 text-red-300 hover:bg-red-500/30'
+              }`}
+            >
+              {isMissionsEnabled ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+              <span>{isMissionsEnabled ? 'MISI ON' : 'MISI OFF'}</span>
+            </button>
+          </div>
+        </div>
 
         {/* Countdown Timer Control */}
         <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
