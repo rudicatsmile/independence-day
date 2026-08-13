@@ -30,3 +30,6 @@ docs/kredential*
 
 # typescript build cache
 *.tsbuildinfo
+
+.env.production
+.env.testing

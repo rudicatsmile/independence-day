@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed-supabase.mjs"
+    "seed": "node scripts/seed-supabase.mjs",
+    "env:testing": "node -e \"require('fs').copyFileSync('.env.testing', '.env.local'); console.log('✅ Switched to TESTING Database');\"",
+    "env:prod": "node -e \"require('fs').copyFileSync('.env.production', '.env.local'); console.log('✅ Switched to PRODUCTION Database (HARI-H)');\""
   },
   "dependencies": {
     "@serwist/next": "^9.0.0",
