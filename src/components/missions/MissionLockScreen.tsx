@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, Clock } from 'lucide-react';
 
-// Target: 19 Agustus 2026 pukul 07:00 WIB (UTC+7)
-const MISSION_UNLOCK_TIME = new Date('2026-08-19T00:00:00Z'); // 07:00 WIB = 00:00 UTC
+// Target: 17 Agustus 2026 pukul 08:00 WIB (UTC+7)
+const MISSION_UNLOCK_TIME = new Date('2026-08-17T01:00:00Z'); // 08:00 WIB = 01:00 UTC
 
 function useCountdown(target: Date) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, expired: false });
@@ -103,7 +103,7 @@ export function MissionLockScreen() {
             </div>
           </div>
           <p className="text-[11px] text-slate-500">
-            🗓️ 19 Agustus 2026 • HUT RI ke-81
+            🗓️ 17 Agustus 2026 • HUT RI ke-81 • Mulai Pukul 08:00 WIB
           </p>
         </div>
       ) : (
