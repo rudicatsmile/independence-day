@@ -262,6 +262,19 @@ export default function HomePage() {
                     <p className="text-[10px] text-blue-300">Statistik & Kontrol Fitur</p>
                   </div>
                 </Link>
+
+                <Link
+                  href="/cosplay"
+                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 flex items-center gap-3 transition-all hover:scale-105 shadow-glow"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Klasemen Cosplay</p>
+                    <p className="text-[10px] text-pink-300">Papan Peringkat Publik</p>
+                  </div>
+                </Link>
                 
                 <button
                   onClick={() => setIsRoleModalOpen(true)}
