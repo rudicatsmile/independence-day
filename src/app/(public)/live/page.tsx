@@ -60,6 +60,8 @@ export default function LivePage() {
 
   const [isSaluteAnimating, setIsSaluteAnimating] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [tapCount, setTapCount] = useState(0); // Tracks taps toward 3
+  const [saluteCompleted, setSaluteCompleted] = useState(false); // Locked after 3rd tap
 
   const countdown = useCountdown(isCountdownEnabled ? countdownTargetTime : null);
 
@@ -68,10 +70,26 @@ export default function LivePage() {
   }, [initLiveSupabase, profile?.id]);
 
   const handleSaluteTap = () => {
-    incrementSalute();
+    if (saluteCompleted) return; // Already done, locked
+    if (!isLoggedIn || profile.id === 'guest') {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    const nextCount = tapCount + 1;
+    setTapCount(nextCount);
     setIsSaluteAnimating(true);
     setTimeout(() => setIsSaluteAnimating(false), 300);
-    confetti({ particleCount: 25, spread: 40, origin: { y: 0.7 } });
+    confetti({ particleCount: 15, spread: 30, origin: { y: 0.7 } });
+
+    if (nextCount >= 3) {
+      // 3rd tap: add to global counter, award points, lock button
+      incrementSalute();
+      setSaluteCompleted(true);
+      completeMission('m-05', 125);
+      unlockBadge('b-03');
+      confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+    }
   };
 
   const handleVote = (optionId: string) => {
@@ -163,18 +181,47 @@ export default function LivePage() {
           </p>
         </div>
 
+        {/* 3-Dot Progress Indicator */}
+        <div className="flex items-center justify-center gap-3">
+          {[1, 2, 3].map((step) => (
+            <div
+              key={step}
+              className={`transition-all duration-300 rounded-full border-2 ${
+                tapCount >= step
+                  ? saluteCompleted && step === 3
+                    ? 'w-8 h-8 bg-emerald-400 border-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.8)]'
+                    : 'w-7 h-7 bg-amber-400 border-amber-300 shadow-gold-glow'
+                  : 'w-6 h-6 bg-slate-800 border-slate-600'
+              }`}
+            />
+          ))}
+        </div>
+        <p className="text-[11px] text-slate-400 -mt-3">
+          {saluteCompleted
+            ? '✅ Hormat selesai! Poin telah ditambahkan.'
+            : tapCount === 0
+              ? 'Ketuk tombol Hormat! sebanyak 3 kali'
+              : `Ketukan ${tapCount}/3 — teruskan!`}
+        </p>
+
         {/* Big Interactive Salute Button */}
         <button
           onClick={handleSaluteTap}
-          className={`w-36 h-36 rounded-full bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-4 border-amber-300 shadow-gold-glow flex items-center justify-center mx-auto p-2 transition-transform active:scale-95 overflow-hidden ${isSaluteAnimating ? 'scale-110' : 'hover:scale-105'
-            }`}
-          title="Ketuk untuk Hormat!"
+          disabled={saluteCompleted}
+          className={`w-36 h-36 rounded-full border-4 shadow-gold-glow flex items-center justify-center mx-auto p-2 transition-transform overflow-hidden ${
+            saluteCompleted
+              ? 'bg-slate-800 border-slate-600 opacity-50 cursor-not-allowed scale-95'
+              : `bg-gradient-to-br from-merdeka-red via-merdeka-crimson to-amber-500 border-amber-300 active:scale-95 ${isSaluteAnimating ? 'scale-110' : 'hover:scale-105'}`
+          }`}
+          title={saluteCompleted ? 'Hormat sudah selesai' : 'Ketuk untuk Hormat!'}
         >
           <img src="/hormat.png" alt="Hormat" className="w-full h-full object-contain drop-shadow-xl" />
         </button>
 
         <p className="text-xs text-slate-300 max-w-sm mx-auto">
-          💡 Bebas ketuk tombol **Hormat!** . Setiap ketukan akan langsung menambah angka counter di Layar Proyektor Panggung.
+          {saluteCompleted
+            ? '🏆 Terima kasih sudah memberi hormat! Lencana Suara Kemerdekaan berhasil diraih.'
+            : '💡 Ketuk tombol Hormat! sebanyak 3 kali untuk mengirimkan hormatmu ke layar panggung dan mendapatkan poin.'}
         </p>
       </div>
 
