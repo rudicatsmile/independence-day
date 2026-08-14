@@ -178,6 +178,17 @@ export const MOCK_MISSIONS: Mission[] = [
     is_active: true,
     order_index: 5,
   },
+  {
+    id: 'm-07',
+    slug: 'tap-battle',
+    title: 'Tap Battle Hormat',
+    description: 'Adu cepat! Ketuk tombol hormat sebanyak-banyaknya dalam 60 detik.',
+    type: 'checkin',
+    points_reward: 200,
+    icon_name: 'Activity',
+    is_active: true,
+    order_index: 6,
+  },
 ];
 
 export const MOCK_BADGES: Badge[] = [

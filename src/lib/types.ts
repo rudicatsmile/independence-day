@@ -143,3 +143,13 @@ export interface CosplayScoreRecord {
   scores: Record<string, number>;
   final_score: number;
 }
+
+export interface TapBattleScore {
+  id: string;
+  user_id: string;
+  user_name: string;
+  instansi?: string;
+  tap_count: number;
+  completed_at: string;
+}
+

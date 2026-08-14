@@ -399,15 +399,17 @@ export default function HomePage() {
                   ) : (
                     <Link
                       href={
-                        mission.slug === 'selfie-guru'
-                          ? '/selfie-guru'
-                          : mission.slug === 'selfie-patriotik'
-                            ? '/twibbon'
-                            : mission.type === 'qr_hunt'
-                              ? '/map'
-                              : mission.type === 'quiz'
-                                ? '/quiz'
-                                : '/live'
+                        mission.slug === 'tap-battle'
+                          ? '/tap-battle'
+                          : mission.slug === 'selfie-guru'
+                            ? '/selfie-guru'
+                            : mission.slug === 'selfie-patriotik'
+                              ? '/twibbon'
+                              : mission.type === 'qr_hunt'
+                                ? '/map'
+                                : mission.type === 'quiz'
+                                  ? '/quiz'
+                                  : '/live'
                       }
                       className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white font-bold text-xs flex items-center gap-1 shadow-glow"
                     >

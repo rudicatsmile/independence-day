@@ -1224,3 +1224,38 @@ export async function executeFactoryReset(): Promise<{ error: string | null }> {
 
   return { error: null };
 }
+
+// --- TAP BATTLE SERVICES ---
+export async function submitTapBattleScore(userId: string, userName: string, instansi: string | undefined, tapCount: number) {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('tap_battle_scores')
+    .insert({
+      user_id: userId,
+      user_name: userName,
+      instansi: instansi || null,
+      tap_count: tapCount,
+    });
+  
+  if (error) {
+    console.error('Error submitting tap battle score:', error);
+    return false;
+  }
+  return true;
+}
+
+export async function fetchTapBattleLeaderboard(limit: number = 10) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('tap_battle_scores')
+    .select('*')
+    .order('tap_count', { ascending: false })
+    .order('completed_at', { ascending: true })
+    .limit(limit);
+    
+  if (error) {
+    console.error('Error fetching tap battle leaderboard:', error);
+    return [];
+  }
+  return data;
+}
