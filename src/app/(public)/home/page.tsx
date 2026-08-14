@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp, UserCog, HelpCircle, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp, UserCog, HelpCircle, ToggleLeft, ToggleRight, Activity } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
