@@ -10,7 +10,7 @@ export default function LandingPage() {
       {/* Badge Pill */}
       <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card-gold border border-amber-400/40 text-amber-300 text-xs font-black tracking-wider uppercase animate-bounce">
         <Sparkles className="w-4 h-4 text-amber-400" />
-        <span>APLIKASI RESMI PERAYAAN HUT RI KE-81</span>
+        <span>PORTAL PERAYAAN HUT KE-81 RI</span>
       </div>
 
       {/* Hero Title */}
@@ -28,7 +28,7 @@ export default function LandingPage() {
           Yayasan Al-Wathoniyah <span className="text-gradient-gold">Asshodriyah 9</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Platform partisipasi digital interaktif HUT RI ke-81. Ikuti Twibbon Photobooth, Wall of Merdeka, dan Gerakan Penghormatan Bendera di Panggung Utama!
+          Platform partisipasi digital interaktif HUT ke-81 Republik Indonesia. Ikuti Twibbon Photobooth, Wall of Merdeka, dan Gerakan Penghormatan Bendera di Panggung Utama!
         </p>
       </div>
 

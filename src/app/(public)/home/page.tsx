@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp, UserCog, HelpCircle } from 'lucide-react';
+import { Flag, Sparkles, MapPin, Trophy, Crown, Camera, Radio, ChevronRight, CheckCircle2, LogIn, Lock, ShieldCheck, Image as ImageIcon, Tv, GraduationCap, BarChart3, Megaphone, ChevronDown, ChevronUp, UserCog, HelpCircle, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLiveStore } from '@/stores/useLiveStore';
 import { AuthModal } from '@/components/auth/AuthModal';
 import RoleManagementModal from '@/components/admin/RoleManagementModal';
 import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
-import { fetchLiveEventHeaderFromSupabase, fetchFullLeaderboardFromSupabase } from '@/lib/supabase/services';
+import { fetchLiveEventHeaderFromSupabase, fetchFullLeaderboardFromSupabase, updateMissionsToggleInSupabase } from '@/lib/supabase/services';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Profile } from '@/lib/types';
 
@@ -28,6 +28,7 @@ export default function HomePage() {
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isSavingMission, setIsSavingMission] = useState(false);
   const [eventTitle, setEventTitle] = useState('PANGGUNG UTAMA PERAYAAN HUT RI KE-81');
   const [eventDate, setEventDate] = useState('17 AGUSTUS 2026');
   const [eventYearNumber, setEventYearNumber] = useState('81');
@@ -143,6 +144,40 @@ export default function HomePage() {
             {isAdmin ? 'Akses khusus Panitia Utama: Kelola bingkai Twibbon publik, pemicu suara sirine panggung, & takedown galeri foto.' : 'Akses jalan pintas menuju halaman kontrol penilaian Cosplay.'}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+
+            {/* === Mission Control Card - untuk Admin dan Panitia Cosplay === */}
+            {(isAdmin || isPanitiaCosplay) && (
+              <button
+                onClick={async () => {
+                  setIsSavingMission(true);
+                  useLiveStore.setState({ isMissionsEnabled: !isMissionsEnabled });
+                  await updateMissionsToggleInSupabase(!isMissionsEnabled);
+                  setIsSavingMission(false);
+                }}
+                disabled={isSavingMission}
+                className={`p-4 text-left rounded-2xl border flex items-center gap-3 transition-all hover:scale-105 shadow-glow ${
+                  isMissionsEnabled
+                    ? 'bg-emerald-950/60 border-emerald-400/60'
+                    : 'bg-red-950/60 border-red-400/60'
+                }`}
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  isMissionsEnabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                }`}>
+                  {isMissionsEnabled
+                    ? <ToggleRight className="w-5 h-5" />
+                    : <ToggleLeft className="w-5 h-5" />}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Mission Control</p>
+                  <p className={`text-[10px] font-bold ${
+                    isMissionsEnabled ? 'text-emerald-300' : 'text-red-300'
+                  }`}>
+                    {isMissionsEnabled ? '🟢 Misi AKTIF' : '🔴 Misi TERKUNCI'}
+                  </p>
+                </div>
+              </button>
+            )}
             {isAdmin && (
               <Link
                 href="/admin/twibbon"

@@ -195,28 +195,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </form>
 
         {/* Toggle Login / Register */}
-        <div className="text-center pt-2 border-t border-slate-800">
-          {mode === 'login' ? (
-            <p className="text-xs text-slate-400">
-              Belum punya akun?{' '}
-              <button
-                onClick={() => setMode('register')}
-                className="text-amber-400 font-bold hover:underline"
-              >
-                Daftar di sini
-              </button>
-            </p>
-          ) : (
-            <p className="text-xs text-slate-400">
-              Sudah punya akun?{' '}
-              <button
-                onClick={() => setMode('login')}
-                className="text-amber-400 font-bold hover:underline"
-              >
-                Masuk di sini
-              </button>
-            </p>
-          )}
+        <div className="pt-4 mt-2 border-t border-slate-800/50">
+          <p className="text-xs text-center text-slate-400 mb-3">
+            {mode === 'login' ? 'Belum punya akun?' : 'Sudah punya akun?'}
+          </p>
+          <button
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            className="w-full flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-700/50 hover:border-amber-500/50 bg-slate-900/30 hover:bg-slate-800/50 text-sm font-medium text-slate-300 hover:text-amber-400 transition-all duration-300"
+          >
+            {mode === 'login' ? 'Buat Akun Baru' : 'Masuk ke Akun Anda'}
+          </button>
         </div>
 
         {/* Subtle Admin Shortcut Link */}
@@ -227,7 +215,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               onClick={handleAdminFill}
               className="text-[11px] font-semibold text-slate-400 hover:text-amber-300 transition-colors inline-flex items-center gap-1"
             >
-              <span>👑 Akses Pintasan Panitia / Admin (Isi Otomatis Kredensial)</span>
+              {/* <span>👑  Panitia / Admin (Isi Otomatis Kredensial)</span> */}
             </button>
           </div>
         )}
