@@ -1,4 +1,4 @@
-﻿export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay' | 'juri_cosplay';
+export type UserRole = 'participant' | 'admin' | 'media_team' | 'panitia_cosplay' | 'juri_cosplay';
 
 export interface Profile {
   id: string;
@@ -92,6 +92,8 @@ export interface LiveEventState {
   event_year_number: string;
   cosplay_published?: boolean;
   event_type: 'salute' | 'merdeka_challenge';
+  tap_battle_enabled?: boolean;|event_type: 'salute' | 'merdeka_challenge';
+  tap_battle_enabled?: boolean;
 }
 
 export interface TwibbonFrame {

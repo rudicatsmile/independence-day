@@ -24,6 +24,7 @@ interface LiveState {
   isLeaderboardEnabled: boolean;
   isSfxEnabled: boolean;
   isMissionsEnabled: boolean;
+  isTapBattleEnabled: boolean;
 
   initLiveSupabase: (userId?: string) => Promise<void>;
   incrementSalute: () => void;
@@ -45,6 +46,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   isLeaderboardEnabled: true,
   isSfxEnabled: true,
   isMissionsEnabled: false,
+  isTapBattleEnabled: false,
 
   initLiveSupabase: async (userId?: string) => {
     if (!isSupabaseConfigured()) return;
@@ -69,6 +71,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
         isLeaderboardEnabled: extras.leaderboard_enabled,
         isSfxEnabled: extras.sfx_enabled,
         isMissionsEnabled: extras.missions_enabled,
+        isTapBattleEnabled: extras.tap_battle_enabled,
       });
 
       if (wasConnected) {
@@ -94,6 +97,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
               if (typeof newData.leaderboard_enabled === 'boolean') updates.isLeaderboardEnabled = newData.leaderboard_enabled;
               if (typeof newData.sfx_enabled === 'boolean') updates.isSfxEnabled = newData.sfx_enabled;
               if (typeof newData.missions_enabled === 'boolean') updates.isMissionsEnabled = newData.missions_enabled;
+              if (typeof newData.tap_battle_enabled === 'boolean') updates.isTapBattleEnabled = newData.tap_battle_enabled;
               set(updates);
             }
           }
@@ -152,3 +156,4 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     set((state) => ({ isAudioMuted: !state.isAudioMuted }));
   },
 }));
+

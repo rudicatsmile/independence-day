@@ -25,6 +25,7 @@ export default function HomePage() {
   const announcementText = useLiveStore((state) => state.announcementText);
   const isAnnouncementEnabled = useLiveStore((state) => state.isAnnouncementEnabled);
   const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
+  const isTapBattleEnabled = useLiveStore((state) => state.isTapBattleEnabled);
   const initLiveSupabase = useLiveStore((state) => state.initLiveSupabase);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -174,6 +175,38 @@ export default function HomePage() {
                     isMissionsEnabled ? 'text-emerald-300' : 'text-red-300'
                   }`}>
                     {isMissionsEnabled ? '🟢 Misi AKTIF' : '🔴 Misi TERKUNCI'}
+                  </p>
+                </div>
+              </button>
+            )}
+
+            {(isAdmin || isPanitiaCosplay) && (
+              <button
+                onClick={async () => {
+                  setIsSavingMission(true);
+                  useLiveStore.setState({ isTapBattleEnabled: !isTapBattleEnabled });
+                  const { updateTapBattleToggleInSupabase } = await import('@/lib/supabase/services');
+                  await updateTapBattleToggleInSupabase(!isTapBattleEnabled);
+                  setIsSavingMission(false);
+                }}
+                disabled={isSavingMission}
+                className={`p-4 text-left rounded-2xl border flex items-center gap-3 transition-all hover:scale-105 shadow-glow ${
+                  isTapBattleEnabled
+                    ? 'bg-blue-950/60 border-blue-400/60'
+                    : 'bg-slate-900/60 border-slate-700/60'
+                }`}
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  isTapBattleEnabled ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-800 text-slate-500'
+                }`}>
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Tap Battle</p>
+                  <p className={`text-[10px] font-bold ${
+                    isTapBattleEnabled ? 'text-blue-300' : 'text-slate-400'
+                  }`}>
+                    {isTapBattleEnabled ? '🟢 AKTIF' : '🔴 OFF'}
                   </p>
                 </div>
               </button>

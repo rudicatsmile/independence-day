@@ -28,3 +28,7 @@ CREATE POLICY "tap_battle_scores_insert_own"
 
 -- 5. Enable Realtime untuk tabel ini (agar monitor live update)
 ALTER PUBLICATION supabase_realtime ADD TABLE public.tap_battle_scores;
+
+-- 6. Tambahkan kolom tap_battle_enabled ke live_event_state (Jalankan ini juga!)
+ALTER TABLE public.live_event_state ADD COLUMN IF NOT EXISTS tap_battle_enabled boolean DEFAULT false;
+

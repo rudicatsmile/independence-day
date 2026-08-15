@@ -972,7 +972,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
 
   const { data, error } = await supabase
     .from('live_event_state')
-    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled, missions_enabled')
+    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled, missions_enabled, tap_battle_enabled')
     .eq('id', 'main')
     .single();
 
@@ -1259,3 +1259,28 @@ export async function fetchTapBattleLeaderboard(limit: number = 10) {
   }
   return data;
 }
+
+
+  /**
+   * Mengubah status tap battle
+   */
+  export async function updateTapBattleToggleInSupabase(enabled: boolean): Promise<{ error: string | null }> {
+    if (!isSupabaseConfigured()) return { error: null };
+  
+    const { error } = await supabase
+      .from('live_event_state')
+      .upsert({
+        id: 'main',
+        tap_battle_enabled: enabled,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'id' });
+  
+    if (error) {
+      console.warn('?? Supabase live_event_state tap_battle notice:', error.message);
+      if (error.message.includes('tap_battle_enabled')) {
+        return { error: null }; // Ignore schema missing error during dev
+      }
+      return { error: error.message };
+    }
+    return { error: null };
+  }

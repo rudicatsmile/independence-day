@@ -16,6 +16,7 @@ export default function TapBattlePage() {
   const router = useRouter();
   const { profile, isLoggedIn } = useUserStore();
   const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
+  const isTapBattleEnabled = useLiveStore((state) => state.isTapBattleEnabled);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [gameState, setGameState] = useState<'intro' | 'countdown' | 'playing' | 'finished' | 'already_played'>('intro');
@@ -106,7 +107,7 @@ export default function TapBattlePage() {
     handleTap();
   };
 
-  if (!isMissionsEnabled) {
+  if (!isMissionsEnabled || !isTapBattleEnabled) {
     return (
       <div className="max-w-2xl mx-auto">
         <MissionLockScreen />
