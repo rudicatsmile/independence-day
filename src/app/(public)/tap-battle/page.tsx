@@ -34,6 +34,21 @@ export default function TapBattlePage() {
     }
   }, [userMissions, gameState]);
 
+  // Handle timer reaching 0 safely outside of render phase
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === 'playing') {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setGameState('finished');
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      
+      // Submit score
+      if (isLoggedIn && profile.id !== 'guest') {
+        submitTapBattleScore(profile.id, profile.full_name, profile.instansi, tapCount);
+        completeMission('m-07', tapCount);
+      }
+    }
+  }, [timeLeft, gameState, isLoggedIn, profile, tapCount, completeMission]);
+
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -67,30 +82,8 @@ export default function TapBattlePage() {
   const startTimer = () => {
     setTimeLeft(BATTLE_DURATION);
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          endGame();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
-  };
-
-  const endGame = async () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setGameState('finished');
-    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-    
-    // Submit score
-    if (isLoggedIn && profile.id !== 'guest') {
-      // capture current tap count
-      setTapCount(currentTapCount => {
-        submitTapBattleScore(profile.id, profile.full_name, profile.instansi, currentTapCount);
-        completeMission('m-07', currentTapCount);
-        return currentTapCount;
-      });
-    }
   };
 
   const handleTap = () => {
