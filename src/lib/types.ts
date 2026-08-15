@@ -92,7 +92,6 @@ export interface LiveEventState {
   event_year_number: string;
   cosplay_published?: boolean;
   event_type: 'salute' | 'merdeka_challenge';
-  tap_battle_enabled?: boolean;|event_type: 'salute' | 'merdeka_challenge';
   tap_battle_enabled?: boolean;
 }
 
