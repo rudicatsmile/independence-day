@@ -61,11 +61,13 @@ export const QuizGame: React.FC = () => {
       setIsAnswered(false);
     } else {
       setIsFinished(true);
-      const finalScore = score + (selectedOption === currentQ.correct_answer_index ? 0 : 0);
+      const finalScore = score + (selectedOption === currentQ.correct_answer_index ? 1 : 0);
       const isPerfect = finalScore === questions.length;
+      
+      const calculatedPoints = Math.floor((100 / questions.length) * finalScore);
+      completeMission('m-04', calculatedPoints);
 
       if (isPerfect) {
-        completeMission('m-04', 100);
         unlockBadge('b-02'); // Unlock Raja Trivia Sejarah
         confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } });
       }
@@ -73,11 +75,7 @@ export const QuizGame: React.FC = () => {
   };
 
   const handleRestart = () => {
-    setCurrentIndex(0);
-    setSelectedOption(null);
-    setIsAnswered(false);
-    setScore(0);
-    setIsFinished(false);
+    // Restart is no longer allowed. Mission is locked after first completion.
   };
 
   return (
@@ -236,23 +234,28 @@ export const QuizGame: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-3xl">
+              <div className="w-16 h-16 rounded-2xl bg-amber-950/80 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto text-3xl">
                 🎯
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl font-black text-white">Skor Anda: {score} / {questions.length} Benar</h3>
                 <p className="text-xs text-slate-300">
-                  Untuk membuka Lencana <span className="text-amber-400 font-bold">"Raja Trivia Sejarah"</span> dan klaim <span className="text-amber-300 font-bold">+100 PTS</span>, Anda harus menjawab seluruh 5 soal dengan 100% benar tanpa salah!
+                  Anda mendapatkan <span className="text-amber-400 font-bold">+{Math.floor((100 / questions.length) * score)} PTS</span> dari kuis ini.
+                </p>
+                <p className="text-[10px] text-slate-400 mt-2">
+                  (Lencana "Raja Trivia Sejarah" gagal didapatkan karena ada jawaban yang salah)
                 </p>
               </div>
 
-              <button
-                onClick={handleRestart}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white font-bold text-xs shadow-glow flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>Coba Kuis Lagi Sekarang</span>
-              </button>
+              <div className="pt-4">
+                <Link
+                  href="/passport"
+                  className="w-full py-3.5 rounded-2xl bg-slate-800 text-white font-black text-xs shadow-glow flex items-center justify-center gap-2 border border-slate-700 hover:bg-slate-700 transition-colors"
+                >
+                  <Trophy className="w-4 h-4" />
+                  <span>Kembali ke Paspor Digital</span>
+                </Link>
+              </div>
             </div>
           )}
         </div>
