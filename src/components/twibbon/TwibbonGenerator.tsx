@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, Move, RotateCcw, Camera, SwitchCamera, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, Download, Share2, Sparkles, RefreshCw, CheckCircle2, Lock, Move, RotateCcw, Camera, SwitchCamera, X, Image as ImageIcon, CheckCircle, Send } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '@/stores/useUserStore';
 import { TwibbonFrame } from '@/lib/types';
 import { MOCK_TWIBBON_FRAMES } from '@/lib/mockData';
-import { fetchTwibbonFramesFromSupabase } from '@/lib/supabase/services';
+import { fetchTwibbonFramesFromSupabase, uploadGalleryImageToStorage } from '@/lib/supabase/services';
 import { AuthModal } from '@/components/auth/AuthModal';
 
 export const TwibbonGenerator: React.FC = () => {
@@ -16,6 +16,8 @@ export const TwibbonGenerator: React.FC = () => {
   const [caption, setCaption] = useState('Bangga menjadi bagian dari Perayaan HUT RI ke-81! 🇮🇩✨ #Merdeka81');
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
+  const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSavedToGallery, setIsSavedToGallery] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -233,6 +235,9 @@ export const TwibbonGenerator: React.FC = () => {
     function finishRender() {
       if (canvasRef.current) {
         setGeneratedDataUrl(canvasRef.current.toDataURL('image/jpeg', 0.8));
+        canvasRef.current.toBlob((blob) => {
+          if (blob) setGeneratedBlob(blob);
+        }, 'image/jpeg', 0.8);
       }
       setIsProcessing(false);
     }
@@ -324,20 +329,30 @@ export const TwibbonGenerator: React.FC = () => {
   };
 
   // Save to Wall of Merdeka Gallery (Requires Login)
-  const handlePublishToGallery = () => {
+  const handlePublishToGallery = async () => {
     if (!isLoggedIn || profile.id === 'guest') {
       setIsAuthModalOpen(true);
       return;
     }
 
-    if (!generatedDataUrl) return;
+    if (!generatedDataUrl || !generatedBlob) return;
+
+    setIsUploading(true);
+    const publicUrl = await uploadGalleryImageToStorage(generatedBlob);
+    setIsUploading(false);
+
+    if (!publicUrl) {
+      alert('Gagal mengunggah foto ke server. Silakan coba lagi.');
+      return;
+    }
+
     addGalleryItem({
       user_id: profile.id,
       user_name: profile.full_name,
       user_avatar: profile.avatar_url,
       instansi: profile.instansi,
       type: 'photo',
-      image_url: generatedDataUrl,
+      image_url: publicUrl,
       caption: caption,
     });
     
@@ -596,7 +611,7 @@ export const TwibbonGenerator: React.FC = () => {
               ) : (
                 <button
                   onClick={handlePublishToGallery}
-                  disabled={isSavedToGallery}
+                  disabled={isSavedToGallery || isUploading}
                   className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-gold-glow transition-all ${
                     isSavedToGallery
                       ? 'bg-emerald-600/30 border border-emerald-500 text-emerald-300 cursor-default'

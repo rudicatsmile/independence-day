@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Sparkles, Heart, Flag, Share2, Upload, CheckCircle2, ShieldAlert, Trash2, AlertTriangle } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -98,9 +99,11 @@ export default function GalleryPage() {
             {/* Header User Info */}
             <div className="p-3 pb-0 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <img
+                <Image
                   src={item.user_avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
                   alt={item.user_name}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full object-cover border border-amber-400"
                 />
                 <div className="leading-tight">
@@ -114,10 +117,12 @@ export default function GalleryPage() {
 
             {/* Photo Card Image */}
             <div className="relative aspect-square w-full overflow-hidden bg-slate-950">
-              <img
+              <Image
                 src={item.image_url}
                 alt={item.caption}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
 
               {item.report_count > 0 && (

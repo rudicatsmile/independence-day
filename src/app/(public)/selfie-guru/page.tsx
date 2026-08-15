@@ -18,10 +18,11 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
-import { AuthModal } from '@/components/auth/AuthModal';
 import { useLiveStore } from '@/stores/useLiveStore';
+import { AuthModal } from '@/components/auth/AuthModal';
 import { MissionLockScreen } from '@/components/missions/MissionLockScreen';
 import confetti from 'canvas-confetti';
+import { uploadGalleryImageToStorage } from '@/lib/supabase/services';
 
 const PRESET_TEACHERS = [
   { id: 't-2', name: 'Ibu Kartini', subject: 'Guru Sejarah', school: 'SD AL-Wathoniyah 9' },
@@ -41,12 +42,14 @@ export default function SelfieGuruPage() {
   const [selectedTeacher, setSelectedTeacher] = useState(PRESET_TEACHERS[0].name);
   const [customTeacher, setCustomTeacher] = useState('');
   const [isCustomTeacher, setIsCustomTeacher] = useState(false);
-  const [caption, setCaption] = useState('Terima kasih Bestie ku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
-
+  
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
-  const [isCapturing, setIsCapturing] = useState(false);
+  const [caption, setCaption] = useState('Terima kasih Bestie ku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
   const [isPublished, setIsPublished] = useState(false);
+  const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -169,6 +172,9 @@ export default function SelfieGuruPage() {
       ctx.fillText(`Guru: ${teacherNameFinal}`, 65, 745);
 
       setGeneratedDataUrl(canvas.toDataURL('image/jpeg', 0.92));
+      canvas.toBlob((blob) => {
+        if (blob) setGeneratedBlob(blob);
+      }, 'image/jpeg', 0.92);
     };
   }, [imageSrc, teacherNameFinal]);
 
@@ -178,7 +184,16 @@ export default function SelfieGuruPage() {
       return;
     }
 
-    if (!generatedDataUrl) return;
+    if (!generatedDataUrl || !generatedBlob) return;
+
+    setIsUploading(true);
+    const publicUrl = await uploadGalleryImageToStorage(generatedBlob);
+    setIsUploading(false);
+
+    if (!publicUrl) {
+      alert('Gagal mengunggah foto ke server. Silakan coba lagi.');
+      return;
+    }
 
     addGalleryItem({
       user_id: profile.id,
@@ -186,7 +201,7 @@ export default function SelfieGuruPage() {
       user_avatar: profile.avatar_url,
       instansi: profile.instansi,
       type: 'photo',
-      image_url: generatedDataUrl,
+      image_url: publicUrl,
       caption: `Selfie Bersama : ${teacherNameFinal} - "${caption}"`,
     });
 
@@ -357,12 +372,16 @@ export default function SelfieGuruPage() {
             {/* Final Action Button */}
             {generatedDataUrl && (
               <button
-                type="button"
                 onClick={handlePublishSelfie}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-merdeka-red text-slate-950 font-black text-sm uppercase tracking-wider shadow-gold-glow shimmer-btn flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform"
+                disabled={caption.length < 5 || isUploading}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-merdeka-red to-amber-500 text-white font-black text-sm uppercase tracking-wide shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] transition-all"
               >
-                <Send className="w-5 h-5" />
-                <span>Tayangkan di Layar Panggung & Klaim +150 PTS</span>
+                {isUploading ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+                <span>{isUploading ? 'Menyiarkan...' : 'Siarkan ke Layar Utama'}</span>
               </button>
             )}
           </div>

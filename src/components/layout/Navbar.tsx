@@ -26,18 +26,13 @@ export const Navbar: React.FC = () => {
 
     if (isSupabaseConfigured()) {
       const supabase = createClient();
-      supabase.auth.getUser().then(({ data }) => {
-        if (data.user) {
-          supabase.from('profiles').select('*').eq('id', data.user.id).single().then(({ data: prof }) => {
-            if (prof) {
-              setUserProfile(prof);
-            }
-          });
-        }
-      });
-
-      const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-        if (!session?.user) {
+      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+          if (prof) {
+            setUserProfile(prof);
+          }
+        } else {
           setUserProfile(null);
         }
       });

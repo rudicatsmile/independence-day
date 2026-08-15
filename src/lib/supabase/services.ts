@@ -530,6 +530,44 @@ export async function insertGalleryItemToSupabase(item: Omit<GalleryItem, 'id' |
 }
 
 /**
+ * Upload a gallery image (Selfie/Twibbon) from Blob to Supabase Storage
+ */
+export async function uploadGalleryImageToStorage(blob: Blob): Promise<string | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const ext = 'jpg';
+    const fileName = `gallery_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+    
+    const { data, error } = await supabase.storage
+      .from('gallery-images')
+      .upload(fileName, blob, {
+        contentType: 'image/jpeg',
+        upsert: true
+      });
+      
+    if (error) {
+      console.error('Error uploading gallery image:', error);
+      return null;
+    }
+    
+    if (data) {
+      const { data: pubData } = supabase.storage
+        .from('gallery-images')
+        .getPublicUrl(data.path);
+        
+      if (pubData) {
+        return pubData.publicUrl;
+      }
+    }
+    return null;
+  } catch (err: any) {
+    console.error('Failed to upload gallery image:', err);
+    return null;
+  }
+}
+
+/**
  * Admin Takedown photo from Wall of Merdeka
  */
 export async function takedownGalleryItemInSupabase(id: string) {

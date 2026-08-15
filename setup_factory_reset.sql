@@ -10,6 +10,7 @@ BEGIN
     TRUNCATE TABLE public.gallery_items CASCADE;
     TRUNCATE TABLE public.poll_votes CASCADE;
     TRUNCATE TABLE public.cosplay_scores CASCADE;
+    TRUNCATE TABLE public.tap_battle_scores CASCADE;
 
     -- Note: cosplay_participants is intentionally NOT truncated as requested.
 
