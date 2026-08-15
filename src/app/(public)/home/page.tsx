@@ -76,7 +76,11 @@ export default function HomePage() {
     }
   }, [initLiveSupabase]);
 
-  const activeMissions = missions.filter((m) => m.is_active !== false);
+  const activeMissions = missions.filter((m) => {
+    if (m.is_active === false) return false;
+    if (m.slug === 'tap-battle' && !isTapBattleEnabled) return false;
+    return true;
+  });
   const completedActiveCount = activeMissions.filter(
     (m) => userMissions[m.id]?.status === 'completed'
   ).length;
