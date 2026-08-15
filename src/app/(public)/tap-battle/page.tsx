@@ -14,7 +14,7 @@ const BATTLE_DURATION = 60; // 60 seconds
 
 export default function TapBattlePage() {
   const router = useRouter();
-  const { profile, isLoggedIn } = useUserStore();
+  const { profile, isLoggedIn, userMissions, completeMission } = useUserStore();
   const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
   const isTapBattleEnabled = useLiveStore((state) => state.isTapBattleEnabled);
 
@@ -27,8 +27,12 @@ export default function TapBattlePage() {
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check if user already played (in a real app, we'd check DB or local state)
-  // For simplicity, we just allow one play per session unless they reload, but the DB unique constraint prevents multiple submissions anyway.
+  // Check if user already played
+  useEffect(() => {
+    if (userMissions['m-07']?.status === 'completed' && gameState === 'intro') {
+      setGameState('already_played');
+    }
+  }, [userMissions, gameState]);
 
   useEffect(() => {
     return () => {
@@ -83,6 +87,7 @@ export default function TapBattlePage() {
       // capture current tap count
       setTapCount(currentTapCount => {
         submitTapBattleScore(profile.id, profile.full_name, profile.instansi, currentTapCount);
+        completeMission('m-07', currentTapCount);
         return currentTapCount;
       });
     }
@@ -204,6 +209,9 @@ export default function TapBattlePage() {
               <p className="text-xs text-amber-200 mt-2">
                 Rata-rata: {(tapCount / BATTLE_DURATION).toFixed(1)} ketukan per detik
               </p>
+              <div className="mt-4 inline-block px-4 py-2 bg-amber-950/50 border border-amber-500/30 rounded-xl">
+                <p className="text-xs font-bold text-amber-400">+{tapCount} Poin Misi Ditambahkan!</p>
+              </div>
             </div>
             
             <div className="p-4 bg-slate-900/80 border border-amber-500/30 rounded-2xl">
@@ -215,6 +223,29 @@ export default function TapBattlePage() {
             <button
               onClick={() => router.push('/home')}
               className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold border border-slate-700 hover:bg-slate-700"
+            >
+              Kembali ke Beranda
+            </button>
+          </div>
+        )}
+
+        {gameState === 'already_played' && (
+          <div className="space-y-6 animate-fade-in w-full max-w-sm">
+            <div className="w-24 h-24 bg-slate-900/80 rounded-full border-4 border-slate-600 flex items-center justify-center mx-auto">
+              <Activity className="w-10 h-10 text-slate-500" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-white">Kamu Sudah Bermain</h3>
+              <p className="text-sm text-slate-300">
+                Misi ini hanya bisa diikuti <strong className="text-amber-400">SATU KALI</strong> saja.
+              </p>
+              <p className="text-sm text-slate-300">
+                Poin yang kamu dapatkan sebelumnya sudah ditambahkan ke total poinmu.
+              </p>
+            </div>
+            <button
+              onClick={() => router.push('/home')}
+              className="w-full py-4 bg-slate-800 text-white rounded-2xl font-bold border border-slate-700 hover:bg-slate-700 mt-4"
             >
               Kembali ke Beranda
             </button>
