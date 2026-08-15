@@ -957,6 +957,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
   leaderboard_enabled: boolean;
   sfx_enabled: boolean;
   missions_enabled: boolean;
+  tap_battle_enabled: boolean;
 }> {
   const defaults = {
     countdown_target_time: null,
@@ -966,6 +967,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     leaderboard_enabled: true,
     sfx_enabled: true,
     missions_enabled: false,
+    tap_battle_enabled: false,
   };
 
   if (!isSupabaseConfigured()) return defaults;
@@ -986,6 +988,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     leaderboard_enabled: data.leaderboard_enabled ?? true,
     sfx_enabled: data.sfx_enabled ?? true,
     missions_enabled: data.missions_enabled ?? false,
+    tap_battle_enabled: data.tap_battle_enabled ?? false,
   };
 }
 
