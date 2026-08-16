@@ -261,7 +261,9 @@ export default function RoleManagementModal({ isOpen, onClose }: RoleManagementM
                               </span>
                               <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" /> 
-                                {new Date(profile.updated_at).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                {profile.updated_at || profile.created_at 
+                                  ? new Date(profile.updated_at || profile.created_at || '').toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' })
+                                  : '-'}
                               </span>
                             </div>
                           </div>

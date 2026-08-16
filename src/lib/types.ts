@@ -12,6 +12,8 @@ export interface Profile {
   onboarding_completed: boolean;
   rank?: number;
   judge_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type MissionType = 'checkin' | 'qr_hunt' | 'quiz' | 'video' | 'referral';
