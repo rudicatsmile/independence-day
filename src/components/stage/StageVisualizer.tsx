@@ -484,7 +484,7 @@ export const StageVisualizer: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-6 space-y-2">
                 <div className="flex items-center gap-3">
                   <img
-                    src={activePhoto.user_avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
+                    src={activePhoto.user_avatar || '/logo-yayasan.png'}
                     alt={activePhoto.user_name}
                     className="w-10 h-10 rounded-full object-cover border-2 border-amber-400 shadow-lg"
                   />
