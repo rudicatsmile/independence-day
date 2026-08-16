@@ -35,14 +35,14 @@ export default function SelfieGuruPage() {
   const router = useRouter();
   const { isLoggedIn, profile, addGalleryItem, completeMission, initSupabaseData, userMissions, unlockBadge } = useUserStore();
   const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
-  
+
   const isMissionCompleted = userMissions['m-06']?.status === 'completed';
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(PRESET_TEACHERS[0].name);
   const [customTeacher, setCustomTeacher] = useState('');
   const [isCustomTeacher, setIsCustomTeacher] = useState(false);
-  
+
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [generatedDataUrl, setGeneratedDataUrl] = useState<string | null>(null);
   const [caption, setCaption] = useState('Terima kasih Bestie ku! Dirgahayu Republik Indonesia ke-81! 🇮🇩✨');
@@ -165,7 +165,7 @@ export default function SelfieGuruPage() {
 
       ctx.fillStyle = '#F59E0B';
       ctx.font = 'bold 22px Inter, sans-serif';
-      ctx.fillText('🎓 SELFIE PATRIOT: MURID & GURU PERAYAAN 81', 65, 708);
+      ctx.fillText('🎓 SELFIE KEBERSAMAAN', 65, 708);
 
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 26px Inter, sans-serif';
