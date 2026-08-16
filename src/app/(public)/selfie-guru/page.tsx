@@ -225,7 +225,7 @@ export default function SelfieGuruPage() {
       <div className="glass-card-gold rounded-3xl p-6 border border-amber-400/50 text-center space-y-3 shadow-gold-glow relative overflow-hidden">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-wider">
           <GraduationCap className="w-4 h-4 text-amber-400" />
-          <span>MISI GURU & MURID PATRIOT</span>
+          <span>MISI PHOTO KEBERSAMAAN</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-gradient-gold uppercase">
           SELFIE BERSAMA BESTIE (+150 PTS)
