@@ -169,7 +169,7 @@ export default function SelfieGuruPage() {
 
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 26px Inter, sans-serif';
-      ctx.fillText(`Guru: ${teacherNameFinal}`, 65, 745);
+      ctx.fillText(`BESTIE: ${teacherNameFinal}`, 65, 745);
 
       setGeneratedDataUrl(canvas.toDataURL('image/jpeg', 0.92));
       canvas.toBlob((blob) => {
@@ -353,7 +353,7 @@ export default function SelfieGuruPage() {
 
               {/* Rendered Preview Image with Frame */}
               {!isCapturing && generatedDataUrl && (
-                <img src={generatedDataUrl} alt="Selfie Guru" className="w-full h-full object-cover animate-fade-in" />
+                <img src={generatedDataUrl} alt="Selfie Kebersamaan" className="w-full h-full object-cover animate-fade-in" />
               )}
 
               {/* Placeholder */}
@@ -363,7 +363,7 @@ export default function SelfieGuruPage() {
                     <GraduationCap className="w-8 h-8" />
                   </div>
                   <p className="text-xs text-slate-400 max-w-xs">
-                    Klik <b>Kamera HP</b> atau <b>Upload Foto</b> untuk memulai momen selfie bersama guru patriot.
+                    Klik <b>Kamera HP</b> atau <b>Upload Foto</b> untuk memulai momen selfie Kebersamaan.
                   </p>
                 </div>
               )}

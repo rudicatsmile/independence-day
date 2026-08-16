@@ -338,8 +338,8 @@ export const StageVisualizer: React.FC = () => {
             <button
               onClick={() => setIsAudioMuted(!isAudioMuted)}
               className={`p-3 rounded-2xl border transition-all ${isAudioMuted
-                  ? 'bg-slate-900 border-slate-700 text-slate-400'
-                  : 'bg-amber-500/20 border-amber-400/50 text-amber-300 shadow-gold-glow'
+                ? 'bg-slate-900 border-slate-700 text-slate-400'
+                : 'bg-amber-500/20 border-amber-400/50 text-amber-300 shadow-gold-glow'
                 }`}
               title={isAudioMuted ? 'Nyalakan Efek Suara' : 'Matikan Efek Suara'}
             >
@@ -660,10 +660,10 @@ export const StageVisualizer: React.FC = () => {
                 (g) => g.user_id === selectedParticipant.id || g.user_name === selectedParticipant.full_name
               );
               const twibbonPhoto = userPhotos.find(
-                (g) => !g.caption?.toLowerCase().includes('guru')
-              ) || userPhotos[0];
+                (g) => !g.caption?.toLowerCase().includes('selfie bersama')
+              );
               const guruPhoto = userPhotos.find(
-                (g) => g.caption?.toLowerCase().includes('guru')
+                (g) => g.caption?.toLowerCase().includes('selfie bersama')
               );
 
               return (
@@ -703,7 +703,7 @@ export const StageVisualizer: React.FC = () => {
                   <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                        <Trophy className="w-4 h-4 text-amber-400" /> Selfie bersama Guru Patriot
+                        <Trophy className="w-4 h-4 text-amber-400" /> Selfie Kebersamaan
                       </span>
                       {guruPhoto && (
                         <span className="text-[10px] text-emerald-400 font-bold">✓ Terverifikasi</span>
