@@ -724,8 +724,8 @@ export const StageVisualizer: React.FC = () => {
                     ) : (
                       <div className="aspect-square w-full rounded-xl bg-slate-900/50 border border-dashed border-slate-800 flex flex-col items-center justify-center text-center p-4 space-y-1">
                         <span className="text-2xl">📸</span>
-                        <p className="text-xs font-bold text-slate-400">Belum Mengunggah Foto Guru</p>
-                        <p className="text-[10px] text-slate-500">Peserta belum menyelesaikan Misi Selfie Guru Patriot</p>
+                        <p className="text-xs font-bold text-slate-400">Belum Mengunggah Foto</p>
+                        <p className="text-[10px] text-slate-500">Peserta belum menyelesaikan Misi Photo Kebersamaan</p>
                       </div>
                     )}
                   </div>
