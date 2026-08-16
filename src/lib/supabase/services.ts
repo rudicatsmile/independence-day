@@ -949,7 +949,6 @@ export async function updatePollInSupabase(
       options: options,
       total_votes: totalVotes,
       is_active: true,
-      updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
 
   if (error) return { error: error.message };
@@ -973,7 +972,6 @@ export async function resetPollVotesInSupabase(): Promise<{ error: string | null
       options: resetOptions,
       total_votes: 0,
       is_active: true,
-      updated_at: new Date().toISOString(),
     }, { onConflict: 'id' });
 
   if (error) return { error: error.message };
