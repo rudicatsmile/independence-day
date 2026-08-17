@@ -17,6 +17,7 @@ import {
   updateLeaderboardToggleInSupabase,
   updateSfxToggleInSupabase,
   updateMissionsToggleInSupabase,
+  updateEventFinishedToggleInSupabase,
   executeFactoryReset,
 } from '@/lib/supabase/services';
 
@@ -34,6 +35,7 @@ export default function AdminDashboardPage() {
   const isLeaderboardEnabled = useLiveStore((state) => state.isLeaderboardEnabled);
   const isSfxEnabled = useLiveStore((state) => state.isSfxEnabled);
   const isMissionsEnabled = useLiveStore((state) => state.isMissionsEnabled);
+  const isEventFinished = useLiveStore((state) => state.isEventFinished);
 
   const isAdmin = isLoggedIn && (profile.role === 'admin' || profile.role === 'media_team');
 
@@ -130,6 +132,16 @@ export default function AdminDashboardPage() {
     setIsSaving(true);
     useLiveStore.setState({ isMissionsEnabled: !isMissionsEnabled });
     await updateMissionsToggleInSupabase(!isMissionsEnabled);
+    setIsSaving(false);
+  };
+
+  const handleToggleEventFinished = async () => {
+    const nextState = !isEventFinished;
+    if (nextState && !confirm('Yakin ingin menutup acara? Semua peserta akan melihat pesan acara selesai.')) return;
+    
+    setIsSaving(true);
+    useLiveStore.setState({ isEventFinished: nextState });
+    await updateEventFinishedToggleInSupabase(nextState);
     setIsSaving(false);
   };
 
@@ -266,6 +278,37 @@ export default function AdminDashboardPage() {
             >
               {isMissionsEnabled ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
               <span>{isMissionsEnabled ? 'MISI ON' : 'MISI OFF'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* === PENUTUPAN ACARA (EVENT FINISHED) === */}
+        <div className={`glass-card rounded-2xl p-5 border-2 space-y-2 transition-all ${
+          isEventFinished ? 'border-amber-400/60 shadow-[0_0_20px_rgba(251,191,36,0.2)]' : 'border-slate-800'
+        }`}>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className={`w-5 h-5 ${isEventFinished ? 'text-amber-400' : 'text-slate-500'}`} />
+                <span className="text-base font-black text-white">Status Akhir Acara</span>
+              </div>
+              <p className="text-[11px] text-slate-400 pl-7">
+                {isEventFinished
+                  ? 'ACARA SELESAI — Peserta akan melihat pesan terima kasih.'
+                  : 'ACARA BERJALAN — Misi masih mengikuti aturan Mission Control di atas.'}
+              </p>
+            </div>
+            <button
+              onClick={handleToggleEventFinished}
+              disabled={isSaving}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black transition-all ${
+                isEventFinished
+                  ? 'bg-amber-500/20 border-2 border-amber-400 text-amber-300 hover:bg-amber-500/30'
+                  : 'bg-slate-800 border-2 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              {isEventFinished ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+              <span>{isEventFinished ? 'ACARA SELESAI' : 'ACARA AKTIF'}</span>
             </button>
           </div>
         </div>

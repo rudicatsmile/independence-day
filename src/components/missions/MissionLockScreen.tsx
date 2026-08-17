@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Lock, Clock } from 'lucide-react';
+import { Lock, Clock, CheckCircle2 } from 'lucide-react';
+import { useLiveStore } from '@/stores/useLiveStore';
 
 // Target: 17 Agustus 2026 pukul 08:00 WIB (UTC+7)
 const MISSION_UNLOCK_TIME = new Date('2026-08-17T01:00:00Z'); // 08:00 WIB = 01:00 UTC
@@ -36,6 +37,34 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 export function MissionLockScreen() {
   const countdown = useCountdown(MISSION_UNLOCK_TIME);
+  const isEventFinished = useLiveStore((state) => state.isEventFinished);
+
+  if (isEventFinished) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center space-y-8 px-4">
+        {/* Main lock icon */}
+        <div className="relative">
+          <div className="w-28 h-28 rounded-3xl bg-slate-900 border-2 border-emerald-400/40 flex items-center justify-center shadow-gold-glow mx-auto">
+            <CheckCircle2 className="w-14 h-14 text-emerald-400" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="space-y-4 max-w-md mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
+            <Clock className="w-3.5 h-3.5" />
+            <span>Acara Telah Berakhir</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+            Terima kasih atas partisipasi Anda!
+          </h1>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            Rangkaian Acara HUT RI ke-81 telah selesai. Sampai jumpa di acara selanjutnya! 🇮🇩
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center space-y-8 px-4">

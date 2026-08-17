@@ -25,6 +25,7 @@ interface LiveState {
   isSfxEnabled: boolean;
   isMissionsEnabled: boolean;
   isTapBattleEnabled: boolean;
+  isEventFinished: boolean;
 
   initLiveSupabase: (userId?: string) => Promise<void>;
   incrementSalute: () => void;
@@ -47,6 +48,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   isSfxEnabled: true,
   isMissionsEnabled: false,
   isTapBattleEnabled: false,
+  isEventFinished: false,
 
   initLiveSupabase: async (userId?: string) => {
     if (!isSupabaseConfigured()) return;
@@ -72,6 +74,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
         isSfxEnabled: extras.sfx_enabled,
         isMissionsEnabled: extras.missions_enabled,
         isTapBattleEnabled: extras.tap_battle_enabled,
+        isEventFinished: extras.event_finished,
       });
 
       if (wasConnected) {
@@ -98,6 +101,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
               if (typeof newData.sfx_enabled === 'boolean') updates.isSfxEnabled = newData.sfx_enabled;
               if (typeof newData.missions_enabled === 'boolean') updates.isMissionsEnabled = newData.missions_enabled;
               if (typeof newData.tap_battle_enabled === 'boolean') updates.isTapBattleEnabled = newData.tap_battle_enabled;
+              if (typeof newData.is_event_finished === 'boolean') updates.isEventFinished = newData.is_event_finished;
               set(updates);
             }
           }

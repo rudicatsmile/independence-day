@@ -994,6 +994,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
   sfx_enabled: boolean;
   missions_enabled: boolean;
   tap_battle_enabled: boolean;
+  event_finished: boolean;
 }> {
   const defaults = {
     countdown_target_time: null,
@@ -1004,13 +1005,14 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     sfx_enabled: true,
     missions_enabled: false,
     tap_battle_enabled: false,
+    event_finished: false,
   };
 
   if (!isSupabaseConfigured()) return defaults;
 
   const { data, error } = await supabase
     .from('live_event_state')
-    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled, missions_enabled, tap_battle_enabled')
+    .select('countdown_target_time, countdown_enabled, announcement_text, announcement_enabled, leaderboard_enabled, sfx_enabled, missions_enabled, tap_battle_enabled, is_event_finished')
     .eq('id', 'main')
     .single();
 
@@ -1025,6 +1027,7 @@ export async function fetchLiveEventExtrasFromSupabase(): Promise<{
     sfx_enabled: data.sfx_enabled ?? true,
     missions_enabled: data.missions_enabled ?? false,
     tap_battle_enabled: data.tap_battle_enabled ?? false,
+    event_finished: data.is_event_finished ?? false,
   };
 }
 
@@ -1123,6 +1126,25 @@ export async function updateMissionsToggleInSupabase(enabled: boolean): Promise<
     }, { onConflict: 'id' });
 
   if (error) return { error: error.message };
+  return { error: null };
+}
+
+/**
+ * Update Event Finished toggle
+ */
+export async function updateEventFinishedToggleInSupabase(enabled: boolean): Promise<{ error: string | null }> {
+  if (!isSupabaseConfigured()) return { error: null };
+
+  const { error } = await supabase
+    .from('live_event_state')
+    .update({ is_event_finished: enabled, updated_at: new Date().toISOString() })
+    .eq('id', 'main');
+
+  if (error) {
+    console.error('Error updating event finished toggle:', error);
+    return { error: error.message };
+  }
+
   return { error: null };
 }
 
